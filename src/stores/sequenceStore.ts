@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { SequenceState, SequenceActions, SequenceTheme, SequenceResult } from '@/types/sequence';
 import { SpinResult } from '@/types/wheel';
+import { getNextStepId, findStepById, isSequenceComplete, getSequencePath } from '@/utils/branchingUtils';
 
 interface SequenceStore extends SequenceState, SequenceActions {}
 
@@ -10,6 +11,7 @@ export const useSequenceStore = create<SequenceStore>()(
     (set, get) => ({
       // Initial state
       currentTheme: null,
+      currentStepId: null,
       currentStepIndex: 0,
       isActive: false,
       results: [],
@@ -22,46 +24,49 @@ export const useSequenceStore = create<SequenceStore>()(
 
       // Actions
       startSequence: (theme: SequenceTheme) => {
+        const startStepId = theme.startStepId || theme.steps[0]?.id;
+        const totalSteps = getSequencePath(theme, []).length; // Get expected path length
+        
         set({
           currentTheme: theme,
+          currentStepId: startStepId,
           currentStepIndex: 0,
           isActive: true,
           results: [],
           isTransitioning: false,
           progress: {
             completed: 0,
-            total: theme.steps.length,
+            total: totalSteps,
             percentage: 0,
           },
         }, false, 'sequence/start');
       },
 
       completeStep: (spinResult: SpinResult) => {
-        const { currentTheme, currentStepIndex, results } = get();
+        const { currentTheme, currentStepId, results } = get();
         
-        if (!currentTheme || currentStepIndex >= currentTheme.steps.length) {
-          console.log('Invalid completeStep call - no theme or index out of bounds');
+        if (!currentTheme || !currentStepId) {
+          console.log('Invalid completeStep call - no theme or current step');
           return;
         }
 
-        const currentStep = currentTheme.steps[currentStepIndex];
-        
         // Check if this step is already completed to prevent duplicates
-        const existingResult = results.find(r => r.stepId === currentStep.id);
+        const existingResult = results.find(r => r.stepId === currentStepId);
         if (existingResult) {
-          console.log('Step already completed, ignoring duplicate:', currentStep.id);
+          console.log('Step already completed, ignoring duplicate:', currentStepId);
           return;
         }
 
         const sequenceResult: SequenceResult = {
-          stepId: currentStep.id,
+          stepId: currentStepId,
           spinResult,
           timestamp: Date.now(),
         };
 
         const newResults = [...results, sequenceResult];
         const completed = newResults.length;
-        const total = currentTheme.steps.length;
+        const expectedPath = getSequencePath(currentTheme, newResults);
+        const total = expectedPath.length;
 
         set({
           results: newResults,
@@ -71,24 +76,27 @@ export const useSequenceStore = create<SequenceStore>()(
             percentage: Math.round((completed / total) * 100),
           },
         }, false, 'sequence/completeStep');
-
-        // Note: Auto-advance is now handled by the component
       },
 
       nextStep: () => {
-        const { currentTheme, currentStepIndex, isTransitioning } = get();
+        const { currentTheme, currentStepId, results, isTransitioning } = get();
         
-        if (!currentTheme || isTransitioning) {
-          console.log('NextStep blocked - no theme or transitioning');
+        if (!currentTheme || !currentStepId || isTransitioning) {
+          console.log('NextStep blocked - no theme, no current step, or transitioning');
           return;
         }
 
-        const nextIndex = currentStepIndex + 1;
-        console.log(`NextStep: currentIndex=${currentStepIndex}, nextIndex=${nextIndex}, totalSteps=${currentTheme.steps.length}`);
+        const currentStep = findStepById(currentTheme, currentStepId);
+        if (!currentStep) {
+          console.log('NextStep blocked - current step not found');
+          return;
+        }
+
+        // Use branching logic to determine next step
+        const nextStepId = getNextStepId(currentStep, results);
         
-        // Check if sequence is complete
-        if (nextIndex >= currentTheme.steps.length) {
-          console.log('Sequence complete!');
+        if (!nextStepId) {
+          console.log('Sequence complete - no next step found!');
           set({
             isTransitioning: false,
             // Keep isActive: true so results screen shows
@@ -96,13 +104,25 @@ export const useSequenceStore = create<SequenceStore>()(
           return;
         }
 
+        const nextStep = findStepById(currentTheme, nextStepId);
+        if (!nextStep) {
+          console.log('NextStep error - next step not found:', nextStepId);
+          return;
+        }
+
+        console.log(`NextStep: ${currentStepId} → ${nextStepId}`);
+
         // Start transition
         set({ isTransitioning: true }, false, 'sequence/startTransition');
 
         // After transition animation, move to next step
         setTimeout(() => {
+          // Calculate new step index for backward compatibility
+          const newStepIndex = currentTheme.steps.findIndex(s => s.id === nextStepId);
+          
           set({
-            currentStepIndex: nextIndex,
+            currentStepId: nextStepId,
+            currentStepIndex: newStepIndex,
             isTransitioning: false,
           }, false, 'sequence/nextStep');
         }, 500);
@@ -111,6 +131,7 @@ export const useSequenceStore = create<SequenceStore>()(
       resetSequence: () => {
         set({
           currentTheme: null,
+          currentStepId: null,
           currentStepIndex: 0,
           isActive: false,
           results: [],
@@ -149,15 +170,15 @@ export const useSequenceStore = create<SequenceStore>()(
 // Selectors for common use cases
 export const useCurrentStep = () => {
   return useSequenceStore(state => {
-    if (!state.currentTheme) return null;
-    return state.currentTheme.steps[state.currentStepIndex] || null;
+    if (!state.currentTheme || !state.currentStepId) return null;
+    return findStepById(state.currentTheme, state.currentStepId);
   });
 };
 
 export const useIsSequenceComplete = () => {
   return useSequenceStore(state => {
     if (!state.currentTheme) return false;
-    return state.results.length >= state.currentTheme.steps.length;
+    return isSequenceComplete(state.currentTheme, state.results);
   });
 };
 

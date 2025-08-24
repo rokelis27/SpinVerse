@@ -257,16 +257,8 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         const winnerIndex = findSegmentByAngle(normalizedPointerAngle, config.segments);
         const selectedSegment = config.segments[winnerIndex];
         
-        // Debug logging
-        console.log('Final wheel position:', {
-          wheelAngle: newAngle,
-          pointerAngle,
-          normalizedPointerAngle,
-          detectedSegmentIndex: winnerIndex,
-          detectedSegment: selectedSegment?.text,
-          allSegmentProbabilities: calculateSegmentProbabilities(config.segments),
-          segmentAngles: segmentAngles
-        });
+        // Debug logging (remove in production)
+        // console.log('Final wheel position:', detectedSegment: selectedSegment?.text);
         
         // DON'T SNAP - just stop where physics naturally stopped
         const finalAngle = newAngle;

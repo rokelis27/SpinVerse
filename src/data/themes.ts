@@ -1,5 +1,6 @@
 import { SequenceTheme } from '@/types/sequence';
 import { WheelConfig } from '@/types/wheel';
+import { BranchingConditions, createBranch } from '@/utils/branchingUtils';
 
 // Harry Potter Theme Data
 const harryPotterTheme: SequenceTheme = {
@@ -7,6 +8,7 @@ const harryPotterTheme: SequenceTheme = {
   name: 'Harry Potter Character Creator',
   description: 'Discover your magical identity through the halls of Hogwarts',
   color: '#8B4513',
+  startStepId: 'origin', // Define the starting step
   steps: [
     {
       id: 'origin',
@@ -24,6 +26,7 @@ const harryPotterTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'harry-potter',
       },
+      defaultNextStep: 'house', // Linear progression to house selection
     },
     {
       id: 'house',
@@ -41,7 +44,58 @@ const harryPotterTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'harry-potter',
       },
+      // Branching logic: Different magical specializations based on house
+      branches: [
+        createBranch('light-magic', [
+          BranchingConditions.oneOf('house', ['gryffindor', 'hufflepuff'])
+        ]),
+        createBranch('dark-magic', [
+          BranchingConditions.oneOf('house', ['slytherin', 'ravenclaw'])
+        ])
+      ],
+      defaultNextStep: 'wand', // Fallback to original path
     },
+    
+    // Branching Paths: Different Magic Specializations
+    {
+      id: 'light-magic',
+      title: 'Light Magic Specialization',
+      description: 'Learn the protective and healing arts...',
+      wheelConfig: {
+        segments: [
+          { id: 'healing', text: 'Healing Magic', color: '#E6E6FA', rarity: 'common', weight: 30 },
+          { id: 'protection', text: 'Protection Charms', color: '#4682B4', rarity: 'common', weight: 30 },
+          { id: 'transfiguration', text: 'Transfiguration', color: '#32CD32', rarity: 'uncommon', weight: 25 },
+          { id: 'patronus', text: 'Patronus Magic', color: '#FFD700', rarity: 'rare', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'harry-potter',
+      },
+      defaultNextStep: 'wand', // Merge back to main path
+    },
+    
+    {
+      id: 'dark-magic',
+      title: 'Advanced Magic Specialization', 
+      description: 'Master the complex and forbidden arts...',
+      wheelConfig: {
+        segments: [
+          { id: 'legilimency', text: 'Legilimency', color: '#4B0082', rarity: 'rare', weight: 20 },
+          { id: 'occlumency', text: 'Occlumency', color: '#800080', rarity: 'rare', weight: 20 },
+          { id: 'advanced-potions', text: 'Advanced Potions', color: '#2F4F2F', rarity: 'uncommon', weight: 30 },
+          { id: 'ancient-runes', text: 'Ancient Runes', color: '#8B4513', rarity: 'uncommon', weight: 25 },
+          { id: 'dark-arts', text: 'Dark Arts Defense', color: '#DC143C', rarity: 'legendary', weight: 5 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'harry-potter',
+      },
+      defaultNextStep: 'wand', // Merge back to main path
+    },
+    
     {
       id: 'wand',
       title: 'Your Wand',
@@ -60,6 +114,7 @@ const harryPotterTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'harry-potter',
       },
+      defaultNextStep: 'pet',
     },
     {
       id: 'pet',
@@ -78,6 +133,7 @@ const harryPotterTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'harry-potter',
       },
+      defaultNextStep: 'spell',
     },
     {
       id: 'spell',
@@ -99,9 +155,15 @@ const harryPotterTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'harry-potter',
       },
+      // No defaultNextStep - this is the end of the sequence
     },
   ],
   narrativeTemplate: "You are a {origin} wizard sorted into {house}, wielding a {wand} wand with your loyal {pet} by your side. Your signature spell is {spell}.",
+  narrativeTemplates: {
+    'light-path': "You are a {origin} wizard from {house}, specializing in {light-magic}. With your {wand} wand and {pet} companion, you've mastered {spell} and dedicate yourself to helping others.",
+    'dark-path': "You are a {origin} wizard from {house}, versed in {dark-magic}. Your {wand} wand channels your power while your {pet} aids your studies. Your mastery of {spell} sets you apart.",
+    'default': "You are a {origin} wizard sorted into {house}, wielding a {wand} wand with your loyal {pet} by your side. Your signature spell is {spell}."
+  },
 };
 
 // Export all themes
