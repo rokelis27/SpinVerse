@@ -33,6 +33,12 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   // Handle wheel spin completion
   const handleSpinComplete = (result: SpinResult) => {
+    console.log('SequenceController received result:', {
+      segment: result.segment,
+      segmentText: result.segment.text,
+      index: result.index
+    });
+    
     if (!isActive || isTransitioning || showResultPopup) return;
     
     // Show result popup immediately

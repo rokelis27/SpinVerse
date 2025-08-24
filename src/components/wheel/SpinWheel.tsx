@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { WheelConfig, WheelSegment, SpinResult, WheelPhysics } from '@/types/wheel';
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SPEED_PRESETS } from '@/types/settings';
+import { selectWeightedSegment, calculateTargetAngle, getRarityIndicator, calculateSegmentProbabilities, findSegmentByAngle } from '@/utils/probabilityUtils';
 
 interface SpinWheelProps {
   config: WheelConfig;
@@ -46,8 +47,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   // Idle rotation constants
   const IDLE_SPEED = 0.005; // Very slow idle rotation speed 
 
-  // Calculate segment angle
-  const segmentAngle = (2 * Math.PI) / config.segments.length;
+  // Calculate proportional segment angles based on weights
+  const segmentProbabilities = calculateSegmentProbabilities(config.segments);
+  const segmentAngles = segmentProbabilities.map(prob => prob * 2 * Math.PI);
 
   // Enhanced colors for better visual appeal
   const getSegmentColor = (segment: WheelSegment, index: number): string => {
@@ -93,10 +95,13 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 5;
 
-    // Draw segments
+    // Draw segments with proportional angles
+    let cumulativeAngle = 0;
     config.segments.forEach((segment, index) => {
-      const startAngle = index * segmentAngle;
-      const endAngle = startAngle + segmentAngle;
+      const startAngle = cumulativeAngle;
+      const endAngle = startAngle + segmentAngles[index];
+      cumulativeAngle = endAngle;
+      
       const segmentColor = getSegmentColor(segment, index);
       const textColor = segment.textColor || getTextColor(segmentColor);
 
@@ -118,9 +123,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw text
+      // Draw text with rarity indicator
       ctx.save();
-      const textAngle = startAngle + segmentAngle / 2;
+      const textAngle = startAngle + segmentAngles[index] / 2;
       ctx.rotate(textAngle);
       ctx.fillStyle = textColor;
       ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
@@ -133,7 +138,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.shadowOffsetX = 1;
       ctx.shadowOffsetY = 1;
       
-      ctx.fillText(segment.text, radius * 0.7, 0);
+      const rarityIndicator = getRarityIndicator(segment.rarity);
+      const displayText = rarityIndicator ? `${rarityIndicator} ${segment.text}` : segment.text;
+      ctx.fillText(displayText, radius * 0.7, 0);
       ctx.restore();
     });
 
@@ -175,7 +182,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('SPIN', centerX, centerY);
-  }, [physics.currentAngle, config.segments, segmentAngle]);
+  }, [physics.currentAngle, config.segments, segmentAngles]);
 
   // Animation loop with dramatic, suspenseful physics
   const animate = useCallback(() => {
@@ -242,25 +249,34 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
 
       // Check if should stop spinning (much lower threshold)
       if (Math.abs(newVelocity) < MIN_VELOCITY) {
-        // Calculate winning segment with precise positioning
+        // Calculate which segment the pointer is naturally pointing to
+        // The pointer points down from top, and segments are drawn starting from right (0 radians)
+        // We need to account for the wheel rotation and pointer position
         const pointerAngle = (-newAngle - Math.PI / 2) % (2 * Math.PI);
         const normalizedPointerAngle = pointerAngle < 0 ? pointerAngle + 2 * Math.PI : pointerAngle;
-        const segmentIndex = Math.floor(normalizedPointerAngle / segmentAngle) % config.segments.length;
-        const selectedSegment = config.segments[segmentIndex];
+        const winnerIndex = findSegmentByAngle(normalizedPointerAngle, config.segments);
+        const selectedSegment = config.segments[winnerIndex];
         
-        // Snap to center of winning segment for clean finish
-        const segmentCenterAngle = (segmentIndex * segmentAngle) + (segmentAngle / 2);
-        const targetAngle = -segmentCenterAngle - Math.PI / 2;
-        let finalAngle = targetAngle;
-        while (finalAngle > 2 * Math.PI) finalAngle -= 2 * Math.PI;
-        while (finalAngle < 0) finalAngle += 2 * Math.PI;
+        // Debug logging
+        console.log('Final wheel position:', {
+          wheelAngle: newAngle,
+          pointerAngle,
+          normalizedPointerAngle,
+          detectedSegmentIndex: winnerIndex,
+          detectedSegment: selectedSegment?.text,
+          allSegmentProbabilities: calculateSegmentProbabilities(config.segments),
+          segmentAngles: segmentAngles
+        });
+        
+        // DON'T SNAP - just stop where physics naturally stopped
+        const finalAngle = newAngle;
         
         // Call completion callback with dramatic pause
         if (onSpinComplete && selectedSegment) {
           setTimeout(() => {
             onSpinComplete({
               segment: selectedSegment,
-              index: segmentIndex,
+              index: winnerIndex,
               angle: finalAngle,
               timestamp: Date.now()
             });
@@ -285,7 +301,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     });
 
     animationFrameRef.current = requestAnimationFrame(animate);
-  }, [physics.isSpinning, isIdleRotating, onSpinComplete, segmentAngle, config.segments]);
+  }, [physics.isSpinning, isIdleRotating, onSpinComplete, segmentAngles, config.segments, wheelSettings.spinSpeed, MIN_VELOCITY]);
 
   // Handle spin trigger
   const spin = useCallback(() => {
@@ -301,7 +317,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       velocity: spinPower,
       isSpinning: true
     }));
-  }, [disabled, physics.isSpinning]);
+  }, [disabled, physics.isSpinning, SPIN_POWER_MIN, SPIN_POWER_MAX]);
 
   // Handle touch/click events with enhanced interaction
   const handleInteraction = useCallback((e: React.MouseEvent | React.TouchEvent) => {
