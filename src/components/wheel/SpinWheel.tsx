@@ -34,8 +34,14 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   const MIN_VELOCITY = speedPreset.minVelocity;
   const SPIN_POWER_MIN = speedPreset.minPower;
   const SPIN_POWER_MAX = speedPreset.maxPower;
-  const SUSPENSE_THRESHOLD = 0.2; 
-  const FINAL_THRESHOLD = 0.15;
+  
+  // Adjust suspense thresholds based on speed - turbo should skip most suspense
+  const SUSPENSE_THRESHOLD = wheelSettings.spinSpeed === 'turbo' ? 0.01 : 
+                            wheelSettings.spinSpeed === 'fast' ? 0.05 :
+                            wheelSettings.spinSpeed === 'normal' ? 0.2 : 0.3;
+  const FINAL_THRESHOLD = wheelSettings.spinSpeed === 'turbo' ? 0.005 : 
+                         wheelSettings.spinSpeed === 'fast' ? 0.02 :
+                         wheelSettings.spinSpeed === 'normal' ? 0.15 : 0.2;
   
   // Idle rotation constants
   const IDLE_SPEED = 0.005; // Very slow idle rotation speed 
@@ -192,27 +198,38 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         };
       }
 
-      // Progressive friction system for maximum suspense
-      if (newVelocity > SUSPENSE_THRESHOLD) {
+      // Progressive friction system - simplified for turbo mode
+      if (wheelSettings.spinSpeed === 'turbo') {
+        // Turbo mode: Skip suspense, just use friction
+        newVelocity *= FRICTION;
+      } else if (newVelocity > SUSPENSE_THRESHOLD) {
         // Normal spinning phase - consistent friction
         newVelocity *= FRICTION;
       } else if (newVelocity > FINAL_THRESHOLD) {
-        // Suspense phase - much more gradual slowdown with micro-variations
-        const suspenseMultiplier = 0.985 + Math.sin(Date.now() * 0.008) * 0.003; // More gradual with subtle wobble
+        // Suspense phase - gradual slowdown with micro-variations (skip for fast/turbo)
+        const suspenseIntensity = wheelSettings.spinSpeed === 'slow' ? 0.003 : 
+                                 wheelSettings.spinSpeed === 'normal' ? 0.002 : 0.001;
+        const suspenseMultiplier = 0.985 + Math.sin(Date.now() * 0.008) * suspenseIntensity;
         newVelocity *= suspenseMultiplier;
         
-        // Add tiny random hesitations for drama
-        if (Math.random() < 0.08) {
-          newVelocity *= 0.995; // Much gentler occasional slowdown
+        // Add tiny random hesitations for drama (less for faster speeds)
+        const hesitationChance = wheelSettings.spinSpeed === 'slow' ? 0.08 : 
+                               wheelSettings.spinSpeed === 'normal' ? 0.04 : 0.01;
+        if (Math.random() < hesitationChance) {
+          newVelocity *= 0.995;
         }
       } else {
-        // Final crawl phase - extremely gradual with micro-steps
-        const finalMultiplier = 0.992 + Math.sin(Date.now() * 0.003) * 0.004; // Even more gradual
+        // Final crawl phase - skip for turbo
+        const finalIntensity = wheelSettings.spinSpeed === 'slow' ? 0.004 : 
+                              wheelSettings.spinSpeed === 'normal' ? 0.002 : 0.001;
+        const finalMultiplier = 0.992 + Math.sin(Date.now() * 0.003) * finalIntensity;
         newVelocity *= finalMultiplier;
         
-        // Add suspenseful micro-pauses
-        if (Math.random() < 0.03) {
-          newVelocity *= 0.98; // Less frequent but still dramatic pauses
+        // Add suspenseful micro-pauses (much less for faster speeds)
+        const pauseChance = wheelSettings.spinSpeed === 'slow' ? 0.03 : 
+                           wheelSettings.spinSpeed === 'normal' ? 0.01 : 0.001;
+        if (Math.random() < pauseChance) {
+          newVelocity *= 0.98;
         }
       }
 

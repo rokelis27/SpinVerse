@@ -144,7 +144,7 @@ export default function Home() {
             </button>
 
             {/* Sequence Controller */}
-            <SequenceController />
+            <SequenceController onBackToHome={handleResetSequence} />
           </div>
         )}
 

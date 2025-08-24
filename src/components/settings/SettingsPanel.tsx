@@ -16,10 +16,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
   if (!isOpen) return null;
 
   const speedOptions = [
-    { value: 'slow', label: 'Slow', description: 'Relaxed spinning' },
-    { value: 'normal', label: 'Normal', description: 'Standard speed' },
-    { value: 'fast', label: 'Fast', description: 'Quick spins' },
-    { value: 'turbo', label: 'Turbo', description: 'Lightning fast!' },
+    { value: 'slow', label: 'Slow', description: 'Long, suspenseful spins' },
+    { value: 'normal', label: 'Normal', description: 'Balanced spinning experience' },
+    { value: 'fast', label: 'Fast', description: 'Quick spins with brief suspense' },
+    { value: 'turbo', label: 'Turbo', description: 'Nearly instant results' },
   ] as const;
 
   return (

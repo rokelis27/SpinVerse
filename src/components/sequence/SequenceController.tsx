@@ -3,15 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { SpinWheel } from '@/components/wheel/SpinWheel';
 import { ResultPopup } from '@/components/wheel/ResultPopup';
+import { SequenceResultsScreen } from './SequenceResultsScreen';
 import { useSequenceStore, useCurrentStep, useIsSequenceComplete } from '@/stores/sequenceStore';
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SpinResult } from '@/types/wheel';
 
 interface SequenceControllerProps {
+  onBackToHome?: () => void;
   className?: string;
 }
 
-export const SequenceController: React.FC<SequenceControllerProps> = ({ className }) => {
+export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackToHome, className }) => {
   const [lastResult, setLastResult] = useState<SpinResult | null>(null);
   const [showResultPopup, setShowResultPopup] = useState(false);
   const wheelSettings = useWheelSettings();
@@ -23,6 +25,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ classNam
     completeStep,
     nextStep,
     resetSequence,
+    startSequence,
   } = useSequenceStore();
 
   const currentStep = useCurrentStep();
@@ -56,20 +59,14 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ classNam
     setShowResultPopup(false);
   };
 
-  // Reset sequence when it completes
+  // Log completion for debugging
   useEffect(() => {
     if (isComplete && currentTheme) {
-      // Sequence complete - could trigger video export here
       console.log('Sequence completed!', useSequenceStore.getState().results);
-      
-      // Auto-reset after showing results
-      setTimeout(() => {
-        resetSequence();
-      }, 5000);
     }
-  }, [isComplete, currentTheme, resetSequence]);
+  }, [isComplete, currentTheme]);
 
-  if (!isActive || !currentTheme || !currentStep) {
+  if (!isActive || !currentTheme) {
     return (
       <div className={`text-center ${className}`}>
         <p className="text-gray-600">No active sequence. Start a themed sequence to begin!</p>
@@ -77,15 +74,40 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ classNam
     );
   }
 
+  // Handle restart sequence
+  const handleRestart = () => {
+    if (currentTheme) {
+      resetSequence();
+      startSequence(currentTheme);
+    }
+  };
+
+  // Handle back to home
+  const handleBackToHome = () => {
+    resetSequence();
+    if (onBackToHome) {
+      onBackToHome();
+    }
+  };
+
   if (isComplete) {
     return (
-      <div className={`text-center space-y-4 ${className}`}>
-        <h2 className="text-2xl font-bold text-green-600">Sequence Complete! 🎉</h2>
-        <p className="text-gray-700">Your {currentTheme.name} story is ready!</p>
-        <div className="text-sm text-gray-600">
-          Resetting in 5 seconds...
-        </div>
-      </div>
+      <SequenceResultsScreen
+        onRestart={handleRestart}
+        onBackToHome={handleBackToHome}
+        className={className}
+      />
+    );
+  }
+
+  // Handle case where sequence is active but no current step (completed)
+  if (!currentStep) {
+    return (
+      <SequenceResultsScreen
+        onRestart={handleRestart}
+        onBackToHome={handleBackToHome}
+        className={className}
+      />
     );
   }
 

@@ -90,8 +90,8 @@ export const useSequenceStore = create<SequenceStore>()(
         if (nextIndex >= currentTheme.steps.length) {
           console.log('Sequence complete!');
           set({
-            isActive: false,
             isTransitioning: false,
+            // Keep isActive: true so results screen shows
           }, false, 'sequence/complete');
           return;
         }

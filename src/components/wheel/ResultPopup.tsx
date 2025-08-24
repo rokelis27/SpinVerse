@@ -114,12 +114,6 @@ export const ResultPopup: React.FC<ResultPopupProps> = ({
             {result.segment.text}
           </div>
           
-          <button
-            onClick={onClose}
-            className="w-full mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm"
-          >
-            ✓ Got it!
-          </button>
         </div>
       </div>
     </div>
