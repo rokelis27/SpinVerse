@@ -7,7 +7,7 @@ export interface WheelSegment {
 }
 
 export interface WheelConfig {
-  segments: WheelSegment[];
+  segments: readonly WheelSegment[] | WheelSegment[];
   size: number;
   spinDuration: number;
   friction: number;

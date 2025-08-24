@@ -2,6 +2,8 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { WheelConfig, WheelSegment, SpinResult, WheelPhysics } from '@/types/wheel';
+import { useWheelSettings } from '@/stores/settingsStore';
+import { SPEED_PRESETS } from '@/types/settings';
 
 interface SpinWheelProps {
   config: WheelConfig;
@@ -14,8 +16,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   onSpinComplete,
   disabled = false
 }) => {
+  const wheelSettings = useWheelSettings();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number>(0);
   const [physics, setPhysics] = useState<WheelPhysics>({
     currentAngle: 0,
     velocity: 0,
@@ -25,11 +28,12 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   
   const [isIdleRotating, setIsIdleRotating] = useState(true);
 
-  // Physics constants for realistic feel with suspenseful ending
-  const FRICTION = 0.985; // Higher for longer spins
-  const MIN_VELOCITY = 0.001; // Even lower threshold for maximum suspense
-  const SPIN_POWER_MIN = 2; // Lower for shorter initial spin
-  const SPIN_POWER_MAX = 5; // Lower maximum for quicker transition to suspense
+  // Physics constants based on user settings
+  const speedPreset = SPEED_PRESETS[wheelSettings.spinSpeed];
+  const FRICTION = speedPreset.friction;
+  const MIN_VELOCITY = speedPreset.minVelocity;
+  const SPIN_POWER_MIN = speedPreset.minPower;
+  const SPIN_POWER_MAX = speedPreset.maxPower;
   const SUSPENSE_THRESHOLD = 0.2; 
   const FINAL_THRESHOLD = 0.15;
   
@@ -56,9 +60,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   const getTextColor = (bgColor: string): string => {
     // Simple contrast calculation
     const hex = bgColor.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
     const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
     return brightness > 128 ? '#000000' : '#FFFFFF';
   };
@@ -286,13 +290,13 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   const handleInteraction = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     
-    // Add haptic feedback for mobile devices
-    if ('vibrate' in navigator) {
+    // Add haptic feedback for mobile devices (if enabled)
+    if (wheelSettings.enableHapticFeedback && 'vibrate' in navigator) {
       navigator.vibrate(50); // Short vibration
     }
     
     spin();
-  }, [spin]);
+  }, [spin, wheelSettings.enableHapticFeedback]);
 
   // Handle touch for swipe-to-spin (future enhancement)
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
