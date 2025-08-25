@@ -115,6 +115,58 @@ export function isSequenceComplete(
 }
 
 /**
+ * Detect Harry Potter Easter egg combinations for special narratives
+ */
+export function detectHarryPotterEasterEggs(
+  results: SequenceResult[]
+): string | null {
+  const resultMap = results.reduce((acc, result) => {
+    acc[result.stepId] = result.spinResult.segment.id;
+    return acc;
+  }, {} as Record<string, string>);
+  
+  const { origin, house, wand, purpose, spell } = resultMap;
+  const career = resultMap['hero-career'] || resultMap['scholar-career'] || resultMap['nature-career'];
+  const magic = resultMap['light-magic'] || resultMap['dark-magic'];
+  
+  // THE CHOSEN ONE: Harry Potter-like combination
+  if (
+    (origin === 'half-blood' || origin === 'pure-blood') &&
+    house === 'gryffindor' &&
+    (wand === 'holly-phoenix' || wand === 'maple-phoenix') &&
+    purpose === 'defeat-voldemort' &&
+    (spell === 'expecto-patronum' || spell === 'expelliarmus')
+  ) {
+    return 'chosen-one';
+  }
+  
+  // THE DARK LORD: Voldemort-like combination
+  if (
+    origin === 'pure-blood' &&
+    house === 'slytherin' &&
+    magic === 'dark-arts' &&
+    spell === 'avada-kedavra' &&
+    (career === 'unspeakable' || purpose === 'discover-magic')
+  ) {
+    return 'dark-lord';
+  }
+  
+  // THE GRAND PROTECTOR: Dumbledore-like combination
+  if (
+    (origin === 'half-blood' || origin === 'pure-blood') &&
+    (house === 'gryffindor' || house === 'ravenclaw') &&
+    (wand === 'holly-phoenix' || wand === 'maple-phoenix') &&
+    purpose === 'teach-hogwarts' &&
+    career === 'unspeakable' &&
+    magic === 'patronus'
+  ) {
+    return 'grand-protector';
+  }
+  
+  return null;
+}
+
+/**
  * Get the appropriate narrative template based on results
  */
 export function getNarrativeTemplate(
@@ -125,17 +177,40 @@ export function getNarrativeTemplate(
     return theme.narrativeTemplate || '';
   }
   
-  // You can add logic here to choose different templates based on the path taken
-  // For now, return the default or first available template
-  const templateKeys = Object.keys(theme.narrativeTemplates);
-  if (templateKeys.length === 0) {
-    return theme.narrativeTemplate || '';
+  // Check for Harry Potter Easter eggs first
+  if (theme.id === 'harry-potter') {
+    const easterEgg = detectHarryPotterEasterEggs(results);
+    if (easterEgg && theme.narrativeTemplates[easterEgg]) {
+      return theme.narrativeTemplates[easterEgg];
+    }
   }
   
-  // Future: Add logic to select template based on specific conditions
-  // e.g., "light_path", "dark_path", "neutral_path"
+  // Standard path detection
+  const hasHeroCareer = results.some(r => r.stepId === 'hero-career');
+  const hasScholarCareer = results.some(r => r.stepId === 'scholar-career');
+  const hasNatureCareer = results.some(r => r.stepId === 'nature-career');
+  const hasLightMagic = results.some(r => r.stepId === 'light-magic');
+  const hasDarkMagic = results.some(r => r.stepId === 'dark-magic');
   
-  return theme.narrativeTemplates[templateKeys[0]] || theme.narrativeTemplate || '';
+  // Select appropriate template based on path taken
+  if (hasHeroCareer && theme.narrativeTemplates['hero-path']) {
+    return theme.narrativeTemplates['hero-path'];
+  }
+  if (hasScholarCareer && theme.narrativeTemplates['scholar-path']) {
+    return theme.narrativeTemplates['scholar-path'];
+  }
+  if (hasNatureCareer && theme.narrativeTemplates['nature-path']) {
+    return theme.narrativeTemplates['nature-path'];
+  }
+  if (hasLightMagic && theme.narrativeTemplates['light-path']) {
+    return theme.narrativeTemplates['light-path'];
+  }
+  if (hasDarkMagic && theme.narrativeTemplates['dark-path']) {
+    return theme.narrativeTemplates['dark-path'];
+  }
+  
+  // Fallback to default template
+  return theme.narrativeTemplates['default'] || theme.narrativeTemplate || '';
 }
 
 /**

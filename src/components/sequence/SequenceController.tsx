@@ -6,7 +6,8 @@ import { ResultPopup } from '@/components/wheel/ResultPopup';
 import { SequenceResultsScreen } from './SequenceResultsScreen';
 import { useSequenceStore, useCurrentStep, useIsSequenceComplete } from '@/stores/sequenceStore';
 import { useWheelSettings } from '@/stores/settingsStore';
-import { SpinResult } from '@/types/wheel';
+import { SpinResult, WheelConfig } from '@/types/wheel';
+import { applyConditionalWeights } from '@/utils/probabilityUtils';
 
 interface SequenceControllerProps {
   onBackToHome?: () => void;
@@ -30,6 +31,32 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   const currentStep = useCurrentStep();
   const isComplete = useIsSequenceComplete();
+  
+  // Apply conditional weights to current step's wheel config
+  const getAdjustedWheelConfig = (): WheelConfig | null => {
+    if (!currentStep || !currentTheme) return null;
+    
+    // Get all previous results as a map
+    const { results } = useSequenceStore.getState();
+    const previousResults = results.reduce((acc, result) => {
+      acc[result.stepId] = result.spinResult.segment.id;
+      return acc;
+    }, {} as Record<string, string>);
+    
+    // Apply conditional weights to segments
+    const adjustedSegments = applyConditionalWeights(
+      [...currentStep.wheelConfig.segments], // Create a copy
+      previousResults
+    );
+    
+    // Return updated wheel config with adjusted segments
+    return {
+      ...currentStep.wheelConfig,
+      segments: adjustedSegments
+    };
+  };
+  
+  const adjustedWheelConfig = getAdjustedWheelConfig();
 
   // Handle wheel spin completion
   const handleSpinComplete = (result: SpinResult) => {
@@ -47,11 +74,20 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
       navigator.vibrate([50, 50, 100]); // Success vibration pattern
     }
 
+    // Check if sequence will be complete after this step
+    const storeState = useSequenceStore.getState();
+    const willBeComplete = storeState.currentTheme ? 
+      require('@/utils/branchingUtils').isSequenceComplete(storeState.currentTheme, storeState.results) : false;
+    
     // Use settings for popup duration, then advance to next step
     const popupDuration = wheelSettings.resultPopupDuration * 1000; // Convert to ms
     setTimeout(() => {
       setShowResultPopup(false);
-      nextStep(); // This will trigger transition
+      
+      if (!willBeComplete) {
+        nextStep(); // Only advance if sequence isn't complete
+      }
+      // If sequence is complete, component will re-render to show results screen
     }, popupDuration);
   };
 
@@ -141,7 +177,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
         }`}
       >
         <SpinWheel
-          config={currentStep.wheelConfig}
+          config={adjustedWheelConfig || currentStep.wheelConfig}
           onSpinComplete={handleSpinComplete}
           disabled={isTransitioning || showResultPopup}
         />
