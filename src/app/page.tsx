@@ -97,7 +97,11 @@ export default function Home() {
                     <span className="text-sm font-medium" style={{ color: theme.color }}>
                       {theme.steps.length} Steps
                     </span>
-                    <div className="text-2xl">🧙‍♂️</div>
+                    <div className="text-2xl">
+                      {theme.id === 'harry-potter' && '🧙‍♂️'}
+                      {theme.id === 'hunger-games' && '🏹'}
+                      {!['harry-potter', 'hunger-games'].includes(theme.id) && '🎯'}
+                    </div>
                   </div>
                 </button>
               ))}

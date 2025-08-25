@@ -130,19 +130,48 @@ export function findSegmentByAngle(
 
 /**
  * Add contextual probability weights based on previous choices
- * Enhanced Harry Potter-specific conditional logic
+ * Supports both Harry Potter and Hunger Games themes
  */
 export function applyConditionalWeights(
   segments: WheelSegment[],
-  previousResults: Record<string, string>
+  previousResults: Record<string, string>,
+  currentStepId?: string
 ): WheelSegment[] {
   return segments.map(segment => {
     let adjustedWeight = segment.weight || (segment.rarity ? RARITY_WEIGHTS[segment.rarity] : 25);
     
-    // === HOUSE SORTING CONDITIONAL LOGIC ===
-    const origin = previousResults.origin;
+    // Determine theme based on segment IDs or current step
+    const isHungerGames = currentStepId?.includes('-') || segment.id.startsWith('district-') || segment.id.includes('bloodbath') || segment.id.includes('survive');
     
-    // SLYTHERIN: Traditionally Pure-blood dominated
+    if (isHungerGames) {
+      // Apply Hunger Games conditional logic
+      adjustedWeight = applyHungerGamesConditionalWeights(segment, adjustedWeight, previousResults, currentStepId);
+    } else {
+      // Apply Harry Potter conditional logic
+      adjustedWeight = applyHarryPotterConditionalWeights(segment, adjustedWeight, previousResults);
+    }
+    
+    return {
+      ...segment,
+      weight: Math.max(adjustedWeight, 1) // Ensure minimum weight of 1
+    };
+  });
+}
+
+/**
+ * Apply Harry Potter specific conditional logic
+ */
+function applyHarryPotterConditionalWeights(
+  segment: WheelSegment,
+  baseWeight: number,
+  previousResults: Record<string, string>
+): number {
+  let adjustedWeight = baseWeight;
+    
+  // === HOUSE SORTING CONDITIONAL LOGIC ===
+  const origin = previousResults.origin;
+  
+  // SLYTHERIN: Traditionally Pure-blood dominated
     if (segment.id === 'slytherin') {
       if (origin === 'pure-blood') adjustedWeight *= 2.2; // 120% increase - Strong family traditions
       if (origin === 'half-blood') adjustedWeight *= 0.7;  // 30% decrease - Some prejudice
@@ -287,12 +316,343 @@ export function applyConditionalWeights(
       if (purpose === 'defeat-voldemort') adjustedWeight *= 1.4;
     }
     
-    if (segment.id === 'protego' && magicSpec === 'protection') adjustedWeight *= 1.8;
-    if (segment.id === 'stupefy' && house === 'slytherin') adjustedWeight *= 1.3;
+  if (segment.id === 'protego' && magicSpec === 'protection') adjustedWeight *= 1.8;
+  if (segment.id === 'stupefy' && house === 'slytherin') adjustedWeight *= 1.3;
+  
+  return adjustedWeight;
+}
+
+/**
+ * Apply Hunger Games specific conditional logic
+ */
+function applyHungerGamesConditionalWeights(
+  segment: WheelSegment,
+  baseWeight: number,
+  previousResults: Record<string, string>,
+  currentStepId?: string
+): number {
+  let adjustedWeight = baseWeight;
+  
+  const district = previousResults.district;
+  const tributeStatus = previousResults['tribute-status'];
+  const trainingScore = previousResults['training-score'];
+  const arena = previousResults['arena-environment'];
+  const alliance = previousResults['alliance-strategy'];
+  
+  // === TRIBUTE STATUS CONDITIONAL LOGIC ===
+  if (segment.id === 'career-volunteer') {
+    // Only available for Career districts
+    if (!['district-1', 'district-2', 'district-4'].includes(district)) {
+      adjustedWeight *= 0.05; // Nearly impossible for non-Career districts
+    } else {
+      adjustedWeight *= 2.0; // More common in Career districts
+    }
+  }
+  
+  if (segment.id === 'volunteer-save') {
+    // Higher probability for poorer districts (desperation)
+    if (['district-11', 'district-12'].includes(district)) {
+      adjustedWeight *= 2.5; // Like Katniss volunteering for Prim
+    }
+    if (['district-9', 'district-10'].includes(district)) {
+      adjustedWeight *= 1.8;
+    }
+  }
+  
+  if (segment.id === 'reaped-multiple') {
+    // More tessera entries for poorer districts
+    if (['district-11', 'district-12'].includes(district)) {
+      adjustedWeight *= 2.0;
+    }
+    if (['district-8', 'district-9', 'district-10'].includes(district)) {
+      adjustedWeight *= 1.5;
+    }
+    if (['district-1', 'district-2'].includes(district)) {
+      adjustedWeight *= 0.3; // Wealthy districts rarely need tessera
+    }
+  }
+  
+  // === TRAINING SCORE CONDITIONAL LOGIC ===
+  if (segment.id.startsWith('score-')) {
+    const scoreNumber = parseInt(segment.id.split('-')[1]);
     
-    return {
-      ...segment,
-      weight: Math.max(adjustedWeight, 1) // Ensure minimum weight of 1
-    };
-  });
+    // Career tributes get higher scores
+    if (tributeStatus === 'career-volunteer') {
+      if (scoreNumber >= 9) adjustedWeight *= 3.0; // 60% chance of 9+ for careers
+      if (scoreNumber <= 6) adjustedWeight *= 0.2; // Rare for careers to score low
+    }
+    
+    // District advantages for certain scores
+    if (['district-1', 'district-2', 'district-4'].includes(district) && scoreNumber >= 8) {
+      adjustedWeight *= 1.8; // Career districts excel
+    }
+    
+    if (['district-3', 'district-5', 'district-6'].includes(district) && scoreNumber >= 6 && scoreNumber <= 8) {
+      adjustedWeight *= 1.4; // Tech districts show moderate competence
+    }
+    
+    // District 12 special: Katniss bow moment (score 11)
+    if (district === 'district-12' && segment.id === 'score-11') {
+      adjustedWeight *= 5.0; // Ultra rare but possible
+    }
+    
+    // Lower district expectations
+    if (['district-8', 'district-9', 'district-10', 'district-11', 'district-12'].includes(district) && scoreNumber >= 9) {
+      adjustedWeight *= 0.5; // Unusual for poor districts to score very high
+    }
+  }
+  
+  // === ARENA ENVIRONMENT ADVANTAGES ===
+  if (currentStepId === 'arena-environment') {
+    // District advantages for specific arenas
+    if (segment.id === 'dense-forest') {
+      if (['district-7', 'district-12'].includes(district)) {
+        adjustedWeight *= 1.5; // Forestry and hunting experience
+      }
+    }
+    
+    if (segment.id === 'tropical-island') {
+      if (district === 'district-4') {
+        adjustedWeight *= 2.0; // Fishing district = water advantage
+      }
+    }
+    
+    if (segment.id === 'urban-ruins') {
+      if (['district-3', 'district-5', 'district-6'].includes(district)) {
+        adjustedWeight *= 1.6; // Tech districts understand infrastructure
+      }
+    }
+    
+    if (segment.id === 'frozen-tundra') {
+      if (['district-9', 'district-10', 'district-11'].includes(district)) {
+        adjustedWeight *= 1.3; // Agricultural hardiness
+      }
+    }
+  }
+  
+  // === ALLIANCE STRATEGY CONDITIONAL LOGIC ===
+  if (segment.id === 'career-pack') {
+    // Only high-scoring or Career tributes get invited
+    const score = parseInt(trainingScore?.split('-')[1] || '0');
+    if (tributeStatus === 'career-volunteer' || score >= 8) {
+      adjustedWeight *= 2.0;
+    } else {
+      adjustedWeight *= 0.1; // Very unlikely for weak tributes
+    }
+  }
+  
+  if (segment.id === 'secret-romance') {
+    // More likely for joint District tributes
+    if (district === 'district-12') {
+      adjustedWeight *= 2.5; // Katniss and Peeta reference
+    }
+  }
+  
+  if (segment.id === 'solo-survivor') {
+    // More likely for hunting/independent districts
+    if (['district-7', 'district-12'].includes(district)) {
+      adjustedWeight *= 1.8; // Used to self-reliance
+    }
+  }
+  
+  // === SURVIVAL WHEELS CONDITIONAL LOGIC ===
+  
+  // CORNUCOPIA BLOODBATH
+  if (currentStepId === 'cornucopia-bloodbath') {
+    if (segment.id === 'survive-bloodbath') {
+      // Career districts trained for this
+      if (tributeStatus === 'career-volunteer') adjustedWeight *= 1.2; // 90% survival
+      if (['district-1', 'district-2', 'district-4'].includes(district)) adjustedWeight *= 1.27; // 95% survival
+      
+      // High training scores help
+      const score = parseInt(trainingScore?.split('-')[1] || '5');
+      if (score >= 8) adjustedWeight *= 1.2; // 90% survival for high scorers
+      
+      // Agile districts survive better
+      if (['district-11', 'district-12'].includes(district)) adjustedWeight *= 1.13; // 85% survival (agility)
+      
+      // Solo strategy avoids bloodbath entirely
+      if (alliance === 'solo-survivor') adjustedWeight *= 1.33; // 100% survival (avoided carnage)
+    }
+  }
+  
+  // FIRST NIGHT SURVIVAL
+  if (currentStepId === 'first-night-survival') {
+    if (segment.id === 'survive-night') {
+      // Outdoor districts excel
+      if (district === 'district-7') adjustedWeight *= 1.31; // 105% survival (forestry skills)
+      if (district === 'district-12') adjustedWeight *= 1.25; // 100% survival (harsh conditions)
+      if (['district-9', 'district-10', 'district-11'].includes(district)) adjustedWeight *= 1.19; // 95% survival (hardiness)
+      
+      // Career districts struggle with basics
+      if (['district-1', 'district-2'].includes(district) && tributeStatus === 'career-volunteer') {
+        adjustedWeight *= 0.875; // 70% survival (pampered)
+      }
+      
+      // Extreme arenas are deadly
+      if (['desert-wasteland', 'frozen-tundra'].includes(arena)) {
+        adjustedWeight *= 0.82; // 65% survival in extreme conditions
+      }
+    }
+  }
+  
+  // TRACKER JACKER ENCOUNTER
+  if (currentStepId === 'tracker-jacker-encounter') {
+    // Only appears in forest/tropical arenas
+    if (!['dense-forest', 'tropical-island'].includes(arena)) {
+      return 0; // Skip this wheel entirely
+    }
+    
+    if (segment.id === 'survive-trackers') {
+      // Forest districts have advantages
+      if (district === 'district-7') adjustedWeight *= 1.43; // 100% survival (tree climbing)
+      if (district === 'district-12') adjustedWeight *= 1.36; // 95% survival (hunting/tracking)
+      
+      // High intelligence helps
+      const score = parseInt(trainingScore?.split('-')[1] || '5');
+      if (score >= 8) adjustedWeight *= 1.29; // 90% survival (quick thinking)
+      
+      // Alliance help with recovery
+      if (alliance !== 'solo-survivor') adjustedWeight *= 1.21; // 85% survival (help)
+    }
+  }
+  
+  // ARENA DISASTER SURVIVAL
+  if (currentStepId === 'arena-disaster-survival') {
+    if (segment.id === 'survive-disaster') {
+      // Tech districts understand systems
+      if (['district-3', 'district-5', 'district-6'].includes(district)) {
+        adjustedWeight *= 1.38; // 90% survival (understand manipulation)
+      }
+      
+      // District 12: Fire/explosion experience
+      if (district === 'district-12') adjustedWeight *= 1.31; // 85% survival (coal mining)
+      
+      // District 4: Swimming in floods
+      if (district === 'district-4') adjustedWeight *= 1.46; // 95% survival (water)
+      
+      // High scores = adaptability
+      const score = parseInt(trainingScore?.split('-')[1] || '5');
+      if (score >= 8) adjustedWeight *= 1.31; // 85% survival
+      
+      // Alliance coordination
+      if (alliance !== 'solo-survivor') adjustedWeight *= 1.23; // 80% survival
+    }
+  }
+  
+  // MUTT ATTACK
+  if (currentStepId === 'mutt-attack') {
+    if (segment.id === 'survive-mutts') {
+      // Combat-trained districts
+      if (tributeStatus === 'career-volunteer') adjustedWeight *= 1.5; // 90% survival
+      if (['district-1', 'district-2'].includes(district)) adjustedWeight *= 1.42; // 85% survival
+      
+      // Animal handling knowledge
+      if (district === 'district-10') adjustedWeight *= 1.33; // 80% survival
+      
+      // Group defense
+      if (alliance !== 'solo-survivor') adjustedWeight *= 1.33; // 80% survival
+      
+      // High combat scores
+      const score = parseInt(trainingScore?.split('-')[1] || '5');
+      if (score >= 8) adjustedWeight *= 1.42; // 85% survival
+      
+      // Final 6 = deadlier mutts
+      // This would need to be tracked in sequence state
+    }
+  }
+  
+  // ALLIANCE BETRAYAL TEST
+  if (currentStepId === 'alliance-betrayal-test') {
+    // Skip for solo survivors
+    if (alliance === 'solo-survivor') return 0;
+    
+    if (segment.id === 'survive-betrayal') {
+      // Career Pack has high betrayal rate
+      if (alliance === 'career-pack') adjustedWeight *= 0.43; // 30% survival (70% betrayal)
+      
+      // Secret Romance has low betrayal rate
+      if (alliance === 'secret-romance') adjustedWeight *= 4.0; // 80% survival (20% betrayal)
+      
+      // District Alliance moderate betrayal
+      if (alliance === 'district-alliance') adjustedWeight *= 1.22; // 55% survival (45% betrayal)
+      
+      // Better fighters survive betrayals
+      const score = parseInt(trainingScore?.split('-')[1] || '5');
+      if (score >= 8) adjustedWeight *= 1.36; // +20% survival bonus
+      
+      // Underestimated districts surprise attackers
+      if (['district-11', 'district-12'].includes(district)) {
+        adjustedWeight *= 1.27; // +15% survival bonus
+      }
+    }
+  }
+  
+  // FINAL SHOWDOWN
+  if (currentStepId === 'final-showdown') {
+    // Career advantages
+    if (tributeStatus === 'career-volunteer') {
+      if (segment.id === 'brutal-victory') adjustedWeight *= 1.5;
+    }
+    
+    // High intelligence = strategic victory
+    const score = parseInt(trainingScore?.split('-')[1] || '5');
+    if (score >= 8 && segment.id === 'strategic-victory') {
+      adjustedWeight *= 1.4;
+    }
+    
+    // Secret Romance unlocks Joint Victory
+    if (alliance === 'secret-romance' && segment.id === 'joint-victory') {
+      adjustedWeight *= 3.0;
+    }
+    
+    // District 12 rule change boost (Katniss reference)
+    if (district === 'district-12' && segment.id === 'rule-change-victory') {
+      adjustedWeight *= 2.5; // 5% chance instead of 2%
+    }
+    
+    // Tech districts = strategic thinking
+    if (['district-3', 'district-5', 'district-6'].includes(district) && segment.id === 'strategic-victory') {
+      adjustedWeight *= 1.3;
+    }
+  }
+  
+  // REBELLION ROLE
+  if (currentStepId === 'rebellion-role') {
+    // District 12 = Mockingjay path
+    if (district === 'district-12' && segment.id === 'the-mockingjay') {
+      adjustedWeight *= 1.6; // 40% chance instead of 25%
+    }
+    
+    // Career districts = infiltrator access
+    if (['district-1', 'district-2'].includes(district) && segment.id === 'capitol-infiltrator') {
+      adjustedWeight *= 1.5; // Inside access to Capitol
+    }
+    
+    // Presidential Assassin only with rule change history
+    if (segment.id === 'presidential-assassin') {
+      const victory = previousResults['final-showdown'];
+      if (victory !== 'rule-change-victory') {
+        adjustedWeight *= 0.1; // Nearly impossible without gamemaker manipulation history
+      }
+    }
+    
+    // Joint Victory = Propaganda Stars
+    if (segment.id === 'propaganda-star') {
+      const victory = previousResults['final-showdown'];
+      if (victory === 'joint-victory') {
+        adjustedWeight *= 2.0;
+      }
+    }
+    
+    // Brutal Victory reduces Mockingjay chances (trauma)
+    if (segment.id === 'the-mockingjay') {
+      const victory = previousResults['final-showdown'];
+      if (victory === 'brutal-victory') {
+        adjustedWeight *= 0.6; // Too traumatized to be symbol
+      }
+    }
+  }
+  
+  return adjustedWeight;
 }

@@ -188,7 +188,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
             )}
             
             <p className="text-gray-500 text-xs mt-3">
-              🤖 Powered by AI - Get your personalized story with rarity & character matches!
+              Get your personalized story with rarity & character matches!
             </p>
           </div>
         )}

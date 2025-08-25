@@ -167,6 +167,84 @@ export function detectHarryPotterEasterEggs(
 }
 
 /**
+ * Detect Hunger Games storyline combinations for special narratives
+ */
+export function detectHungerGamesStorylines(
+  results: SequenceResult[]
+): string | null {
+  const resultMap = results.reduce((acc, result) => {
+    acc[result.stepId] = result.spinResult.segment.id;
+    return acc;
+  }, {} as Record<string, string>);
+  
+  const district = resultMap['district'];
+  const tributeStatus = resultMap['tribute-status'];
+  const trainingScore = resultMap['training-score'];
+  const alliance = resultMap['alliance-strategy'];
+  const victory = resultMap['final-showdown'];
+  const rebellion = resultMap['rebellion-role'];
+  
+  // Check for death outcomes first
+  const bloodbathDeath = resultMap['bloodbath-death'];
+  const exposureDeath = resultMap['exposure-death'];
+  const trackerDeath = resultMap['tracker-death'];
+  const disasterDeath = resultMap['disaster-death'];
+  const muttDeath = resultMap['mutt-death'];
+  const betrayalDeath = resultMap['betrayal-death'];
+  
+  // Death storylines
+  if (bloodbathDeath) return 'bloodbath-victim';
+  if (exposureDeath) return 'exposure-victim';
+  if (trackerDeath) return 'tracker-victim';
+  if (disasterDeath) return 'disaster-victim';
+  if (muttDeath) return 'mutt-victim';
+  if (betrayalDeath) return 'betrayal-victim';
+  
+  // Victory storylines
+  if (victory && rebellion) {
+    // THE PERFECT MOCKINGJAY: District 12 + Volunteer + High score + Joint victory + Mockingjay
+    if (
+      district === 'district-12' &&
+      tributeStatus === 'volunteer-save' &&
+      (trainingScore === 'score-11' || trainingScore === 'score-12') &&
+      (victory === 'joint-victory' || victory === 'rule-change-victory') &&
+      rebellion === 'the-mockingjay'
+    ) {
+      return 'mockingjay-perfect';
+    }
+    
+    // STAR-CROSSED SURVIVORS: Joint victory + Secret romance
+    if (
+      victory === 'joint-victory' &&
+      alliance === 'secret-romance'
+    ) {
+      return 'star-crossed';
+    }
+    
+    // BRUTAL SURVIVOR: Brutal victory + haunted
+    if (victory === 'brutal-victory') {
+      return 'brutal-survivor';
+    }
+    
+    // STRATEGIC MASTERMIND: Strategic victory + intelligence
+    if (victory === 'strategic-victory') {
+      return 'strategic-mastermind';
+    }
+    
+    // UNLIKELY HERO: Non-career district + low expectations + success
+    if (
+      !['district-1', 'district-2', 'district-4'].includes(district) &&
+      tributeStatus !== 'career-volunteer' &&
+      (victory === 'sacrifice-victory' || victory === 'mercy-victory')
+    ) {
+      return 'unlikely-hero';
+    }
+  }
+  
+  return null;
+}
+
+/**
  * Get the appropriate narrative template based on results
  */
 export function getNarrativeTemplate(
@@ -177,7 +255,7 @@ export function getNarrativeTemplate(
     return theme.narrativeTemplate || '';
   }
   
-  // Check for Harry Potter Easter eggs first
+  // Check for theme-specific storylines
   if (theme.id === 'harry-potter') {
     const easterEgg = detectHarryPotterEasterEggs(results);
     if (easterEgg && theme.narrativeTemplates[easterEgg]) {
@@ -185,7 +263,14 @@ export function getNarrativeTemplate(
     }
   }
   
-  // Standard path detection
+  if (theme.id === 'hunger-games') {
+    const storyline = detectHungerGamesStorylines(results);
+    if (storyline && theme.narrativeTemplates[storyline]) {
+      return theme.narrativeTemplates[storyline];
+    }
+  }
+  
+  // Standard path detection for Harry Potter
   const hasHeroCareer = results.some(r => r.stepId === 'hero-career');
   const hasScholarCareer = results.some(r => r.stepId === 'scholar-career');
   const hasNatureCareer = results.some(r => r.stepId === 'nature-career');
