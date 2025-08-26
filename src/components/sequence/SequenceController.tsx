@@ -149,33 +149,56 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   return (
     <div className={`space-y-6 ${className}`} key={`step-${currentStep.id}`}>
-      {/* Current Step Info */}
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold" style={{ color: currentTheme.color }}>
-          {currentStep.title}
-        </h2>
+      {/* Enhanced Step Info */}
+      <div className="text-center space-y-4 cinematic-enter">
+        <div className="relative inline-block">
+          <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 rounded-lg blur opacity-30"></div>
+          <div className="relative flex items-center justify-center space-x-4 px-4">
+            {/* Theme Logo */}
+            {currentTheme.id === 'harry-potter' && (
+              <img 
+                src="/harry-potter-1.svg" 
+                alt="Harry Potter" 
+                className="w-10 h-10 filter brightness-0 invert opacity-60"
+              />
+            )}
+            {currentTheme.id === 'hunger-games' && (
+              <img 
+                src="/the-hunger-games.svg" 
+                alt="Hunger Games" 
+                className="w-12 h-10 filter brightness-0 invert opacity-60"
+              />
+            )}
+            <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text">
+              {currentStep.title}
+            </h2>
+          </div>
+        </div>
         {currentStep.description && (
-          <p className="text-gray-600 max-w-md mx-auto">
-            {currentStep.description}
-          </p>
+          <div className="glass-panel rounded-xl p-4 max-w-lg mx-auto">
+            <p className="text-gray-200 text-lg font-light">
+              {currentStep.description}
+            </p>
+          </div>
         )}
-        {/* Debug info - remove in production */}
-        <div className="text-xs text-gray-400">
-          Step: {currentStep.id} | Index: {useSequenceStore.getState().currentStepIndex} | 
+        {/* Enhanced debug info for development */}
+        <div className="text-xs text-gray-500 font-mono bg-black/20 rounded-lg px-3 py-1 inline-block">
+          🎯 {currentStep.id} | {useSequenceStore.getState().currentStepIndex + 1}/{currentTheme.steps.length} | 
           Results: {useSequenceStore.getState().results.length} | 
-          Total: {currentTheme.steps.length} |
-          Complete: {isComplete ? 'YES' : 'NO'}
+          {isComplete ? '✅ Complete' : '⚡ In Progress'}
         </div>
       </div>
 
-      {/* Wheel with transition effects */}
+      {/* Enhanced Wheel Container with Gaming Effects */}
       <div 
-        className={`transition-all duration-500 relative ${
+        className={`transition-all duration-700 relative ${
           isTransitioning 
-            ? 'opacity-0 scale-95 transform translate-y-4' 
+            ? 'opacity-0 scale-90 transform translate-y-8 blur-sm' 
             : 'opacity-100 scale-100 transform translate-y-0'
         }`}
       >
+        {/* Ambient glow effect */}
+        <div className="absolute -inset-8 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 rounded-full blur-xl opacity-50 animate-pulse"></div>
         <SpinWheel
           config={adjustedWheelConfig || currentStep.wheelConfig}
           onSpinComplete={handleSpinComplete}
@@ -190,12 +213,26 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
         />
       </div>
 
-      {/* Transition indicator */}
+      {/* Enhanced Transition Indicator */}
       {isTransitioning && (
-        <div className="text-center">
-          <div className="inline-flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-            <span className="text-gray-600">Preparing next wheel...</span>
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center space-x-4 glass-panel rounded-full px-6 py-3">
+            <div className="cosmic-spinner rounded-full h-6 w-6 border-2 border-cyan-400 border-t-transparent"></div>
+            <span className="text-cyan-300 font-semibold text-lg">🌀 Loading next dimension...</span>
+          </div>
+          
+          {/* Progress particles */}
+          <div className="flex justify-center space-x-1">
+            {[...Array(5)].map((_, i) => (
+              <div 
+                key={i}
+                className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"
+                style={{
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: '1s'
+                }}
+              />
+            ))}
           </div>
         </div>
       )}

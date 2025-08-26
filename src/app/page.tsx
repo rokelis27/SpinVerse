@@ -5,12 +5,26 @@ import { SequenceProgress } from '@/components/sequence/SequenceProgress';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { useSequenceStore } from '@/stores/sequenceStore';
 import { themes } from '@/data/themes';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function Home() {
   const [showSequence, setShowSequence] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const { startSequence, resetSequence, isActive } = useSequenceStore();
+
+  // Generate stable particle positions
+  const particlePositions = useMemo(() => 
+    Array.from({ length: 20 }, (_, i) => ({
+      left: (i * 17 + 23) % 100, // Deterministic positioning
+      delay: (i * 0.3) % 3,
+      duration: 3 + (i % 2)
+    })), []
+  );
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleStartSequence = (themeId: string) => {
     const theme = themes.find(t => t.id === themeId);
@@ -26,27 +40,47 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen cosmic-bg p-4 md:p-8 relative overflow-hidden">
+      {/* Particle Effects - Only render on client */}
+      {isClient && (
+        <div className="particle-container">
+          {particlePositions.map((particle, i) => (
+            <div
+              key={i}
+              className="particle"
+              style={{
+                left: `${particle.left}%`,
+                animationDelay: `${particle.delay}s`,
+                animationDuration: `${particle.duration}s`
+              }}
+            />
+          ))}
+        </div>
+      )}
+      
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header with Settings Button */}
         <div className="flex justify-between items-start mb-8">
-          <div className="text-center flex-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              SpinVerse - Sequence Testing 🎯
-            </h1>
-            <p className="text-lg text-gray-600">
-              Testing our auto-advancing themed wheel sequences
+          <div className="text-center flex-1 cinematic-enter">
+            <div className="relative inline-block">
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
+                SpinVerse
+              </h1>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
+            </div>
+            <p className="text-2xl text-gray-100 font-medium tracking-wide">
+              Transform spins into epic stories
             </p>
           </div>
           
           {/* Settings Button */}
           <button
             onClick={() => setShowSettings(true)}
-            className="p-3 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 group"
+            className="p-3 glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
             title="Settings"
           >
             <svg 
-              className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors" 
+              className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -70,65 +104,89 @@ export default function Home() {
         {!showSequence ? (
           // Theme Selection Screen
           <div className="flex flex-col items-center gap-8">
-            <div className="text-center mb-4">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                Choose Your Adventure
+            <div className="text-center mb-4 cinematic-enter" style={{animationDelay: '0.2s'}}>
+              <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
+                🌟 Choose Your Epic Journey
               </h2>
-              <p className="text-gray-600">
-                Select a theme to begin your sequence journey
-              </p>
             </div>
-
-            <div className="grid md:grid-cols-1 gap-6 w-full max-w-md">
-              {themes.map(theme => (
+            
+            <div className="grid md:grid-cols-1 gap-8 w-full max-w-lg">
+              {themes.map((theme, index) => (
                 <button
                   key={theme.id}
                   onClick={() => handleStartSequence(theme.id)}
-                  className="bg-white rounded-xl shadow-lg p-6 text-left hover:shadow-xl transition-all duration-200 hover:scale-105"
-                  style={{ borderLeft: `6px solid ${theme.color}` }}
+                  className="glass-panel hud-panel rounded-2xl p-8 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter"
+                  style={{ 
+                    borderLeft: `4px solid ${theme.color}`,
+                    animationDelay: `${0.3 + index * 0.1}s`
+                  }}
                 >
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
                     {theme.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4">
+                  <p className="text-gray-100 text-base mb-6 group-hover:text-white transition-colors font-medium">
                     {theme.description}
                   </p>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium" style={{ color: theme.color }}>
-                      {theme.steps.length} Steps
-                    </span>
-                    <div className="text-2xl">
-                      {theme.id === 'harry-potter' && '🧙‍♂️'}
-                      {theme.id === 'hunger-games' && '🏹'}
-                      {!['harry-potter', 'hunger-games'].includes(theme.id) && '🎯'}
+                    <div className="flex items-center space-x-3">
+                      <span className="text-base font-bold px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" style={{ 
+                        color: theme.color,
+                        textShadow: '0 0 10px rgba(255,255,255,0.5)'
+                      }}>
+                        {theme.steps.length} Epic Steps
+                      </span>
+                      <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
+                    </div>
+                    <div className="flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-transform duration-300">
+                      {theme.id === 'harry-potter' && (
+                        <img 
+                          src="/harry-potter-1.svg" 
+                          alt="Harry Potter" 
+                          className="w-12 h-12 filter brightness-0 invert opacity-70 group-hover:opacity-100 transition-opacity"
+                        />
+                      )}
+                      {theme.id === 'hunger-games' && (
+                        <img 
+                          src="/the-hunger-games.svg" 
+                          alt="Hunger Games" 
+                          className="w-14 h-14 filter brightness-0 invert opacity-70 group-hover:opacity-100 transition-opacity"
+                        />
+                      )}
+                      {!['harry-potter', 'hunger-games'].includes(theme.id) && (
+                        <span className="text-3xl">🎯</span>
+                      )}
                     </div>
                   </div>
                 </button>
               ))}
             </div>
 
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mt-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">
-                🌟 Sequence System Features
+            <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.6s'}}>
+              <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-6 text-center">
+                🚀 Next-Gen Storytelling Features
               </h2>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <h3 className="font-semibold text-purple-600 mb-2">Auto-Flow</h3>
-                  <ul className="space-y-1 text-gray-600">
-                    <li>• Auto-advance between wheels</li>
-                    <li>• Smooth transitions</li>
-                    <li>• Progress tracking</li>
-                    <li>• Result preservation</li>
-                  </ul>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="font-bold text-emerald-400 mb-3 text-lg">🌀 Auto-Flow Magic</h3>
+                  <div className="space-y-2">
+                    {['Auto-advance between wheels', 'Cinematic transitions', 'Progress tracking', 'Result persistence'].map((feature, i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                        <span className="text-gray-100 font-medium">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-purple-600 mb-2">Visual Design</h3>
-                  <ul className="space-y-1 text-gray-600">
-                    <li>• Step-by-step progress bar</li>
-                    <li>• Themed wheel configurations</li>
-                    <li>• Transition animations</li>
-                    <li>• Mobile-optimized layout</li>
-                  </ul>
+                <div className="space-y-4">
+                  <h3 className="font-bold text-cyan-400 mb-3 text-lg">✨ Visual Excellence</h3>
+                  <div className="space-y-2">
+                    {['Gaming-inspired UI', 'Immersive animations', 'Mobile-first design', 'AI-powered narratives'].map((feature, i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2 + 1}s`}}></div>
+                        <span className="text-gray-100 font-medium">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -142,9 +200,14 @@ export default function Home() {
             {/* Reset Button */}
             <button
               onClick={handleResetSequence}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors mb-4"
+              className="px-6 py-3 glass-panel rounded-xl text-gray-300 hover:text-white transition-all duration-300 mb-6 micro-bounce neon-glow group"
             >
-              ← Back to Themes
+              <span className="flex items-center space-x-2">
+                <svg className="w-5 h-5 group-hover:text-cyan-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Universes</span>
+              </span>
             </button>
 
             {/* Sequence Controller */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { WheelConfig, WheelSegment, SpinResult, WheelPhysics } from '@/types/wheel';
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SPEED_PRESETS } from '@/types/settings';
@@ -29,6 +29,14 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   
   const [isIdleRotating, setIsIdleRotating] = useState(true);
 
+  // Generate stable particle positions for spinning effect
+  const spinParticles = useMemo(() => 
+    Array.from({ length: 12 }, (_, i) => ({
+      angle: i * 30, // Evenly distributed around circle
+      delay: i * 0.1
+    })), []
+  );
+
   // Physics constants based on user settings
   const speedPreset = SPEED_PRESETS[wheelSettings.spinSpeed];
   const FRICTION = speedPreset.friction;
@@ -51,15 +59,15 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   const segmentProbabilities = calculateSegmentProbabilities(config.segments);
   const segmentAngles = segmentProbabilities.map(prob => prob * 2 * Math.PI);
 
-  // Enhanced colors for better visual appeal
+  // 2025 Gaming-inspired colors with neon aesthetics
   const getSegmentColor = (segment: WheelSegment, index: number): string => {
     if (segment.color) return segment.color;
     
-    // Beautiful default gradient colors
+    // Neon cyberpunk color palette
     const colors = [
-      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57',
-      '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
-      '#EE5A24', '#0ABDE3', '#10AC84', '#F79F1F', '#A3CB38'
+      '#FF0080', '#00FF80', '#8000FF', '#FF8000', '#0080FF',
+      '#FF4080', '#40FF80', '#8040FF', '#FF4000', '#0040FF',
+      '#FF0040', '#00FF40', '#4000FF', '#FF8040', '#4080FF'
     ];
     return colors[index % colors.length];
   };
@@ -89,11 +97,11 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.translate(centerX, centerY);
     ctx.rotate(physics.currentAngle);
 
-    // Draw shadow for depth
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-    ctx.shadowBlur = 15;
+    // Enhanced gaming-style shadow with neon glow
+    ctx.shadowColor = 'rgba(99, 102, 241, 0.6)';
+    ctx.shadowBlur = 25;
     ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 5;
+    ctx.shadowOffsetY = 8;
 
     // Draw segments with proportional angles
     let cumulativeAngle = 0;
@@ -105,11 +113,12 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       const segmentColor = getSegmentColor(segment, index);
       const textColor = segment.textColor || getTextColor(segmentColor);
 
-      // Create gradient for each segment
-      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-      gradient.addColorStop(0, segmentColor);
-      gradient.addColorStop(0.7, segmentColor);
-      gradient.addColorStop(1, `${segmentColor}dd`); // Slightly darker edge
+      // Create enhanced cyberpunk gradient
+      const gradient = ctx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
+      gradient.addColorStop(0, `${segmentColor}ff`);
+      gradient.addColorStop(0.4, segmentColor);
+      gradient.addColorStop(0.8, `${segmentColor}cc`);
+      gradient.addColorStop(1, `${segmentColor}66`); // Fade to translucent edge
 
       // Draw segment
       ctx.beginPath();
@@ -118,9 +127,17 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.fillStyle = gradient;
       ctx.fill();
 
-      // Draw segment border
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 2;
+      // Enhanced neon border effect
+      ctx.strokeStyle = `${segmentColor}aa`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Add inner glow border
+      ctx.beginPath();
+      ctx.arc(0, 0, radius - 5, startAngle, endAngle);
+      ctx.lineTo(0, 0);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1;
       ctx.stroke();
 
       // Draw text with rarity indicator
@@ -132,15 +149,20 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
-      // Add text shadow for better readability
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 3;
-      ctx.shadowOffsetX = 1;
-      ctx.shadowOffsetY = 1;
-      
       const rarityIndicator = getRarityIndicator(segment.rarity);
       const displayText = rarityIndicator ? `${rarityIndicator} ${segment.text}` : segment.text;
+      
+      // Enhanced text with neon glow effect
+      ctx.shadowColor = segmentColor;
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      
+      // Draw text multiple times for stronger glow
       ctx.fillText(displayText, radius * 0.7, 0);
+      ctx.shadowBlur = 4;
+      ctx.fillText(displayText, radius * 0.7, 0);
+      ctx.shadowBlur = 0;
       ctx.restore();
     });
 
@@ -148,40 +170,78 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.shadowColor = 'transparent';
     ctx.restore();
 
-    // Draw pointer/indicator
-    const pointerSize = 20;
-    ctx.fillStyle = '#2C3E50';
-    ctx.strokeStyle = '#ECF0F1';
-    ctx.lineWidth = 3;
+    // Enhanced cyberpunk pointer with glow
+    const pointerSize = 25;
     
+    // Outer glow
+    ctx.shadowColor = '#00FFFF';
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#00FFFF';
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY - radius - 10);
+    ctx.moveTo(centerX, centerY - radius - 15);
     ctx.lineTo(centerX - pointerSize, centerY - radius + pointerSize);
     ctx.lineTo(centerX + pointerSize, centerY - radius + pointerSize);
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
-
-    // Draw center circle
-    const centerRadius = 30;
-    const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
-    centerGradient.addColorStop(0, '#3498DB');
-    centerGradient.addColorStop(1, '#2980B9');
     
-    ctx.fillStyle = centerGradient;
-    ctx.strokeStyle = '#ECF0F1';
-    ctx.lineWidth = 4;
+    // Inner pointer
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeStyle = '#00FFFF';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+    ctx.moveTo(centerX, centerY - radius - 12);
+    ctx.lineTo(centerX - pointerSize * 0.7, centerY - radius + pointerSize * 0.7);
+    ctx.lineTo(centerX + pointerSize * 0.7, centerY - radius + pointerSize * 0.7);
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
-    // Add "SPIN" text in center
+    // Enhanced cyberpunk center circle with pulsing glow
+    const centerRadius = 35;
+    
+    // Outer pulsing glow
+    const pulseIntensity = 0.5 + Math.sin(Date.now() * 0.005) * 0.3;
+    ctx.shadowColor = '#FF0080';
+    ctx.shadowBlur = 20 * pulseIntensity;
+    
+    const centerGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, centerRadius);
+    centerGradient.addColorStop(0, '#FFFFFF');
+    centerGradient.addColorStop(0.3, '#FF0080');
+    centerGradient.addColorStop(0.7, '#8000FF');
+    centerGradient.addColorStop(1, '#000000');
+    
+    ctx.fillStyle = centerGradient;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Glowing border
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#00FFFF';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Inner ring detail
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, centerRadius - 8, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    // Enhanced "SPIN" text with glow
+    ctx.shadowColor = '#00FFFF';
+    ctx.shadowBlur = 10;
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = 'bold 16px "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('SPIN', centerX, centerY);
+    
+    // Secondary glow
+    ctx.shadowBlur = 5;
+    ctx.fillText('SPIN', centerX, centerY);
+    ctx.shadowBlur = 0;
   }, [physics.currentAngle, config.segments, segmentAngles]);
 
   // Animation loop with dramatic, suspenseful physics
@@ -376,33 +436,67 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   }, [drawWheel]);
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-6 relative">
+      {/* Gaming HUD overlay */}
+      <div className="absolute -inset-4 bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 rounded-full opacity-20 blur-lg animate-pulse" />
+      
       <canvas
         ref={canvasRef}
-        className={`border-4 border-white rounded-full shadow-2xl cursor-pointer transition-all duration-300 ${
-          physics.isSpinning ? 'scale-105 shadow-3xl' : 'hover:scale-105 hover:shadow-3xl'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`relative z-10 border-4 border-cyan-400/50 rounded-full shadow-cosmic cursor-pointer transition-all duration-500 ${
+          physics.isSpinning ? 'scale-110 shadow-3xl' : 'hover:scale-105 hover:shadow-cosmic'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} neon-glow`}
         onClick={handleInteraction}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleInteraction}
         style={{ 
           touchAction: 'manipulation',
-          filter: physics.isSpinning ? 'brightness(1.1)' : 'brightness(1)'
+          filter: physics.isSpinning ? 'brightness(1.2) saturate(1.3)' : 'brightness(1.1)'
         }}
       />
       
       <button
         onClick={spin}
         disabled={disabled || physics.isSpinning}
-        className={`px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg transition-all duration-200 ${
+        className={`px-10 py-4 btn-cosmic text-white font-bold rounded-xl shadow-cosmic transition-all duration-300 micro-bounce neon-glow relative overflow-hidden ${
           disabled || physics.isSpinning
             ? 'opacity-50 cursor-not-allowed'
-            : 'hover:bg-blue-700 hover:shadow-xl active:scale-95'
+            : 'hover:shadow-3xl active:scale-95'
         }`}
       >
-        {physics.isSpinning ? 'Spinning...' : 'SPIN THE WHEEL'}
+        <span className="relative z-10 flex items-center space-x-2">
+          {physics.isSpinning ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Spinning Reality...</span>
+            </>
+          ) : (
+            <>
+              <span>⚡</span>
+              <span>SPIN THE WHEEL</span>
+              <span>⚡</span>
+            </>
+          )}
+        </span>
       </button>
+      
+      {/* Ambient particles around wheel */}
+      {physics.isSpinning && (
+        <div className="absolute inset-0 pointer-events-none">
+          {spinParticles.map((particle, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-70"
+              style={{
+                left: `${50 + Math.cos(particle.angle * Math.PI / 180) * 45}%`,
+                top: `${50 + Math.sin(particle.angle * Math.PI / 180) * 45}%`,
+                animation: `float 2s infinite ease-in-out`,
+                animationDelay: `${particle.delay}s`
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
