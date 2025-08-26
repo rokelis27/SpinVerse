@@ -49,11 +49,16 @@ export const NarrativeTemplateEditor: React.FC = () => {
               <input
                 type="text"
                 value={currentSequence.name}
-                onChange={(e) => updateSequenceName(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 50) {
+                    updateSequenceName(e.target.value);
+                  }
+                }}
+                maxLength={50}
                 className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                 placeholder="Enter sequence name..."
               />
-              <p className="text-xs text-gray-500 mt-1">This will be the title of your generated stories</p>
+              <p className="text-xs text-gray-500 mt-1">{currentSequence.name.length}/50 characters • This will be the title of your generated stories</p>
             </div>
 
             <div>
@@ -86,13 +91,18 @@ export const NarrativeTemplateEditor: React.FC = () => {
             </label>
             <textarea
               value={currentSequence.description}
-              onChange={(e) => updateSequenceDescription(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length <= 500) {
+                  updateSequenceDescription(e.target.value);
+                }
+              }}
+              maxLength={500}
               className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all resize-none"
               rows={3}
               placeholder="Describe the world/setting for your sequence. This helps AI generate more contextual stories..."
             />
             <p className="text-xs text-gray-500 mt-1">
-              Be specific about the setting, tone, and themes. E.g., "A cyberpunk city where hackers battle corporate AI"
+              {currentSequence.description.length}/500 characters • Be specific about the setting, tone, and themes. E.g., "A cyberpunk city where hackers battle corporate AI"
             </p>
           </div>
 

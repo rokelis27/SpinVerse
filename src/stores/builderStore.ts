@@ -109,8 +109,24 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
   // Load existing sequence
   loadSequence: (sequence) => {
+    // Ensure all steps have required builder properties
+    const sequenceWithBuilderProps: UserSequence = {
+      ...sequence,
+      steps: sequence.steps.map(step => ({
+        ...step,
+        isCustom: true, // All loaded sequences are custom
+        wheelConfig: {
+          ...step.wheelConfig,
+          segments: step.wheelConfig.segments.map(segment => ({
+            ...segment,
+            description: '', // Add missing description property for builder
+          }))
+        }
+      }))
+    };
+    
     set({ 
-      currentSequence: sequence, 
+      currentSequence: sequenceWithBuilderProps, 
       selectedStepIndex: 0, 
       isDirty: false, 
       isPreviewMode: false 

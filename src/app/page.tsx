@@ -5,8 +5,11 @@ import { SequenceProgress } from '@/components/sequence/SequenceProgress';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
 import { SequenceBuilder } from '@/components/builder/SequenceBuilder';
 import { useSequenceStore } from '@/stores/sequenceStore';
+import { useBuilderStore } from '@/stores/builderStore';
 import { themes } from '@/data/themes';
 import { useState, useEffect, useMemo } from 'react';
+import { useSavedSequences } from '@/hooks/useSavedSequences';
+import { UserSequence } from '@/types/builder';
 
 export default function Home() {
   const [showSequence, setShowSequence] = useState(false);
@@ -14,6 +17,8 @@ export default function Home() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { startSequence, resetSequence, isActive } = useSequenceStore();
+  const { loadSequence } = useBuilderStore();
+  const { savedSequences, isLoading: loadingSaved, deleteSequence, refreshSequences } = useSavedSequences();
 
   // Generate stable particle positions
   const particlePositions = useMemo(() => 
@@ -47,6 +52,46 @@ export default function Home() {
 
   const handleCloseBuilder = () => {
     setShowBuilder(false);
+    // Refresh saved sequences when builder closes
+    refreshSequences();
+  };
+
+  const handleStartCustomSequence = (sequence: UserSequence) => {
+    // Convert UserSequence to SequenceTheme format
+    const themeForPlay = {
+      id: sequence.id,
+      name: sequence.name,
+      description: sequence.description,
+      color: sequence.color,
+      startStepId: sequence.startStepId,
+      steps: sequence.steps.map(step => ({
+        id: step.id,
+        title: step.title,
+        description: step.description,
+        branches: step.branches,
+        defaultNextStep: step.defaultNextStep,
+        wheelConfig: {
+          ...step.wheelConfig,
+          segments: step.wheelConfig.segments.map(segment => ({
+            id: segment.id,
+            text: segment.text,
+            color: segment.color,
+            rarity: segment.rarity || 'common',
+            weight: segment.weight
+          }))
+        }
+      })),
+      narrativeTemplate: sequence.narrativeTemplate || "You completed your custom journey!",
+      narrativeTemplates: sequence.narrativeTemplates || {}
+    };
+
+    startSequence(themeForPlay);
+    setShowSequence(true);
+  };
+
+  const handleEditSequence = (sequence: UserSequence) => {
+    loadSequence(sequence);
+    setShowBuilder(true);
   };
 
   // Show builder in full screen
@@ -201,6 +246,87 @@ export default function Home() {
                 </div>
               </button>
             </div>
+
+            {/* Your Custom Stories Section */}
+            {isClient && savedSequences.length > 0 && (
+              <div className="w-full max-w-lg mt-8">
+                <div className="glass-panel hud-panel rounded-2xl p-6 cinematic-enter" style={{animationDelay: '0.8s'}}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                      Your Custom Stories
+                    </h3>
+                    <div className="text-sm text-gray-400">
+                      {savedSequences.length} saved
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {savedSequences.slice(0, 5).map((sequence) => (
+                      <div
+                        key={sequence.id}
+                        className="group p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-white text-sm truncate group-hover:text-purple-300 transition-colors">
+                              {sequence.name}
+                            </h4>
+                            <p className="text-xs text-gray-400 mt-1 truncate">
+                              {sequence.steps.length} steps • Created {new Date(sequence.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 ml-3">
+                            <button
+                              onClick={() => handleStartCustomSequence(sequence)}
+                              className="p-2 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300 group"
+                              title="Play Story"
+                            >
+                              <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-7-7h12a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                              </svg>
+                            </button>
+                            
+                            <button
+                              onClick={() => handleEditSequence(sequence)}
+                              className="p-2 rounded-lg bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 border border-emerald-500/30 hover:border-emerald-400/50 transition-all duration-300 group"
+                              title="Edit Story"
+                            >
+                              <svg className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm('Are you sure you want to delete this sequence?')) {
+                                  deleteSequence(sequence.id);
+                                }
+                              }}
+                              className="p-2 rounded-lg hover:bg-red-500/20 border border-transparent hover:border-red-500/30 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                              title="Delete Story"
+                            >
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {savedSequences.length > 5 && (
+                    <div className="mt-3 text-center">
+                      <span className="text-xs text-gray-500">
+                        +{savedSequences.length - 5} more sequences
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.6s'}}>
               <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-6 text-center">

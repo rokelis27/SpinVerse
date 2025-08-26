@@ -87,10 +87,16 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               <input
                 type="text"
                 value={step.title}
-                onChange={(e) => handleStepUpdate('title', e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 30) {
+                    handleStepUpdate('title', e.target.value);
+                  }
+                }}
+                maxLength={30}
                 className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                 placeholder="Enter step title..."
               />
+              <p className="text-xs text-gray-500 mt-1">{step.title.length}/30 characters</p>
             </div>
 
             <div>
@@ -99,11 +105,17 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               </label>
               <textarea
                 value={step.description}
-                onChange={(e) => handleStepUpdate('description', e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 200) {
+                    handleStepUpdate('description', e.target.value);
+                  }
+                }}
+                maxLength={200}
                 className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none"
                 rows={3}
                 placeholder="Describe what this step represents..."
               />
+              <p className="text-xs text-gray-500 mt-1">{(step.description || '').length}/200 characters</p>
             </div>
 
           </div>
@@ -124,7 +136,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-4">
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
               {step.wheelConfig.segments.map((segment) => (
                 <SegmentEditor
                   key={segment.id}
@@ -225,10 +237,16 @@ const SegmentEditor: React.FC<SegmentEditorProps> = ({
               <input
                 type="text"
                 value={segment.text}
-                onChange={(e) => onUpdate('text', e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 40) {
+                    onUpdate('text', e.target.value);
+                  }
+                }}
+                maxLength={40}
                 className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
                 placeholder="Enter option text..."
               />
+              <p className="text-xs text-gray-500 mt-1">{segment.text.length}/40 characters</p>
             </div>
 
             <div>

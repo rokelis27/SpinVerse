@@ -28,11 +28,12 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
     reset
   } = useBuilderStore();
 
-  // Initialize with new sequence
+  // Initialize with new sequence only if none exists on mount
   useEffect(() => {
-    createNewSequence();
-    return () => reset();
-  }, [createNewSequence, reset]);
+    if (!currentSequence) {
+      createNewSequence();
+    }
+  }, []); // Empty dependency array - only run on mount
 
   const handleSave = () => {
     const validation = validateSequence();
@@ -54,7 +55,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
         }
       }
     }
-    reset();
+    reset(); // Reset the store when actually closing
     onClose();
   };
 
@@ -82,16 +83,28 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
               <input
                 type="text"
                 value={currentSequence.name}
-                onChange={(e) => updateSequenceName(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 50) {
+                    updateSequenceName(e.target.value);
+                  }
+                }}
+                maxLength={50}
                 className="text-2xl font-bold bg-transparent text-white border-none outline-none focus:bg-white/10 rounded px-2 py-1"
                 placeholder="Sequence Name"
+                title={`${currentSequence.name.length}/50 characters`}
               />
               <input
                 type="text"
                 value={currentSequence.description}
-                onChange={(e) => updateSequenceDescription(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.length <= 100) {
+                    updateSequenceDescription(e.target.value);
+                  }
+                }}
+                maxLength={100}
                 className="text-sm text-gray-300 bg-transparent border-none outline-none focus:bg-white/10 rounded px-2 py-1 mt-1"
                 placeholder="Description"
+                title={`${currentSequence.description.length}/100 characters`}
               />
             </div>
 
