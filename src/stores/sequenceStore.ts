@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { SequenceState, SequenceActions, SequenceTheme, SequenceResult } from '@/types/sequence';
 import { SpinResult } from '@/types/wheel';
-import { getNextStepId, findStepById, isSequenceComplete, getSequencePath } from '@/utils/branchingUtils';
+import { getNextStepId, findStepById, isSequenceComplete, getSequencePath, applyWeightOverrides } from '@/utils/branchingUtils';
 
 interface SequenceStore extends SequenceState, SequenceActions {}
 
@@ -92,10 +92,10 @@ export const useSequenceStore = create<SequenceStore>()(
           return;
         }
 
-        // Use branching logic to determine next step
-        const nextStepId = getNextStepId(currentStep, results);
+        // Use branching logic to determine next step and weight overrides
+        const branchResult = getNextStepId(currentStep, results);
         
-        if (!nextStepId) {
+        if (!branchResult.nextStepId) {
           console.log('Sequence complete - no next step found!');
           set({
             isTransitioning: false,
@@ -104,24 +104,36 @@ export const useSequenceStore = create<SequenceStore>()(
           return;
         }
 
-        const nextStep = findStepById(currentTheme, nextStepId);
+        const nextStep = findStepById(currentTheme, branchResult.nextStepId);
         if (!nextStep) {
-          console.log('NextStep error - next step not found:', nextStepId);
+          console.log('NextStep error - next step not found:', branchResult.nextStepId);
           return;
         }
 
-        console.log(`NextStep: ${currentStepId} → ${nextStepId}`);
+        console.log(`NextStep: ${currentStepId} → ${branchResult.nextStepId}`);
 
         // Start transition
         set({ isTransitioning: true }, false, 'sequence/startTransition');
 
         // After transition animation, move to next step
         setTimeout(() => {
+          // Apply weight overrides if any
+          const stepWithOverrides = applyWeightOverrides(nextStep, branchResult.weightOverrides);
+          
+          // Update the theme with the modified step
+          const updatedTheme = {
+            ...currentTheme,
+            steps: currentTheme.steps.map(step => 
+              step.id === stepWithOverrides.id ? stepWithOverrides : step
+            )
+          };
+          
           // Calculate new step index for backward compatibility
-          const newStepIndex = currentTheme.steps.findIndex(s => s.id === nextStepId);
+          const newStepIndex = currentTheme.steps.findIndex(s => s.id === branchResult.nextStepId);
           
           set({
-            currentStepId: nextStepId,
+            currentTheme: updatedTheme,
+            currentStepId: branchResult.nextStepId,
             currentStepIndex: newStepIndex,
             isTransitioning: false,
           }, false, 'sequence/nextStep');

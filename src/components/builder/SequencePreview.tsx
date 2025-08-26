@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { UserSequence } from '@/types/builder';
 import { SequenceController } from '@/components/sequence/SequenceController';
 import { useSequenceStore } from '@/stores/sequenceStore';
+import { StoryGenerator } from './StoryGenerator';
 
 interface SequencePreviewProps {
   sequence: UserSequence;
@@ -28,7 +29,11 @@ export const SequencePreview: React.FC<SequencePreviewProps> = ({ sequence }) =>
       color: sequence.color,
       startStepId: sequence.startStepId,
       steps: sequence.steps.map(step => ({
-        ...step,
+        id: step.id,
+        title: step.title,
+        description: step.description,
+        branches: step.branches,
+        defaultNextStep: step.defaultNextStep,
         wheelConfig: {
           ...step.wheelConfig,
           segments: step.wheelConfig.segments.map(segment => ({
@@ -109,6 +114,9 @@ export const SequencePreview: React.FC<SequencePreviewProps> = ({ sequence }) =>
       </div>
 
       <SequenceController onBackToHome={handleReset} />
+      
+      {/* Story Generation */}
+      <StoryGenerator sequence={sequence} />
     </div>
   );
 };

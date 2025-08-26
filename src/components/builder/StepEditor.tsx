@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { SequenceStepBuilder, WheelSegmentBuilder } from '@/types/builder';
+import { BranchEditor } from './BranchEditor';
 
 interface StepEditorProps {
   step: SequenceStepBuilder;
@@ -17,7 +18,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
     updateSegment
   } = useBuilderStore();
   
-  const [activeTab, setActiveTab] = useState<'basic' | 'segments'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
 
   const handleStepUpdate = (field: string, value: string) => {
     updateStep(stepIndex, { [field]: value });
@@ -25,6 +26,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
 
   const handleSegmentUpdate = (segmentId: string, field: string, value: string | number) => {
     updateSegment(stepIndex, segmentId, { [field]: value });
+  };
+
+  const handleBranchesUpdate = (branches: any[]) => {
+    updateStep(stepIndex, { branches });
   };
 
   const getRandomColor = () => {
@@ -58,6 +63,16 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
           }`}
         >
           Wheel Options ({step.wheelConfig.segments.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('connections')}
+          className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+            activeTab === 'connections'
+              ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
+              : 'text-gray-400 hover:text-white hover:bg-white/10'
+          }`}
+        >
+          Connections ({(step.branches || []).length})
         </button>
       </div>
 
@@ -120,6 +135,16 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
                 />
               ))}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'connections' && (
+          <div className="h-full overflow-y-auto pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
+            <BranchEditor
+              stepIndex={stepIndex}
+              branches={step.branches}
+              onUpdate={handleBranchesUpdate}
+            />
           </div>
         )}
       </div>

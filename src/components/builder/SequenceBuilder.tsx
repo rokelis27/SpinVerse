@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
+import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
 
 interface SequenceBuilderProps {
   onClose: () => void;
@@ -128,7 +129,12 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
         <SequencePreview sequence={currentSequence} />
       ) : (
         <div className="max-w-7xl mx-auto p-6">
-          <div className="grid lg:grid-cols-12 gap-6 h-[calc(100vh-120px)]">
+          {/* Story Settings */}
+          <div className="mb-6">
+            <NarrativeTemplateEditor />
+          </div>
+          
+          <div className="grid lg:grid-cols-12 gap-6 h-[calc(100vh-200px)]">
             {/* Step List */}
             <div className="lg:col-span-3">
               <div className="glass-panel h-full rounded-2xl p-6">
@@ -157,11 +163,46 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                       onClick={() => setSelectedStep(index)}
                     >
                       <div className="flex items-center justify-between">
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-semibold text-white text-sm">{step.title}</h4>
                           <p className="text-xs text-gray-400 mt-1">
                             {step.wheelConfig.segments.length} options
+                            {step.branches && step.branches.length > 0 && (
+                              <span className="ml-2 text-emerald-400">• {step.branches.length} branch{step.branches.length !== 1 ? 'es' : ''}</span>
+                            )}
                           </p>
+                          
+                          {/* Connection indicators */}
+                          {step.branches && step.branches.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {step.branches.map((branch, branchIndex) => {
+                                const targetStep = currentSequence.steps.find(s => s.id === branch.nextStepId);
+                                return (
+                                  <span
+                                    key={branchIndex}
+                                    className="inline-flex items-center px-2 py-1 rounded text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                    title={`Goes to: ${targetStep?.title || 'Unknown'}`}
+                                  >
+                                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5M6 12h12" />
+                                    </svg>
+                                    {targetStep?.title?.substring(0, 8) || 'Unknown'}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                          
+                          {step.defaultNextStep && (
+                            <div className="mt-2">
+                              <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5" />
+                                </svg>
+                                Default: {currentSequence.steps.find(s => s.id === step.defaultNextStep)?.title?.substring(0, 8) || 'Unknown'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                         
                         {currentSequence.steps.length > 1 && (
@@ -170,7 +211,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                               e.stopPropagation();
                               removeStep(index);
                             }}
-                            className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded"
+                            className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded ml-2"
                             title="Remove Step"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -5,10 +5,16 @@ export interface SequenceCondition {
   value?: string | string[];
 }
 
+export interface WeightOverride {
+  segmentId: string;
+  newWeight: number;
+}
+
 export interface SequenceBranch {
   conditions: SequenceCondition[];
   nextStepId: string;
   operator?: 'and' | 'or'; // How to combine multiple conditions (default: 'and')
+  weightOverrides?: WeightOverride[]; // Override weights for the target step if this branch is taken
 }
 
 export interface SequenceStep {

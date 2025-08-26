@@ -31,34 +31,56 @@ function getThemeConfig(themeId: string): ThemeConfig {
 
 export async function POST(req: NextRequest) {
   try {
-    const { results, themeName, themeId } = await req.json();
+    const { results, themeName, themeId, isCustomSequence, sequenceDescription } = await req.json();
 
     if (!results || !Array.isArray(results)) {
       return NextResponse.json({ error: 'Invalid results provided' }, { status: 400 });
     }
 
-    // Get theme-specific configurations
-    const themeConfig = getThemeConfig(themeId || 'mystical-academy');
+    // Handle custom sequences differently
+    let themeConfig: ThemeConfig;
+    let rarityScore: number;
+    let storyPrompt: string;
     
-    // Calculate rarity score
-    const rarityScore = calculateRarityScore(results, themeId);
+    // Detect custom sequences either by explicit flag or by themeId pattern
+    const isActuallyCustom = isCustomSequence === true || (themeId && themeId.startsWith('custom-'));
     
-    // Generate story prompt
-    const storyPrompt = generateStoryPrompt(results, themeName, rarityScore, themeId);
+    if (isActuallyCustom) {
+      const fallbackDescription = sequenceDescription || `A custom ${themeName} experience`;
+      themeConfig = getCustomThemeConfig(themeName, fallbackDescription);
+      rarityScore = calculateCustomRarityScore(results);
+      storyPrompt = generateCustomStoryPrompt(results, themeName, fallbackDescription, rarityScore);
+    } else {
+      // Original theme-specific configurations
+      themeConfig = getThemeConfig(themeId || 'mystical-academy');
+      rarityScore = calculateRarityScore(results, themeId);
+      storyPrompt = generateStoryPrompt(results, themeName, rarityScore, themeId);
+    }
     
     // Call OpenAI API
+    const systemMessage = `You are a master storyteller who specializes in creating immersive, personalized narratives. ${isActuallyCustom ? 
+      `You're working with a custom user-created story concept: "${themeName}". Create a story that feels authentic to this unique world and concept.` :
+      `You're working with the ${themeConfig.universe} universe. Create immersive stories that feel authentic to ${themeConfig.worldDescription}.`
+    }
+    
+    Your story should include:
+    1. A compelling narrative (3-4 paragraphs) that weaves the choices into a coherent journey
+    2. Character archetype analysis (what type of character this creates)
+    3. Rarity assessment with estimated percentage of how unique this combination is
+    4. What makes this particular combination special or memorable
+    
+    ${isActuallyCustom ? 
+      `Focus on the unique themes and elements that make this custom sequence special. Draw connections between the choices to create meaningful narrative progression.` :
+      themeConfig.specialInstructions
+    }`;
+
+
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: `You are a master storyteller specializing in ${themeConfig.universe} universe narratives. Create immersive, personalized stories that feel authentic to ${themeConfig.worldDescription}. Include:
-          1. A compelling narrative (3-4 paragraphs)
-          2. Character comparison to known ${themeConfig.universe} characters (be specific about similarities)
-          3. Rarity assessment with specific percentage
-          4. What makes this combination special or unique
-          
-          ${themeConfig.specialInstructions}`
+          content: systemMessage
         },
         {
           role: 'user',
@@ -78,7 +100,9 @@ export async function POST(req: NextRequest) {
       rarityScore,
       rarityPercentage: rarityData.percentage,
       rarityTier: rarityData.tier,
-      characterLookalike: getCharacterLookalike(results, themeId),
+      characterLookalike: isActuallyCustom 
+        ? getCustomCharacterArchetype(results, themeName)
+        : getCharacterLookalike(results, themeId),
     });
 
   } catch (error) {
@@ -430,4 +454,108 @@ Please create:
 4. Make it feel authentic to the magical academy universe
 
 Focus on storytelling that brings these random results to life as a coherent, magical journey. Make the reader feel like this is THEIR unique mage story.`;
+}
+
+// Custom sequence functions
+function getCustomThemeConfig(themeName: string, description?: string): ThemeConfig {
+  return {
+    universe: themeName,
+    worldDescription: description || `the ${themeName.toLowerCase()} universe`,
+    specialInstructions: `Create an authentic narrative that reflects the unique concept of "${themeName}". Focus on making the story feel personal and meaningful to the user's creative vision.`
+  };
+}
+
+function calculateCustomRarityScore(results: SequenceResult[]): number {
+  let totalRarityPoints = 0;
+  
+  // Base calculation for custom sequences
+  for (const result of results) {
+    const segment = result.spinResult.segment;
+    const weightFactor = 100 - (segment.weight || 50); // Lower weight = higher rarity
+    
+    // Convert weight to rarity points (0-100 weight becomes 0-15 points)
+    const weightRarityPoints = Math.round(weightFactor * 0.15);
+    totalRarityPoints += weightRarityPoints;
+    
+    // Bonus for user-defined rarity levels
+    const rarityPoints = {
+      common: 1,
+      uncommon: 3,
+      rare: 8,
+      legendary: 20
+    };
+    
+    totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+  }
+  
+  // Bonus for sequence length (longer sequences are rarer)
+  const lengthBonus = Math.min(results.length * 2, 20);
+  totalRarityPoints += lengthBonus;
+  
+  // Add variability for path uniqueness
+  const pathVariability = Math.min(results.length * 3, 25);
+  totalRarityPoints += pathVariability;
+  
+  return Math.min(totalRarityPoints, 100);
+}
+
+function generateCustomStoryPrompt(
+  results: SequenceResult[], 
+  themeName: string, 
+  description: string = '', 
+  rarityScore: number
+): string {
+  const resultsList = results.map((r, index) => {
+    const stepTitle = r.stepId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return `Step ${index + 1} - ${stepTitle}: ${r.spinResult.segment.text}`;
+  }).join('\n');
+  
+  return `Generate a personalized story for this "${themeName}" journey with rarity score ${rarityScore}/100:
+
+SEQUENCE CONCEPT: ${description || `A custom ${themeName} experience`}
+
+PLAYER CHOICES:
+${resultsList}
+
+Please create:
+1. A compelling 3-4 paragraph narrative that connects these choices into a meaningful journey
+2. Identify what character archetype this creates (based on the combination of choices)
+3. Explain why this particular combination is special or rare (${rarityScore}/100 rarity)
+4. Make the story feel personal and unique to this specific path
+
+Focus on storytelling that transforms these individual choices into a coherent, engaging narrative. The reader should feel like this story is uniquely theirs, born from their specific decisions. Connect the choices in unexpected ways and highlight the narrative threads that make this combination special.
+
+Make it immersive and authentic to the "${themeName}" concept while celebrating the uniqueness of this particular path through the sequence.`;
+}
+
+function getCustomCharacterArchetype(results: SequenceResult[], themeName: string): string {
+  // Analyze the pattern of choices to determine archetype
+  const totalResults = results.length;
+  
+  // Look for common archetypes based on choice patterns
+  const hasHighRiskChoices = results.some(r => (r.spinResult.segment.weight || 50) < 20);
+  const hasConsistentTheme = results.filter(r => 
+    r.spinResult.segment.text.toLowerCase().includes('dark') ||
+    r.spinResult.segment.text.toLowerCase().includes('light') ||
+    r.spinResult.segment.text.toLowerCase().includes('good') ||
+    r.spinResult.segment.text.toLowerCase().includes('evil')
+  ).length > totalResults / 2;
+  
+  if (hasHighRiskChoices && hasConsistentTheme) {
+    return `The Rare Path Walker - A unique ${themeName} character who chose the unlikely path`;
+  }
+  
+  if (hasHighRiskChoices) {
+    return `The Risk Taker - A bold ${themeName} character who defied the odds`;
+  }
+  
+  if (hasConsistentTheme) {
+    return `The Consistent Journeyer - A focused ${themeName} character with clear convictions`;
+  }
+  
+  if (totalResults >= 5) {
+    return `The Epic Adventurer - A ${themeName} character with a complex, multi-faceted journey`;
+  }
+  
+  return `The Unique ${themeName} Character - A one-of-a-kind journey through your custom world`;
 }

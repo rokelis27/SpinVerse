@@ -8,11 +8,21 @@ export function evaluateCondition(
   results: SequenceResult[]
 ): boolean {
   const result = results.find(r => r.stepId === condition.stepId);
-  if (!result) return false;
+  if (!result) {
+    console.log('No result found for stepId:', condition.stepId);
+    return false;
+  }
   
   const actualValue = result.spinResult.segment.id;
   const expectedValue = condition.value;
   const operator = condition.operator || 'equals';
+  
+  console.log('Evaluating condition:', {
+    condition,
+    actualValue,
+    expectedValue,
+    operator
+  });
   
   switch (operator) {
     case 'equals':
@@ -52,18 +62,82 @@ export function evaluateBranch(
 export function getNextStepId(
   currentStep: SequenceStep,
   results: SequenceResult[]
-): string | null {
+): { nextStepId: string | null; weightOverrides?: import('@/types/sequence').WeightOverride[] } {
+  console.log('getNextStepId called with:', {
+    stepId: currentStep.id,
+    branches: currentStep.branches,
+    results: results.map(r => ({ stepId: r.stepId, segmentId: r.spinResult.segment.id, segmentText: r.spinResult.segment.text }))
+  });
+  
   // Check branches in order
   if (currentStep.branches) {
-    for (const branch of currentStep.branches) {
-      if (evaluateBranch(branch, results)) {
-        return branch.nextStepId;
+    for (let i = 0; i < currentStep.branches.length; i++) {
+      const branch = currentStep.branches[i];
+      const branchResult = evaluateBranch(branch, results);
+      console.log(`Branch ${i} evaluation:`, {
+        branch,
+        result: branchResult
+      });
+      
+      if (branchResult) {
+        console.log(`Branch ${i} matched! Going to step:`, branch.nextStepId, 'with weight overrides:', branch.weightOverrides);
+        return { 
+          nextStepId: branch.nextStepId,
+          weightOverrides: branch.weightOverrides
+        };
       }
     }
   }
   
   // Fall back to default next step
-  return currentStep.defaultNextStep || null;
+  console.log('No branches matched, using defaultNextStep:', currentStep.defaultNextStep);
+  return { nextStepId: currentStep.defaultNextStep || null };
+}
+
+/**
+ * Apply weight overrides to a step's wheel configuration
+ */
+export function applyWeightOverrides(
+  step: SequenceStep, 
+  weightOverrides?: import('@/types/sequence').WeightOverride[]
+): SequenceStep {
+  if (!weightOverrides || weightOverrides.length === 0) {
+    return step;
+  }
+
+  console.log('Applying weight overrides:', weightOverrides, 'to step:', step.id);
+
+  // Create a map of overridden weights
+  const overrideMap = new Map(weightOverrides.map(override => [override.segmentId, override.newWeight]));
+  
+  // Calculate total overridden weight
+  const totalOverriddenWeight = weightOverrides.reduce((sum, override) => sum + override.newWeight, 0);
+  const remainingWeight = Math.max(0, 100 - totalOverriddenWeight);
+  
+  // Get segments that are not overridden
+  const nonOverriddenSegments = step.wheelConfig.segments.filter(segment => !overrideMap.has(segment.id));
+  const weightPerNonOverridden = nonOverriddenSegments.length > 0 ? remainingWeight / nonOverriddenSegments.length : 0;
+
+  // Apply overrides
+  const updatedSegments = step.wheelConfig.segments.map(segment => {
+    if (overrideMap.has(segment.id)) {
+      const newWeight = overrideMap.get(segment.id)!;
+      console.log(`Override: ${segment.text} from ${segment.weight}% to ${newWeight}%`);
+      return { ...segment, weight: newWeight };
+    } else {
+      const newWeight = Math.round(weightPerNonOverridden);
+      console.log(`Auto-adjust: ${segment.text} from ${segment.weight}% to ${newWeight}%`);
+      return { ...segment, weight: newWeight };
+    }
+  });
+
+  return {
+    ...step,
+    wheelConfig: {
+      ...step.wheelConfig,
+      segments: updatedSegments
+    }
+  };
 }
 
 /**
@@ -81,7 +155,7 @@ export function getSequencePath(
   results: SequenceResult[]
 ): SequenceStep[] {
   const path: SequenceStep[] = [];
-  let currentStepId = theme.startStepId;
+  let currentStepId: string | null = theme.startStepId;
   
   while (currentStepId) {
     const step = findStepById(theme, currentStepId);
@@ -94,7 +168,8 @@ export function getSequencePath(
       path.some(s => s.id === r.stepId)
     );
     
-    currentStepId = getNextStepId(step, relevantResults);
+    const branchResult = getNextStepId(step, relevantResults);
+    currentStepId = branchResult.nextStepId;
   }
   
   return path;
