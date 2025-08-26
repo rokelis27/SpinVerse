@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { SequenceStepBuilder, WheelSegmentBuilder } from '@/types/builder';
 import { BranchEditor } from './BranchEditor';
+import { EnhanceStepButton } from './EnhanceStepButton';
 
 interface StepEditorProps {
   step: SequenceStepBuilder;
@@ -42,6 +43,15 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
 
   return (
     <div className="h-full flex flex-col">
+      {/* Header with Step Info and Enhance Button */}
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-xl font-bold text-white">{step.title}</h2>
+          <p className="text-sm text-gray-400">Step {stepIndex + 1} • {step.wheelConfig.segments.length} options</p>
+        </div>
+        <EnhanceStepButton step={step} stepIndex={stepIndex} />
+      </div>
+
       {/* Tab Navigation */}
       <div className="flex space-x-1 mb-6">
         <button
