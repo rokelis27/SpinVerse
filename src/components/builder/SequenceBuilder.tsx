@@ -5,6 +5,8 @@ import { useBuilderStore } from '@/stores/builderStore';
 import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
 import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
+import { EnhanceThemeButton } from './EnhanceThemeButton';
+import { EnhancementNotification } from './EnhancementNotification';
 import { UserSequence } from '@/types/builder';
 
 interface SequenceBuilderProps {
@@ -141,6 +143,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      <EnhancementNotification />
       {/* Hidden file input for import */}
       <input
         ref={fileInputRef}
@@ -222,6 +225,8 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
               </svg>
               <span>Export</span>
             </button>
+
+            <EnhanceThemeButton />
 
             <button
               onClick={togglePreviewMode}
@@ -350,7 +355,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
             <div className="lg:col-span-9">
               <div className="glass-panel h-full rounded-2xl p-6">
                 <StepEditor
-                  step={currentSequence.steps[selectedStepIndex]}
+                  step={{ ...currentSequence.steps[selectedStepIndex], isCustom: true }}
                   stepIndex={selectedStepIndex}
                 />
               </div>

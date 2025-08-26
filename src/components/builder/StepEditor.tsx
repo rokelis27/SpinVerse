@@ -62,7 +62,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
-          Wheel Options ({step.wheelConfig.segments.length})
+          Wheel Options ({step.wheelConfig?.segments?.length || 0})
         </button>
         <button
           onClick={() => setActiveTab('connections')}
@@ -137,13 +137,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
-              {step.wheelConfig.segments.map((segment) => (
+              {(step.wheelConfig?.segments || []).map((segment) => (
                 <SegmentEditor
                   key={segment.id}
                   segment={segment}
                   onUpdate={(field, value) => handleSegmentUpdate(segment.id, field, value)}
                   onRemove={() => removeSegment(stepIndex, segment.id)}
-                  canRemove={step.wheelConfig.segments.length > 2}
+                  canRemove={(step.wheelConfig?.segments?.length || 0) > 2}
                 />
               ))}
             </div>

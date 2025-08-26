@@ -1,12 +1,31 @@
 import { create } from 'zustand';
 import { UserSequence, SequenceStepBuilder, WheelSegmentBuilder, ValidationResult } from '@/types/builder';
 
+interface EnhancementHistory {
+  id: string;
+  timestamp: string;
+  originalSequence: UserSequence;
+  enhancedSequence: UserSequence;
+  description: string;
+  enhancementSummary: {
+    addedSteps: number;
+    addedBranches: number;
+    addedOptions: number;
+    enhancementAreas: string[];
+  };
+}
+
 interface BuilderState {
   // Current editing state
   currentSequence: UserSequence | null;
   selectedStepIndex: number;
   isDirty: boolean;
   isPreviewMode: boolean;
+  
+  // Enhancement state
+  isEnhancing: boolean;
+  enhancementHistory: EnhancementHistory[];
+  currentEnhancementId: string | null;
   
   // Actions
   createNewSequence: () => void;
@@ -34,6 +53,11 @@ interface BuilderState {
   // Save/Load (localStorage for now)
   saveSequence: () => void;
   
+  // Enhancement actions
+  startEnhancement: (level?: 'light' | 'moderate' | 'heavy', focusAreas?: string[]) => Promise<boolean>;
+  rollbackEnhancement: () => void;
+  clearEnhancementHistory: () => void;
+  
   // Utility
   setDirty: (dirty: boolean) => void;
   reset: () => void;
@@ -48,6 +72,11 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   selectedStepIndex: 0,
   isDirty: false,
   isPreviewMode: false,
+  
+  // Enhancement state
+  isEnhancing: false,
+  enhancementHistory: [],
+  currentEnhancementId: null,
 
   // Create new sequence
   createNewSequence: () => {
@@ -117,9 +146,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         isCustom: true, // All loaded sequences are custom
         wheelConfig: {
           ...step.wheelConfig,
-          segments: step.wheelConfig.segments.map(segment => ({
+          segments: (step.wheelConfig?.segments || []).map(segment => ({
             ...segment,
-            description: '', // Add missing description property for builder
+            description: segment.description || '', // Add missing description property for builder
           }))
         }
       }))
@@ -453,6 +482,91 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     }
   },
 
+  // Enhancement actions
+  startEnhancement: async (level = 'moderate', focusAreas = ['branching', 'options']) => {
+    const state = get();
+    if (!state.currentSequence || state.isEnhancing) return false;
+    
+    console.log('🚀 Starting enhancement...', { level, focusAreas, sequenceId: state.currentSequence.id });
+    set({ isEnhancing: true });
+    
+    try {
+      console.log('📡 Making API request to /api/enhance-theme');
+      
+      const response = await fetch('/api/enhance-theme', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sequence: state.currentSequence,
+          enhancementLevel: level,
+          focusAreas,
+          preserveCore: true
+        })
+      });
+
+      console.log('📥 Response received:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API Error:', response.status, errorText);
+        throw new Error(`API Error ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Enhancement successful:', data);
+      const { enhancedSequence, enhancementSummary } = data;
+
+      // Create history entry
+      const historyEntry: EnhancementHistory = {
+        id: `enhancement-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        originalSequence: state.currentSequence,
+        enhancedSequence: enhancedSequence,
+        description: `AI Enhancement (${level}): Added ${enhancementSummary.addedSteps} steps, ${enhancementSummary.addedOptions} options`,
+        enhancementSummary
+      };
+
+      // Update store with enhanced sequence
+      set({
+        currentSequence: enhancedSequence,
+        enhancementHistory: [...state.enhancementHistory, historyEntry],
+        currentEnhancementId: historyEntry.id,
+        isDirty: true,
+        isEnhancing: false
+      });
+
+      return true;
+    } catch (error) {
+      console.error('❌ Enhancement failed:', error);
+      set({ isEnhancing: false });
+      alert(`Enhancement failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      return false;
+    }
+  },
+
+  rollbackEnhancement: () => {
+    const state = get();
+    if (!state.currentEnhancementId || state.enhancementHistory.length === 0) return;
+
+    const currentHistory = state.enhancementHistory.find(h => h.id === state.currentEnhancementId);
+    if (currentHistory) {
+      set({
+        currentSequence: currentHistory.originalSequence,
+        currentEnhancementId: null,
+        isDirty: true
+      });
+    }
+  },
+
+  clearEnhancementHistory: () => {
+    set({
+      enhancementHistory: [],
+      currentEnhancementId: null
+    });
+  },
+
   // Utility
   setDirty: (dirty) => {
     set({ isDirty: dirty });
@@ -463,7 +577,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       currentSequence: null,
       selectedStepIndex: 0,
       isDirty: false,
-      isPreviewMode: false
+      isPreviewMode: false,
+      isEnhancing: false,
+      enhancementHistory: [],
+      currentEnhancementId: null
     });
   }
 }));
