@@ -94,6 +94,35 @@ export default function Home() {
     setShowBuilder(true);
   };
 
+  const handleExportSequence = (sequence: UserSequence) => {
+    const dataStr = JSON.stringify(sequence, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `${sequence.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleExportAll = () => {
+    if (savedSequences.length === 0) return;
+    
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      sequences: savedSequences
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', `spinverse_sequences_backup_${new Date().toISOString().split('T')[0]}.json`);
+    linkElement.click();
+  };
+
   // Show builder in full screen
   if (showBuilder) {
     return <SequenceBuilder onClose={handleCloseBuilder} />;
@@ -255,8 +284,20 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                       Your Custom Stories
                     </h3>
-                    <div className="text-sm text-gray-400">
-                      {savedSequences.length} saved
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={handleExportAll}
+                        className="text-xs px-2 py-1 glass-panel rounded text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300 flex items-center space-x-1"
+                        title="Export All Sequences"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Export All</span>
+                      </button>
+                      <div className="text-sm text-gray-400">
+                        {savedSequences.length} saved
+                      </div>
                     </div>
                   </div>
                   
@@ -294,6 +335,16 @@ export default function Home() {
                             >
                               <svg className="w-4 h-4 text-emerald-400 group-hover:text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            
+                            <button
+                              onClick={() => handleExportSequence(sequence)}
+                              className="p-2 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 hover:from-blue-500/30 hover:to-indigo-500/30 border border-blue-500/30 hover:border-blue-400/50 transition-all duration-300 group"
+                              title="Export as JSON"
+                            >
+                              <svg className="w-4 h-4 text-blue-400 group-hover:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                             </button>
                             

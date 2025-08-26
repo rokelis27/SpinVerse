@@ -20,7 +20,6 @@ export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
   const { results } = useSequenceStore();
   const [generatedStory, setGeneratedStory] = useState<GeneratedStory | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   
   const isSequenceComplete = results.length > 0 && results.length >= Math.min(sequence.steps.length, 3);
 
@@ -52,7 +51,7 @@ export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
       const data = await response.json();
       setGeneratedStory(data);
     } catch (err) {
-      setError('Failed to generate story. Please try again.');
+      alert('Failed to generate story. Please try again.');
       console.error('Story generation error:', err);
     } finally {
       setIsGenerating(false);
@@ -74,51 +73,6 @@ export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
 
   return (
     <div className="mt-8 space-y-6">
-      {/* Story Generation Button */}
-      {!generatedStory && (
-        <div className="glass-panel rounded-2xl p-6 text-center">
-          <div className="mb-4">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-2">Generate Your Story</h3>
-            <p className="text-gray-300 mb-4">
-              Transform your choices into an AI-generated personalized narrative
-            </p>
-            <div className="text-sm text-gray-400 mb-6">
-              {results.length} choice{results.length !== 1 ? 's' : ''} • {sequence.name}
-            </div>
-          </div>
-
-          <button
-            onClick={generateStory}
-            disabled={isGenerating}
-            className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-3 mx-auto"
-          >
-            {isGenerating ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Generating Story...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-                <span>Generate AI Story</span>
-              </>
-            )}
-          </button>
-
-          {error && (
-            <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
-              {error}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Generated Story Display */}
       {generatedStory && (

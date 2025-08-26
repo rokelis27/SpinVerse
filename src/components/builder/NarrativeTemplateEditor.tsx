@@ -121,26 +121,6 @@ export const NarrativeTemplateEditor: React.FC = () => {
             </div>
           </div>
 
-          {/* Preview Examples */}
-          <div className="border-t border-white/10 pt-6">
-            <h4 className="text-sm font-semibold text-white mb-3">Story Generation Examples</h4>
-            <div className="space-y-3">
-              <div className="bg-white/5 rounded-lg p-3">
-                <div className="text-xs font-medium text-gray-300 mb-1">Simple Setup:</div>
-                <div className="text-xs text-gray-400">
-                  Name: "Character Creator" → Description: "Create your hero" → 
-                  Result: "Generic adventure story"
-                </div>
-              </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <div className="text-xs font-medium text-gray-300 mb-1">Rich Setup:</div>
-                <div className="text-xs text-gray-400">
-                  Name: "Neon Runners" → Description: "Cyberpunk hackers in Neo-Tokyo fighting mega-corporations" → 
-                  Result: "Detailed cyberpunk narrative with specific world-building"
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>

@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
 import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
+import { UserSequence } from '@/types/builder';
 
 interface SequenceBuilderProps {
   onClose: () => void;
@@ -25,8 +26,11 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
     togglePreviewMode,
     validateSequence,
     saveSequence,
+    loadSequence,
     reset
   } = useBuilderStore();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize with new sequence only if none exists on mount
   useEffect(() => {
@@ -59,12 +63,93 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
     onClose();
   };
 
+  const handleImportSequence = () => {
+    if (isDirty) {
+      const shouldProceed = confirm('You have unsaved changes. They will be lost if you import. Continue?');
+      if (!shouldProceed) return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const jsonData = JSON.parse(e.target?.result as string);
+        
+        // Validate that it's a UserSequence
+        if (validateImportedSequence(jsonData)) {
+          // Generate new ID to avoid conflicts
+          const importedSequence: UserSequence = {
+            ...jsonData,
+            id: `custom-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            lastModified: new Date().toISOString(),
+            isCustom: true
+          };
+          
+          loadSequence(importedSequence);
+          alert('Sequence imported successfully!');
+        } else {
+          alert('Invalid sequence file. Please check the JSON format.');
+        }
+      } catch (error) {
+        alert('Failed to parse JSON file. Please check the file format.');
+      }
+    };
+    
+    reader.readAsText(file);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const validateImportedSequence = (data: any): data is UserSequence => {
+    return (
+      data &&
+      typeof data.name === 'string' &&
+      typeof data.description === 'string' &&
+      Array.isArray(data.steps) &&
+      data.steps.length > 0 &&
+      data.steps.every((step: any) => 
+        step.id && step.title && step.wheelConfig && Array.isArray(step.wheelConfig.segments)
+      )
+    );
+  };
+
+  const handleExportSequence = () => {
+    if (!currentSequence) return;
+    
+    const dataStr = JSON.stringify(currentSequence, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `${currentSequence.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
   if (!currentSequence) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Hidden file input for import */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleFileSelect}
+        style={{ display: 'none' }}
+      />
+      
       {/* Header */}
       <div className="glass-panel border-b border-white/20 p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -116,6 +201,28 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
           </div>
 
           <div className="flex items-center space-x-3">
+            <button
+              onClick={handleImportSequence}
+              className="px-4 py-2 glass-panel text-gray-300 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 flex items-center space-x-2"
+              title="Import Sequence"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              <span>Import</span>
+            </button>
+
+            <button
+              onClick={handleExportSequence}
+              className="px-4 py-2 glass-panel text-gray-300 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 flex items-center space-x-2"
+              title="Export Sequence"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+              <span>Export</span>
+            </button>
+
             <button
               onClick={togglePreviewMode}
               className={`px-4 py-2 rounded-lg transition-all duration-300 ${
