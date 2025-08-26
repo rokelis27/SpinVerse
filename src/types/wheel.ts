@@ -14,7 +14,7 @@ export interface WheelConfig {
   size: number;
   spinDuration: number;
   friction: number;
-  theme?: 'default' | 'harry-potter' | 'marvel' | 'startup' | 'hunger-games';
+  theme?: 'default' | 'mystical-academy' | 'survival-tournament' | 'marvel' | 'startup';
 }
 
 export interface SpinResult {

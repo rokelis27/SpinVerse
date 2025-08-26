@@ -3,6 +3,7 @@
 import { SequenceController } from '@/components/sequence/SequenceController';
 import { SequenceProgress } from '@/components/sequence/SequenceProgress';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { SequenceBuilder } from '@/components/builder/SequenceBuilder';
 import { useSequenceStore } from '@/stores/sequenceStore';
 import { themes } from '@/data/themes';
 import { useState, useEffect, useMemo } from 'react';
@@ -10,6 +11,7 @@ import { useState, useEffect, useMemo } from 'react';
 export default function Home() {
   const [showSequence, setShowSequence] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showBuilder, setShowBuilder] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { startSequence, resetSequence, isActive } = useSequenceStore();
 
@@ -38,6 +40,19 @@ export default function Home() {
     resetSequence();
     setShowSequence(false);
   };
+
+  const handleOpenBuilder = () => {
+    setShowBuilder(true);
+  };
+
+  const handleCloseBuilder = () => {
+    setShowBuilder(false);
+  };
+
+  // Show builder in full screen
+  if (showBuilder) {
+    return <SequenceBuilder onClose={handleCloseBuilder} />;
+  }
 
   return (
     <main className="min-h-screen cosmic-bg p-4 md:p-8 relative overflow-hidden">
@@ -138,27 +153,53 @@ export default function Home() {
                       <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
                     </div>
                     <div className="flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-transform duration-300">
-                      {theme.id === 'harry-potter' && (
-                        <img 
-                          src="/harry-potter-1.svg" 
-                          alt="Harry Potter" 
-                          className="w-12 h-12 filter brightness-0 invert opacity-70 group-hover:opacity-100 transition-opacity"
-                        />
+                      {theme.id === 'mystical-academy' && (
+                        <span className="text-3xl">🧙‍♂️</span>
                       )}
-                      {theme.id === 'hunger-games' && (
-                        <img 
-                          src="/the-hunger-games.svg" 
-                          alt="Hunger Games" 
-                          className="w-14 h-14 filter brightness-0 invert opacity-70 group-hover:opacity-100 transition-opacity"
-                        />
+                      {theme.id === 'survival-tournament' && (
+                        <span className="text-3xl">🏹</span>
                       )}
-                      {!['harry-potter', 'hunger-games'].includes(theme.id) && (
+                      {!['mystical-academy', 'survival-tournament'].includes(theme.id) && (
                         <span className="text-3xl">🎯</span>
                       )}
                     </div>
                   </div>
                 </button>
               ))}
+            </div>
+
+            {/* Create Your Own Journey Button */}
+            <div className="w-full max-w-lg mt-8">
+              <button
+                onClick={handleOpenBuilder}
+                className="w-full glass-panel hud-panel rounded-2xl p-8 text-center hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter border-2 border-emerald-500/30 hover:border-emerald-400/50"
+                style={{ 
+                  borderLeft: '4px solid #10B981',
+                  animationDelay: '0.7s'
+                }}
+              >
+                <div className="flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                    </svg>
+                  </div>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-3 group-hover:from-emerald-300 group-hover:to-cyan-300 transition-all duration-300">
+                  Create Your Own Journey
+                </h3>
+                
+                <p className="text-gray-100 text-base mb-4 group-hover:text-white transition-colors font-medium">
+                  Build custom wheel sequences with your own choices and stories
+                </p>
+                
+                <div className="flex justify-center">
+                  <span className="text-base font-bold px-4 py-2 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-500/30 text-emerald-400 group-hover:bg-emerald-500/30 group-hover:border-emerald-400/50 transition-all duration-300">
+                    ✨ Builder Mode
+                  </span>
+                </div>
+              </button>
             </div>
 
             <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.6s'}}>

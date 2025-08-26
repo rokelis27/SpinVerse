@@ -179,28 +179,34 @@ function applyHarryPotterConditionalWeights(
       if (origin === 'squib') adjustedWeight *= 1.6;       // 60% increase - Desperation for magical belonging
     }
     
-    // GRYFFINDOR: Values bravery over blood status
-    if (segment.id === 'gryffindor') {
-      if (origin === 'pure-blood') adjustedWeight *= 0.9;   // 10% decrease - Less common but not rare
-      if (origin === 'half-blood') adjustedWeight *= 1.3;   // 30% increase - Like Harry Potter
-      if (origin === 'muggle-born') adjustedWeight *= 1.5;  // 50% increase - Like Hermione
-      if (origin === 'squib') adjustedWeight *= 1.2;        // 20% increase - Proving magical worth
+    // COURAGE HOUSE: Values bravery over blood status
+    if (segment.id === 'courage-house') {
+      if (origin === 'ancient-lineage') adjustedWeight *= 0.9;   // Less common but not rare
+      if (origin === 'mixed-heritage') adjustedWeight *= 1.3;   // Values diverse perspective
+      if (origin === 'common-born') adjustedWeight *= 1.5;  // Proving themselves through courage
+      if (origin === 'wildcard-origin') adjustedWeight *= 1.2;  // Proving magical worth
+      if (origin === 'lost-bloodline') adjustedWeight *= 1.4; // Reclaiming honor
+      if (origin === 'first-generation') adjustedWeight *= 1.6; // Fresh perspective on bravery
     }
     
-    // HUFFLEPUFF: Most accepting of all backgrounds
-    if (segment.id === 'hufflepuff') {
-      if (origin === 'pure-blood') adjustedWeight *= 0.8;   // 20% decrease - Less prestigious
-      if (origin === 'half-blood') adjustedWeight *= 1.4;   // 40% increase - Welcomes mixed heritage
-      if (origin === 'muggle-born') adjustedWeight *= 1.6;  // 60% increase - Most welcoming house
-      if (origin === 'squib') adjustedWeight *= 1.8;        // 80% increase - Most accepting of magical struggles
+    // LOYALTY HOUSE: Most accepting of all backgrounds
+    if (segment.id === 'loyalty-house') {
+      if (origin === 'ancient-lineage') adjustedWeight *= 0.8;   // Less prestigious
+      if (origin === 'mixed-heritage') adjustedWeight *= 1.4;   // Welcomes mixed heritage
+      if (origin === 'common-born') adjustedWeight *= 1.6;  // Most welcoming house
+      if (origin === 'wildcard-origin') adjustedWeight *= 1.8;  // Most accepting of magical struggles
+      if (origin === 'lost-bloodline') adjustedWeight *= 1.5; // Accepting of lost souls
+      if (origin === 'first-generation') adjustedWeight *= 1.7; // Welcoming to newcomers
     }
     
-    // RAVENCLAW: Values intelligence regardless of blood
-    if (segment.id === 'ravenclaw') {
-      if (origin === 'pure-blood') adjustedWeight *= 1.0;   // No change - Merit-based
-      if (origin === 'half-blood') adjustedWeight *= 1.2;   // 20% increase - Analytical minds
-      if (origin === 'muggle-born') adjustedWeight *= 1.3;  // 30% increase - Eager to learn magic
-      if (origin === 'squib') adjustedWeight *= 0.9;        // 10% decrease - Self-doubt about magical ability
+    // WISDOM HOUSE: Values intelligence regardless of blood
+    if (segment.id === 'wisdom-house') {
+      if (origin === 'ancient-lineage') adjustedWeight *= 1.0;   // Merit-based
+      if (origin === 'mixed-heritage') adjustedWeight *= 1.2;   // Analytical minds
+      if (origin === 'common-born') adjustedWeight *= 1.3;  // Eager to learn magic
+      if (origin === 'wildcard-origin') adjustedWeight *= 0.9;  // Self-doubt about ability
+      if (origin === 'lost-bloodline') adjustedWeight *= 1.3; // Seeking to understand heritage
+      if (origin === 'first-generation') adjustedWeight *= 1.4; // Fresh curiosity
     }
     
     // === MAGIC SPECIALIZATION LOGIC ===

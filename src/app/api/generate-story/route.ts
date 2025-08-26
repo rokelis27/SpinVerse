@@ -14,19 +14,19 @@ interface ThemeConfig {
 
 function getThemeConfig(themeId: string): ThemeConfig {
   const configs: Record<string, ThemeConfig> = {
-    'harry-potter': {
-      universe: 'Harry Potter',
-      worldDescription: 'the magical wizarding world',
-      specialInstructions: 'Focus on magical elements, house loyalties, and the struggle between good and evil. Use wizarding terminology and reference Hogwarts, spells, and magical creatures.'
+    'mystical-academy': {
+      universe: 'Mystical Academy',
+      worldDescription: 'the magical academy world',
+      specialInstructions: 'Focus on magical elements, house loyalties, and the journey from student to graduate. Use magical terminology and reference academy life, spells, and magical creatures.'
     },
-    'hunger-games': {
-      universe: 'Hunger Games',
-      worldDescription: 'the dystopian world of Panem',
-      specialInstructions: 'Focus on survival, class inequality, rebellion against oppression, and the brutal reality of the Arena. Reference Districts, the Capitol, Gamemaker manipulation, and the growing rebellion. Emphasize themes of sacrifice, hope, and resistance against tyranny.'
+    'survival-tournament': {
+      universe: 'Survival Tournament',
+      worldDescription: 'the dystopian tournament world',
+      specialInstructions: 'Focus on survival, arena challenges, and rebellion against oppression. Reference regions, the empire, official manipulation, and resistance. Emphasize themes of sacrifice, hope, and fighting tyranny.'
     }
   };
   
-  return configs[themeId] || configs['harry-potter'];
+  return configs[themeId] || configs['mystical-academy'];
 }
 
 export async function POST(req: NextRequest) {
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get theme-specific configurations
-    const themeConfig = getThemeConfig(themeId || 'harry-potter');
+    const themeConfig = getThemeConfig(themeId || 'mystical-academy');
     
     // Calculate rarity score
     const rarityScore = calculateRarityScore(results, themeId);
@@ -107,22 +107,22 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
     totalRarityPoints += rarityPoints[segment.rarity || 'common'];
     
     // Theme-specific bonus points
-    if (themeId === 'harry-potter') {
-      if (segment.id === 'avada-kedavra') totalRarityPoints += 15; // Ultra rare spell
-      if (segment.id === 'phoenix' || segment.id === 'thestral') totalRarityPoints += 10; // Ultra rare pets
-      if (segment.id === 'elder-phoenix') totalRarityPoints += 12; // Death stick wand
+    if (themeId === 'mystical-academy') {
+      if (segment.id === 'void-spell') totalRarityPoints += 15; // Ultra rare spell
+      if (segment.id === 'phoenix' || segment.id === 'shadow-horse') totalRarityPoints += 10; // Ultra rare pets
+      if (segment.id === 'crystal-phoenix') totalRarityPoints += 12; // Ultra rare wand
     }
     
-    if (themeId === 'hunger-games') {
-      if (segment.id === 'district-12') totalRarityPoints += 15; // Ultra rare district (1% chance)
+    if (themeId === 'survival-tournament') {
+      if (segment.id === 'region-12') totalRarityPoints += 15; // Ultra rare region (1% chance)
       if (segment.id === 'score-11' || segment.id === 'score-12') totalRarityPoints += 12; // Perfect scores
-      if (segment.id === 'rule-change-victory') totalRarityPoints += 18; // Gamemaker manipulation
-      if (segment.id === 'the-mockingjay') totalRarityPoints += 15; // Rebellion symbol
-      if (segment.id === 'presidential-assassin') totalRarityPoints += 20; // Ultimate rebellion
+      if (segment.id === 'rule-change-victory') totalRarityPoints += 18; // Official manipulation
+      if (segment.id === 'the-symbol') totalRarityPoints += 15; // Rebellion symbol
+      if (segment.id === 'emperor-assassin') totalRarityPoints += 20; // Ultimate rebellion
       if (segment.id === 'volcanic-hellscape') totalRarityPoints += 10; // Ultra rare arena
       if (segment.id === 'betrayal-plot') totalRarityPoints += 12; // Ultra rare strategy
       
-      // Death outcomes reduce points (but still contribute to story)
+      // Death outcomes reduce points (but still concompetitor to story)
       if (segment.id.includes('death') || segment.id.includes('die-')) {
         totalRarityPoints -= 5; // Deaths are common outcomes
       }
@@ -140,16 +140,16 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
     return acc;
   }, {} as Record<string, string>);
   
-  if (themeId === 'harry-potter') {
+  if (themeId === 'mystical-academy') {
     // Bonus for legendary paths
-    if (isChosenOnePath(resultMap)) totalRarityPoints += 25;
-    if (isDarkLordPath(resultMap)) totalRarityPoints += 30;
-    if (isGrandProtectorPath(resultMap)) totalRarityPoints += 20;
+    if (isHeroPath(resultMap)) totalRarityPoints += 25;
+    if (isDarkPath(resultMap)) totalRarityPoints += 30;
+    if (isProtectorPath(resultMap)) totalRarityPoints += 20;
   }
   
-  if (themeId === 'hunger-games') {
-    // Perfect Mockingjay Path
-    if (isPerfectMockingjayPath(resultMap)) totalRarityPoints += 30; // Ultra legendary
+  if (themeId === 'survival-tournament') {
+    // Perfect Symbol Path
+    if (isPerfectSymbolPath(resultMap)) totalRarityPoints += 30; // Ultra legendary
     
     // Full Arena Survivor
     if (isFullArenaSurvivor(resultMap)) totalRarityPoints += 25; // Survived all 6 challenges
@@ -157,8 +157,8 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
     // Star-Crossed Lovers
     if (isStarCrossedPath(resultMap)) totalRarityPoints += 20; // Joint victory romance
     
-    // Career Killer (non-career beats careers)
-    if (isCareerKillerPath(resultMap)) totalRarityPoints += 15;
+    // Underdog Victory
+    if (isUnderdogPath(resultMap)) totalRarityPoints += 15;
   }
   
   return Math.min(totalRarityPoints, 100); // Cap at 100
@@ -179,58 +179,58 @@ function getCharacterLookalike(results: SequenceResult[], themeId?: string): str
     return acc;
   }, {} as Record<string, string>);
   
-  if (themeId === 'hunger-games') {
-    return getHungerGamesCharacterMatch(resultMap);
+  if (themeId === 'survival-tournament') {
+    return getSurvivalTournamentCharacterMatch(resultMap);
   }
   
-  // Harry Potter character matching
+  // Mystical Academy character matching
   const { origin, house, purpose, spell } = resultMap;
   const schoolPerf = resultMap['school-performance'];
   const career = resultMap['hero-career'] || resultMap['scholar-career'] || resultMap['nature-career'];
   
-  // Specific character matches
-  if (house === 'gryffindor' && spell === 'expelliarmus' && purpose === 'defeat-voldemort') {
-    return 'Harry Potter - The Chosen One who lived';
+  // Specific character archetypes
+  if (house === 'courage-house' && spell === 'disarm-spell' && purpose === 'defeat-darkness') {
+    return 'The Chosen Hero - The brave one destined for greatness';
   }
   
-  if (house === 'gryffindor' && origin === 'muggle-born' && schoolPerf === 'top-grades') {
-    return 'Hermione Granger - The brilliant witch who changed everything';
+  if (house === 'courage-house' && origin === 'muggle-born' && schoolPerf === 'top-grades') {
+    return 'The Brilliant Scholar - The studious one who mastered magic through knowledge';
   }
   
-  if (house === 'slytherin' && spell === 'avada-kedavra' && origin === 'pure-blood') {
-    return 'Tom Riddle/Voldemort - The Dark Lord who sought immortality';
+  if (house === 'ambition-house' && spell === 'void-spell' && origin === 'pure-blood') {
+    return 'The Dark Master - The ambitious one who sought forbidden power';
   }
   
-  if (house === 'gryffindor' && schoolPerf === 'head-student' && purpose === 'teach-hogwarts') {
-    return 'Albus Dumbledore - The wise protector of the wizarding world';
+  if (house === 'wisdom-house' && schoolPerf === 'head-student' && purpose === 'teach-academy') {
+    return 'The Wise Mentor - The protector of magical knowledge';
   }
   
-  if (house === 'slytherin' && career === 'potions-master' && schoolPerf === 'top-grades') {
-    return 'Severus Snape - The Half-Blood Prince';
+  if (house === 'ambition-house' && career === 'potions-master' && schoolPerf === 'top-grades') {
+    return 'The Master Alchemist - The skilled potion maker';
   }
   
-  if (house === 'hufflepuff' && schoolPerf === 'quidditch-captain') {
-    return 'Cedric Diggory - The true Hufflepuff champion';
+  if (house === 'loyalty-house' && schoolPerf === 'flight-captain') {
+    return 'The True Champion - The loyal leader and skyball master';
   }
   
-  if (house === 'ravenclaw' && schoolPerf === 'quiet-genius') {
-    return 'Luna Lovegood - The unique Ravenclaw dreamer';
+  if (house === 'wisdom-house' && schoolPerf === 'quiet-genius') {
+    return 'The Unique Dreamer - The wise one who sees beyond the ordinary';
   }
   
   // General matches based on house
   const houseMatches = {
-    gryffindor: 'Neville Longbottom - The brave Gryffindor who found his courage',
-    slytherin: 'Draco Malfoy - The ambitious Slytherin',
-    hufflepuff: 'Hannah Abbott - The loyal Hufflepuff',
-    ravenclaw: 'Cho Chang - The intelligent Ravenclaw'
+    'courage-house': 'The Brave Guardian - The courageous one who found their strength',
+    'ambition-house': 'The Ambitious Achiever - The driven one who seeks greatness',
+    'loyalty-house': 'The Faithful Friend - The loyal one who stands by others',
+    'wisdom-house': 'The Wise Scholar - The intelligent one who values knowledge'
   };
   
-  return houseMatches[house as keyof typeof houseMatches] || 'A unique wizard of your own making';
+  return houseMatches[house as keyof typeof houseMatches] || 'A unique mage of your own making';
 }
 
-function getHungerGamesCharacterMatch(resultMap: Record<string, string>): string {
-  const district = resultMap.district;
-  const tributeStatus = resultMap['tribute-status'];
+function getSurvivalTournamentCharacterMatch(resultMap: Record<string, string>): string {
+  const region = resultMap.region;
+  const competitorStatus = resultMap['competitor-status'];
   const trainingScore = resultMap['training-score'];
   const alliance = resultMap['alliance-strategy'];
   const victory = resultMap['final-showdown'];
@@ -241,132 +241,132 @@ function getHungerGamesCharacterMatch(resultMap: Record<string, string>): string
   
   if (hasDied) {
     // Tragic heroes who died but inspired others
-    if (district === 'district-11') {
-      return 'Rue - The young ally whose death sparked outrage';
+    if (region === 'region-11') {
+      return 'The Young Ally - The one whose death sparked outrage';
     }
-    if (district === 'district-12') {
-      return 'Mockingjay Tribute - A symbol of resistance even in death';
+    if (region === 'region-12') {
+      return 'The Symbol - A sign of resistance even in death';
     }
-    return 'Fallen Tribute - Your sacrifice fueled the rebellion';
+    return 'Fallen Competitor - Your sacrifice fueled the rebellion';
   }
   
-  // Perfect Mockingjay Path
+  // Perfect Symbol Path
   if (
-    district === 'district-12' &&
-    tributeStatus === 'volunteer-save' &&
+    region === 'region-12' &&
+    competitorStatus === 'volunteer-save' &&
     (trainingScore === 'score-11' || trainingScore === 'score-12') &&
     (victory === 'joint-victory' || victory === 'rule-change-victory') &&
-    rebellion === 'the-mockingjay'
+    rebellion === 'the-symbol'
   ) {
-    return 'Katniss Everdeen - The Girl on Fire who ignited the revolution';
+    return 'The Fire Symbol - The one who ignited the revolution';
   }
   
   // Star-Crossed Lovers
   if (alliance === 'secret-romance' && victory === 'joint-victory') {
-    if (district === 'district-12') {
-      return 'Peeta Mellark - The boy with the bread whose love conquered the Capitol';
+    if (region === 'region-12') {
+      return 'The Beloved - The one whose love conquered the Empire';
     }
-    return 'Star-Crossed Survivor - Your love story gave Panem hope';
+    return 'Star-Crossed Survivor - Your love story gave the Empire hope';
   }
   
-  // Career Tributes
-  if (tributeStatus === 'career-volunteer') {
-    if (district === 'district-2' && victory === 'brutal-victory') {
-      return 'Cato - The brutal Career who fell to the arena\'s cruelty';
+  // Career Competitors
+  if (competitorStatus === 'career-volunteer') {
+    if (region === 'region-2' && victory === 'brutal-victory') {
+      return 'The Brutal Elite - The trained fighter who fell to arena cruelty';
     }
-    if (district === 'district-1') {
-      return 'Marvel/Glimmer - The trained killer who underestimated heart';
+    if (region === 'region-1') {
+      return 'The Elite Killer - The trained assassin who underestimated heart';
     }
-    if (district === 'district-4' && rebellion) {
-      return 'Finnick Odair - The Career who joined the rebellion';
+    if (region === 'region-4' && rebellion) {
+      return 'The Elite Rebel - The trained fighter who joined the rebellion';
     }
-    return 'Career Tribute - Trained to kill, learned to question';
+    return 'Career Competitor - Trained to kill, learned to question';
   }
   
-  // District-specific matches
-  if (district === 'district-7' && alliance === 'solo-survivor') {
-    return 'Johanna Mason - The axe-wielding survivor who played the game';
+  // Region-specific matches
+  if (region === 'region-7' && alliance === 'solo-survivor') {
+    return 'The Axe Wielder - The forest survivor who played the game';
   }
   
-  if (district === 'district-3' && victory === 'strategic-victory') {
-    return 'Beetee - The technical genius who outsmarted the arena';
+  if (region === 'region-3' && victory === 'strategic-victory') {
+    return 'The Tech Genius - The brilliant mind who outsmarted the arena';
   }
   
-  if (district === 'district-11' && alliance === 'district-alliance') {
-    return 'Thresh - The powerful tribute who honored alliances';
+  if (region === 'region-11' && alliance === 'region-alliance') {
+    return 'The Honorable Warrior - The powerful competitor who honored alliances';
   }
   
-  if (district === 'district-5' && trainingScore?.includes('score-5')) {
-    return 'Foxface - The clever tribute who survived through intelligence';
+  if (region === 'region-5' && trainingScore?.includes('score-5')) {
+    return 'The Clever Fox - The smart competitor who survived through intelligence';
   }
   
   // Rebellion roles
-  if (rebellion === 'presidential-assassin') {
-    return 'The Assassin - The one who personally ended Snow\'s reign';
+  if (rebellion === 'emperor-assassin') {
+    return 'The Assassin - The one who personally ended the Emperor\'s reign';
   }
   
   if (rebellion === 'underground-coordinator') {
-    return 'Plutarch Heavensbee - The mastermind of the revolution';
+    return 'The Mastermind - The genius behind the revolution';
   }
   
-  if (rebellion === 'district-liberator') {
-    return 'Commander Paylor - The military leader who freed the districts';
+  if (rebellion === 'region-liberator') {
+    return 'The Commander - The military leader who freed the regions';
   }
   
   if (rebellion === 'capitol-infiltrator') {
-    return 'Inside Rebel - The spy who brought down the system from within';
+    return 'The Inside Rebel - The spy who brought down the system from within';
   }
   
-  // General district matches
-  const districtMatches: Record<string, string> = {
-    'district-1': 'Luxury Tribute - Raised in wealth, learned about suffering',
-    'district-2': 'Stone Warrior - Trained for combat, forged in rebellion',
-    'district-3': 'Tech Survivor - Used intelligence over strength',
-    'district-4': 'Water Tribute - Flowed like the tide, adapted to survive',
-    'district-5': 'Power Player - Generated energy for the revolution',
-    'district-6': 'Transport Rebel - Carried the revolution forward',
-    'district-7': 'Forest Fighter - Strong as the trees, sharp as an axe',
-    'district-8': 'Fabric Weaver - Wove the threads of rebellion',
-    'district-9': 'Grain Guardian - Fed the hope of a hungry nation',
-    'district-10': 'Animal Ally - Understood the call of the wild and free',
-    'district-11': 'Agricultural Rebel - Planted seeds of revolution',
-    'district-12': 'Coal Fire - Burned bright against the darkness',
+  // General region matches
+  const regionMatches: Record<string, string> = {
+    'region-1': 'Luxury Competitor - Raised in wealth, learned about suffering',
+    'region-2': 'Stone Warrior - Trained for combat, forged in rebellion',
+    'region-3': 'Tech Survivor - Used intelligence over strength',
+    'region-4': 'Water Competitor - Flowed like the tide, adapted to survive',
+    'region-5': 'Power Player - Generated energy for the revolution',
+    'region-6': 'Transport Rebel - Carried the revolution forward',
+    'region-7': 'Forest Fighter - Strong as the trees, sharp as an axe',
+    'region-8': 'Fabric Weaver - Wove the threads of rebellion',
+    'region-9': 'Grain Guardian - Fed the hope of a hungry nation',
+    'region-10': 'Animal Ally - Understood the call of the wild and free',
+    'region-11': 'Agricultural Rebel - Planted seeds of revolution',
+    'region-12': 'Coal Fire - Burned bright against the darkness',
   };
   
-  return districtMatches[district] || 'Unique Tribute - Your story stands alone in Panem\'s history';
+  return regionMatches[region] || 'Unique Competitor - Your story stands alone in the Empire\'s history';
 }
 
-function isChosenOnePath(results: Record<string, string>): boolean {
+function isHeroPath(results: Record<string, string>): boolean {
   return (
-    results.house === 'gryffindor' &&
-    results.purpose === 'defeat-voldemort' &&
-    (results.spell === 'expecto-patronum' || results.spell === 'expelliarmus')
+    results.house === 'courage-house' &&
+    results.purpose === 'defeat-darkness' &&
+    (results.spell === 'guardian-spirit' || results.spell === 'disarm-spell')
   );
 }
 
-function isDarkLordPath(results: Record<string, string>): boolean {
+function isDarkPath(results: Record<string, string>): boolean {
   return (
     results.origin === 'pure-blood' &&
-    results.house === 'slytherin' &&
-    results.spell === 'avada-kedavra'
+    results.house === 'ambition-house' &&
+    results.spell === 'void-spell'
   );
 }
 
-function isGrandProtectorPath(results: Record<string, string>): boolean {
+function isProtectorPath(results: Record<string, string>): boolean {
   return (
-    results.purpose === 'teach-hogwarts' &&
+    results.purpose === 'teach-academy' &&
     results['school-performance'] === 'head-student'
   );
 }
 
-// Hunger Games path detection functions
-function isPerfectMockingjayPath(results: Record<string, string>): boolean {
+// Survival Tournament path detection functions
+function isPerfectSymbolPath(results: Record<string, string>): boolean {
   return (
-    results.district === 'district-12' &&
-    results['tribute-status'] === 'volunteer-save' &&
+    results.region === 'region-12' &&
+    results['competitor-status'] === 'volunteer-save' &&
     (results['training-score'] === 'score-11' || results['training-score'] === 'score-12') &&
     (results['final-showdown'] === 'joint-victory' || results['final-showdown'] === 'rule-change-victory') &&
-    results['rebellion-role'] === 'the-mockingjay'
+    results['rebellion-role'] === 'the-symbol'
   );
 }
 
@@ -388,36 +388,36 @@ function isStarCrossedPath(results: Record<string, string>): boolean {
   );
 }
 
-function isCareerKillerPath(results: Record<string, string>): boolean {
-  const isNonCareerDistrict = !['district-1', 'district-2', 'district-4'].includes(results.district);
-  const notCareerVolunteer = results['tribute-status'] !== 'career-volunteer';
+function isUnderdogPath(results: Record<string, string>): boolean {
+  const isUnderdogRegion = !['region-1', 'region-2', 'region-4'].includes(results.region);
+  const notEliteVolunteer = results['competitor-status'] !== 'elite-volunteer';
   const hasVictory = !!results['final-showdown'];
   
-  return isNonCareerDistrict && notCareerVolunteer && hasVictory;
+  return isUnderdogRegion && notEliteVolunteer && hasVictory;
 }
 
 function generateStoryPrompt(results: SequenceResult[], themeName: string, rarityScore: number, themeId?: string): string {
   const resultsList = results.map(r => `${r.stepId}: ${r.spinResult.segment.text}`).join('\n');
   
-  if (themeId === 'hunger-games') {
-    return `Generate an epic Hunger Games tribute story for this ${themeName} character with rarity score ${rarityScore}/100:
+  if (themeId === 'survival-tournament') {
+    return `Generate an epic survival tournament competitor story for this ${themeName} character with rarity score ${rarityScore}/100:
 
-TRIBUTE JOURNEY:
+COMPETITOR JOURNEY:
 ${resultsList}
 
 Please create:
-1. A compelling 3-4 paragraph narrative that follows their journey from District to Arena to (potential) rebellion
-2. Compare this character to a known Hunger Games character (explain the similarities)
-3. Explain the rarity (what makes this combination special in Panem's history)
-4. Make it feel authentic to the brutal world of the Hunger Games
+1. A compelling 3-4 paragraph narrative that follows their journey from Region to Arena to (potential) rebellion
+2. Compare this character to a tournament archetype (explain the similarities)
+3. Explain the rarity (what makes this combination special in the Empire's history)
+4. Make it feel authentic to the brutal world of survival competition
 
 If they died in the Arena, focus on their heroic sacrifice and how it inspired the rebellion.
-If they survived, show their transformation from tribute to rebel leader.
-Include specific details about their District skills, Arena survival tactics, and impact on Panem's future.
+If they survived, show their transformation from competitor to rebel leader.
+Include specific details about their Region skills, Arena survival tactics, and impact on the Empire's future.
 Make the reader feel the stakes, the brutality, but also the hope that drives the revolution.`;
   }
   
-  // Default Harry Potter prompt
+  // Default Mystical Academy prompt
   return `Generate a magical story for this ${themeName} character with rarity score ${rarityScore}/100:
 
 RESULTS:
@@ -425,9 +425,9 @@ ${resultsList}
 
 Please create:
 1. A compelling 3-4 paragraph narrative that weaves these results into an engaging story
-2. Compare this character to a known Harry Potter character (be specific about why)
+2. Compare this character to a magical archetype (be specific about why)
 3. Explain the rarity (what makes this combination special/unique)
-4. Make it feel authentic to the Harry Potter universe
+4. Make it feel authentic to the magical academy universe
 
-Focus on storytelling that brings these random results to life as a coherent, magical journey. Make the reader feel like this is THEIR unique wizard story.`;
+Focus on storytelling that brings these random results to life as a coherent, magical journey. Make the reader feel like this is THEIR unique mage story.`;
 }

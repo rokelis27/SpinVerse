@@ -29,17 +29,35 @@ SpinVerse solves the problem of creators spending hours manually building multip
 - **Result persistence** throughout sequence
 - **Completion detection** with celebration screen
 
-### ✅ **Harry Potter Theme** 🧙‍♂️
-Complete 5-step magical journey:
+### ✅ **Mystical Academy Theme** 🧙‍♂️
+Complete 7-step magical journey:
 1. **Your Origin** - Muggle-born, Half-blood, Pure-blood, or Squib Family
-2. **Your House** - Gryffindor, Slytherin, Hufflepuff, or Ravenclaw  
-3. **Your Wand** - Different wood and core combinations
-4. **Your Pet** - Wise Owl, Clever Cat, Lucky Toad, Loyal Rat, or Cunning Snake
-5. **Your Favorite Spell** - 8 iconic spells to master
+2. **Your House** - Courage, Ambition, Loyalty, or Wisdom House
+3. **Your Magic Specialization** - Light Magic or Advanced Magic paths
+4. **Your Wand** - Different mystical focus and core combinations
+5. **Your Academy Achievement** - How you distinguished yourself at school
+6. **Your Pet** - Wise Owl, Mystical Cat, Oracle Toad, or other magical companions
+7. **Your Signature Spell** - 8 mystical spells to master
+
+### ✅ **Survival Tournament Theme** 🏹
+Epic 13-step survival journey:
+1. **Your Region** - 12 different regions with unique skills and resources
+2. **Competitor Status** - How you entered the tournament
+3. **Training Score** - Official assessment from 1-12
+4. **Arena Environment** - The battleground that tests your skills
+5. **Alliance Strategy** - Who you trust determines survival
+6. **Opening Bloodbath** - The deadly first challenge (binary survival)
+7. **First Night** - Exposure and basic survival (binary)
+8. **Tracker Attack** - Empire creatures hunt you (binary)
+9. **Arena Disaster** - Official manipulation (binary)
+10. **Beast Attack** - Engineered monsters (binary) 
+11. **Alliance Betrayal** - Trust becomes weakness (binary)
+12. **Final Showdown** - Victory or death
+13. **Resistance Role** - Your part in overthrowing the Empire
 
 ### ✅ **Story Generation**
 - **Narrative templates** that convert results into readable stories
-- **Themed storytelling** - "You are a Pure-blood wizard sorted into Gryffindor..."
+- **Themed storytelling** - "You are a Pure-blood mage sorted into the House of Courage..."
 - **Visual result display** with emojis and themed colors
 - **Complete journey summary** at the end
 
@@ -142,7 +160,7 @@ src/
 
 ### 1. **Start a Sequence**
 - Open the app at `http://localhost:3000`
-- Click on "Harry Potter Character Creator"
+- Click on "Mystical Academy: Your Magical Destiny"
 - Begin your magical journey!
 
 ### 2. **Customize Settings**  
@@ -155,12 +173,12 @@ src/
 - Spin the wheel for each step
 - Watch results appear with celebration animations
 - Automatically advance to the next wheel
-- Complete all 5 steps to see your full story
+- Complete all steps to see your full story (7 for Mystical Academy, 13 for Survival Tournament)
 
 ### 4. **View Your Story**
 - See the complete narrative generated from your choices
 - Review all your results in the organized grid
-- Choose to restart with the same theme or try another
+- Choose to restart with the same theme or try the Survival Tournament
 
 ---
 
@@ -195,7 +213,7 @@ src/
 - SpinVerse watermark for viral growth
 
 ### **More Themes** 🦸‍♂️
-- **Marvel Hero Generator** - Powers, origin, team, nemesis
+- **Superhero Origin Generator** - Powers, origin, team, nemesis
 - **Startup Founder Path** - Business journey simulation  
 - **Community theme creation** tools
 

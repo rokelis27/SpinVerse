@@ -2,11 +2,11 @@ import { SequenceTheme } from '@/types/sequence';
 import { WheelConfig } from '@/types/wheel';
 import { BranchingConditions, createBranch } from '@/utils/branchingUtils';
 
-// Enhanced Harry Potter Theme with Multiple Storylines
-const harryPotterTheme: SequenceTheme = {
-  id: 'harry-potter',
-  name: 'Harry Potter: Your Magical Destiny',
-  description: 'Discover your complete wizarding journey from Hogwarts to your ultimate purpose',
+// Enhanced Mystical Academy Theme with Multiple Storylines
+const mysticalAcademyTheme: SequenceTheme = {
+  id: 'mystical-academy',
+  name: 'Mystical Academy: Your Magical Destiny',
+  description: 'Discover your complete magical journey from academy to your ultimate purpose',
   color: '#8B4513',
   startStepId: 'origin', // Define the starting step
   steps: [
@@ -16,41 +16,43 @@ const harryPotterTheme: SequenceTheme = {
       description: 'Where does your magical blood come from?',
       wheelConfig: {
         segments: [
-          { id: 'muggle-born', text: 'Muggle-born', color: '#E8C547', rarity: 'common', weight: 35 },
-          { id: 'half-blood', text: 'Half-blood', color: '#7FB069', rarity: 'common', weight: 40 },
-          { id: 'pure-blood', text: 'Pure-blood', color: '#4A90A4', rarity: 'uncommon', weight: 20 },
-          { id: 'squib', text: 'Squib Family', color: '#B85450', rarity: 'rare', weight: 5 },
+          { id: 'common-born', text: 'Common-Born', color: '#E8C547', rarity: 'common', weight: 28 },
+          { id: 'mixed-heritage', text: 'Mixed Heritage', color: '#7FB069', rarity: 'common', weight: 32 },
+          { id: 'ancient-lineage', text: 'Ancient Lineage', color: '#4A90A4', rarity: 'uncommon', weight: 18 },
+          { id: 'wildcard-origin', text: 'Wildcard Origin', color: '#B85450', rarity: 'uncommon', weight: 12 },
+          { id: 'lost-bloodline', text: 'Lost Bloodline', color: '#8A4FFF', rarity: 'rare', weight: 6 },
+          { id: 'first-generation', text: 'First Generation', color: '#FF6B9D', rarity: 'uncommon', weight: 4 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'house', // Linear progression to house selection
     },
     {
       id: 'house',
       title: 'Your House',
-      description: 'The Sorting Hat will decide your destiny...',
+      description: 'The Academy Council will decide your destiny...',
       wheelConfig: {
         segments: [
-          { id: 'gryffindor', text: 'Gryffindor', color: '#D3A625', rarity: 'common', weight: 25 },
-          { id: 'slytherin', text: 'Slytherin', color: '#2A623D', rarity: 'common', weight: 25 },
-          { id: 'hufflepuff', text: 'Hufflepuff', color: '#F0C75E', rarity: 'common', weight: 25 },
-          { id: 'ravenclaw', text: 'Ravenclaw', color: '#226B74', rarity: 'common', weight: 25 },
+          { id: 'courage-house', text: 'House of Courage', color: '#D3A625', rarity: 'common', weight: 25 },
+          { id: 'ambition-house', text: 'House of Ambition', color: '#2A623D', rarity: 'common', weight: 25 },
+          { id: 'loyalty-house', text: 'House of Loyalty', color: '#F0C75E', rarity: 'common', weight: 25 },
+          { id: 'wisdom-house', text: 'House of Wisdom', color: '#226B74', rarity: 'common', weight: 25 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       // Branching logic: Different magical specializations based on house
       branches: [
         createBranch('light-magic', [
-          BranchingConditions.oneOf('house', ['gryffindor', 'hufflepuff'])
+          BranchingConditions.oneOf('house', ['courage-house', 'loyalty-house'])
         ]),
         createBranch('dark-magic', [
-          BranchingConditions.oneOf('house', ['slytherin', 'ravenclaw'])
+          BranchingConditions.oneOf('house', ['ambition-house', 'wisdom-house'])
         ])
       ],
       defaultNextStep: 'wand', // Fallback to original path
@@ -71,7 +73,7 @@ const harryPotterTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'wand', // Merge back to main path
     },
@@ -91,7 +93,7 @@ const harryPotterTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'wand', // Merge back to main path
     },
@@ -99,53 +101,53 @@ const harryPotterTheme: SequenceTheme = {
     {
       id: 'wand',
       title: 'Your Wand',
-      description: 'The wand chooses the wizard, remember...',
+      description: 'The mystical focus chooses the mage, remember...',
       wheelConfig: {
         segments: [
           // Legendary combinations (rarest, most powerful)
-          { id: 'holly-phoenix', text: 'Holly & Phoenix Feather', color: '#8B0000', rarity: 'legendary', weight: 5 },
-          { id: 'elder-phoenix', text: 'Elder & Phoenix Feather', color: '#2F2F2F', rarity: 'legendary', weight: 3 },
-          { id: 'yew-phoenix', text: 'Yew & Phoenix Feather', color: '#556B2F', rarity: 'legendary', weight: 4 },
+          { id: 'crystal-phoenix', text: 'Crystal Staff & Phoenix Essence', color: '#8B0000', rarity: 'legendary', weight: 5 },
+          { id: 'moonstone-phoenix', text: 'Moonstone Wand & Phoenix Essence', color: '#2F2F2F', rarity: 'legendary', weight: 3 },
+          { id: 'obsidian-phoenix', text: 'Obsidian Rod & Phoenix Essence', color: '#556B2F', rarity: 'legendary', weight: 4 },
           
           // Rare combinations (special properties)
-          { id: 'cherry-dragon', text: 'Cherry & Dragon Heartstring', color: '#DC143C', rarity: 'rare', weight: 8 },
-          { id: 'cedar-dragon', text: 'Cedar & Dragon Heartstring', color: '#8B4513', rarity: 'rare', weight: 9 },
-          { id: 'cypress-dragon', text: 'Cypress & Dragon Heartstring', color: '#2F4F2F', rarity: 'rare', weight: 7 },
-          { id: 'ebony-dragon', text: 'Ebony & Dragon Heartstring', color: '#000000', rarity: 'rare', weight: 6 },
+          { id: 'ruby-dragon', text: 'Ruby Focus & Dragon Core', color: '#DC143C', rarity: 'rare', weight: 8 },
+          { id: 'amber-dragon', text: 'Amber Wand & Dragon Core', color: '#8B4513', rarity: 'rare', weight: 9 },
+          { id: 'emerald-dragon', text: 'Emerald Staff & Dragon Core', color: '#2F4F2F', rarity: 'rare', weight: 7 },
+          { id: 'onyx-dragon', text: 'Onyx Rod & Dragon Core', color: '#000000', rarity: 'rare', weight: 6 },
           
           // Uncommon combinations (solid performance)
-          { id: 'maple-phoenix', text: 'Maple & Phoenix Feather', color: '#D2691E', rarity: 'uncommon', weight: 12 },
-          { id: 'chestnut-dragon', text: 'Chestnut & Dragon Heartstring', color: '#CD853F', rarity: 'uncommon', weight: 13 },
-          { id: 'walnut-unicorn', text: 'Walnut & Unicorn Hair', color: '#8B7355', rarity: 'uncommon', weight: 11 },
-          { id: 'rowan-dragon', text: 'Rowan & Dragon Heartstring', color: '#A0522D', rarity: 'uncommon', weight: 10 },
+          { id: 'topaz-phoenix', text: 'Topaz Wand & Phoenix Essence', color: '#D2691E', rarity: 'uncommon', weight: 12 },
+          { id: 'garnet-dragon', text: 'Garnet Staff & Dragon Core', color: '#CD853F', rarity: 'uncommon', weight: 13 },
+          { id: 'jade-spirit', text: 'Jade Focus & Spirit Energy', color: '#8B7355', rarity: 'uncommon', weight: 11 },
+          { id: 'sapphire-dragon', text: 'Sapphire Rod & Dragon Core', color: '#A0522D', rarity: 'uncommon', weight: 10 },
           
           // Common combinations (reliable, widespread)
-          { id: 'oak-unicorn', text: 'Oak & Unicorn Hair', color: '#D2B48C', rarity: 'common', weight: 18 },
-          { id: 'ash-unicorn', text: 'Ash & Unicorn Hair', color: '#DEB887', rarity: 'common', weight: 19 },
-          { id: 'birch-unicorn', text: 'Birch & Unicorn Hair', color: '#F5DEB3', rarity: 'common', weight: 17 },
-          { id: 'willow-unicorn', text: 'Willow & Unicorn Hair', color: '#9ACD32', rarity: 'common', weight: 16 },
+          { id: 'quartz-spirit', text: 'Quartz Wand & Spirit Energy', color: '#D2B48C', rarity: 'common', weight: 18 },
+          { id: 'silver-spirit', text: 'Silver Staff & Spirit Energy', color: '#DEB887', rarity: 'common', weight: 19 },
+          { id: 'copper-spirit', text: 'Copper Focus & Spirit Energy', color: '#F5DEB3', rarity: 'common', weight: 17 },
+          { id: 'bronze-spirit', text: 'Bronze Rod & Spirit Energy', color: '#9ACD32', rarity: 'common', weight: 16 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'school-performance',
     },
     
-    // NEW: School Performance - How did you do at Hogwarts?
+    // NEW: School Performance - How did you do at the Academy?
     {
       id: 'school-performance',
-      title: 'Your School Achievement',
-      description: 'How did you distinguish yourself at Hogwarts?',
+      title: 'Your Academy Achievement',
+      description: 'How did you distinguish yourself at the Academy?',
       wheelConfig: {
         segments: [
-          { id: 'quidditch-captain', text: 'Quidditch Captain', color: '#DAA520', rarity: 'rare', weight: 12 },
+          { id: 'flight-captain', text: 'Skyball Captain', color: '#DAA520', rarity: 'rare', weight: 12 },
           { id: 'prefect', text: 'House Prefect', color: '#4169E1', rarity: 'uncommon', weight: 18 },
-          { id: 'head-student', text: 'Head Boy/Girl', color: '#FFD700', rarity: 'legendary', weight: 6 },
+          { id: 'head-student', text: 'Academy Leader', color: '#FFD700', rarity: 'legendary', weight: 6 },
           { id: 'top-grades', text: 'Outstanding Student', color: '#9932CC', rarity: 'uncommon', weight: 16 },
-          { id: 'quidditch-star', text: 'Quidditch Star Player', color: '#FF6347', rarity: 'uncommon', weight: 15 },
-          { id: 'dueling-champion', text: 'Dueling Club Champion', color: '#8B0000', rarity: 'rare', weight: 10 },
+          { id: 'flight-star', text: 'Skyball Star Player', color: '#FF6347', rarity: 'uncommon', weight: 15 },
+          { id: 'dueling-champion', text: 'Spell-Duel Champion', color: '#8B0000', rarity: 'rare', weight: 10 },
           { id: 'popular-student', text: 'Most Popular Student', color: '#FF69B4', rarity: 'common', weight: 20 },
           { id: 'rule-breaker', text: 'Notorious Rule-Breaker', color: '#2F4F2F', rarity: 'uncommon', weight: 13 },
           { id: 'quiet-genius', text: 'Quiet Genius', color: '#4682B4', rarity: 'common', weight: 17 },
@@ -154,7 +156,7 @@ const harryPotterTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'pet',
     },
@@ -164,30 +166,30 @@ const harryPotterTheme: SequenceTheme = {
       description: 'Choose your faithful partner for the magical journey',
       wheelConfig: {
         segments: [
-          // Official Hogwarts pets (most common)
-          { id: 'snowy-owl', text: 'Snowy Owl (like Hedwig)', color: '#F8F8FF', rarity: 'common', weight: 18 },
-          { id: 'brown-owl', text: 'Brown Owl', color: '#8B7355', rarity: 'common', weight: 16 },
-          { id: 'tabby-cat', text: 'Tabby Cat', color: '#CD853F', rarity: 'common', weight: 17 },
-          { id: 'black-cat', text: 'Black Cat', color: '#2F2F2F', rarity: 'common', weight: 15 },
-          { id: 'common-toad', text: 'Common Toad', color: '#6B8E23', rarity: 'uncommon', weight: 12 },
+          // Common Academy familiars
+          { id: 'snowy-owl', text: 'Wise Snowy Owl', color: '#F8F8FF', rarity: 'common', weight: 18 },
+          { id: 'brown-owl', text: 'Clever Brown Owl', color: '#8B7355', rarity: 'common', weight: 16 },
+          { id: 'tabby-cat', text: 'Mystical Tabby Cat', color: '#CD853F', rarity: 'common', weight: 17 },
+          { id: 'black-cat', text: 'Shadow Cat', color: '#2F2F2F', rarity: 'common', weight: 15 },
+          { id: 'common-toad', text: 'Oracle Toad', color: '#6B8E23', rarity: 'uncommon', weight: 12 },
           
-          // Unofficial but seen at Hogwarts
-          { id: 'rat', text: 'Pet Rat (like Scabbers)', color: '#A0522D', rarity: 'uncommon', weight: 10 },
-          { id: 'ferret', text: 'Ferret', color: '#DEB887', rarity: 'uncommon', weight: 8 },
+          // Uncommon familiars
+          { id: 'rat', text: 'Clever Rat Companion', color: '#A0522D', rarity: 'uncommon', weight: 10 },
+          { id: 'ferret', text: 'Swift Ferret', color: '#DEB887', rarity: 'uncommon', weight: 8 },
           
           // Rare/Special companions
-          { id: 'snake', text: 'Non-Venomous Snake', color: '#228B22', rarity: 'rare', weight: 6 },
-          { id: 'pygmy-puff', text: 'Pygmy Puff', color: '#FF69B4', rarity: 'rare', weight: 5 },
-          { id: 'bowtruckle', text: 'Bowtruckle', color: '#8FBC8F', rarity: 'rare', weight: 4 },
+          { id: 'snake', text: 'Mystic Serpent', color: '#228B22', rarity: 'rare', weight: 6 },
+          { id: 'fluff-ball', text: 'Magical Fluff Creature', color: '#FF69B4', rarity: 'rare', weight: 5 },
+          { id: 'tree-sprite', text: 'Forest Sprite', color: '#8FBC8F', rarity: 'rare', weight: 4 },
           
           // Ultra-rare magical companions  
           { id: 'phoenix', text: 'Phoenix Chick', color: '#FF4500', rarity: 'legendary', weight: 2 },
-          { id: 'thestral', text: 'Baby Thestral', color: '#2F2F2F', rarity: 'legendary', weight: 1 },
+          { id: 'shadow-horse', text: 'Shadow Pegasus Foal', color: '#2F2F2F', rarity: 'legendary', weight: 1 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'purpose',
     },
@@ -196,29 +198,29 @@ const harryPotterTheme: SequenceTheme = {
     {
       id: 'purpose',
       title: 'Your Magical Purpose',
-      description: 'What drives you in the wizarding world?',
+      description: 'What drives you in the magical world?',
       wheelConfig: {
         segments: [
-          { id: 'defeat-voldemort', text: 'Defeat Voldemort', color: '#8B0000', rarity: 'legendary', weight: 8 },
+          { id: 'defeat-darkness', text: 'Defeat Dark Forces', color: '#8B0000', rarity: 'legendary', weight: 8 },
           { id: 'protect-muggles', text: 'Protect Muggles', color: '#4682B4', rarity: 'common', weight: 20 },
           { id: 'discover-magic', text: 'Discover New Magic', color: '#9932CC', rarity: 'uncommon', weight: 18 },
           { id: 'save-creatures', text: 'Save Magical Creatures', color: '#228B22', rarity: 'uncommon', weight: 18 },
-          { id: 'become-auror', text: 'Become an Auror', color: '#B8860B', rarity: 'uncommon', weight: 16 },
-          { id: 'teach-hogwarts', text: 'Teach at Hogwarts', color: '#8B4513', rarity: 'uncommon', weight: 12 },
+          { id: 'become-guardian', text: 'Become a Guardian', color: '#B8860B', rarity: 'uncommon', weight: 16 },
+          { id: 'teach-academy', text: 'Teach at the Academy', color: '#8B4513', rarity: 'uncommon', weight: 12 },
           { id: 'master-potions', text: 'Master All Potions', color: '#2F4F2F', rarity: 'rare', weight: 8 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       // Branching based on purpose - different career paths
       branches: [
         createBranch('hero-career', [
-          BranchingConditions.oneOf('purpose', ['defeat-voldemort', 'protect-muggles', 'become-auror'])
+          BranchingConditions.oneOf('purpose', ['defeat-darkness', 'protect-muggles', 'become-guardian'])
         ]),
         createBranch('scholar-career', [
-          BranchingConditions.oneOf('purpose', ['discover-magic', 'teach-hogwarts', 'master-potions'])
+          BranchingConditions.oneOf('purpose', ['discover-magic', 'teach-academy', 'master-potions'])
         ]),
         createBranch('nature-career', [
           BranchingConditions.oneOf('purpose', ['save-creatures'])
@@ -231,19 +233,19 @@ const harryPotterTheme: SequenceTheme = {
     {
       id: 'hero-career',
       title: 'Your Heroic Career',
-      description: 'Choose your path as a protector of the wizarding world',
+      description: 'Choose your path as a protector of the magical world',
       wheelConfig: {
         segments: [
-          { id: 'auror', text: 'Auror', color: '#B8860B', rarity: 'common', weight: 30 },
-          { id: 'hit-wizard', text: 'Hit Wizard', color: '#8B0000', rarity: 'uncommon', weight: 20 },
-          { id: 'ministry-security', text: 'Ministry Security', color: '#4682B4', rarity: 'common', weight: 25 },
+          { id: 'guardian', text: 'Magic Guardian', color: '#B8860B', rarity: 'common', weight: 30 },
+          { id: 'battle-mage', text: 'Elite Battle Mage', color: '#8B0000', rarity: 'uncommon', weight: 20 },
+          { id: 'academy-security', text: 'Academy Security', color: '#4682B4', rarity: 'common', weight: 25 },
           { id: 'dragon-keeper', text: 'Dragon Keeper', color: '#DC143C', rarity: 'rare', weight: 15 },
           { id: 'curse-breaker', text: 'Curse Breaker', color: '#FFD700', rarity: 'rare', weight: 10 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'spell',
     },
@@ -265,7 +267,7 @@ const harryPotterTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'spell',
     },
@@ -287,7 +289,7 @@ const harryPotterTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       defaultNextStep: 'spell',
     },
@@ -298,108 +300,108 @@ const harryPotterTheme: SequenceTheme = {
       description: 'What magic defines your legacy?',
       wheelConfig: {
         segments: [
-          { id: 'expelliarmus', text: 'Expelliarmus', color: '#FF6347', rarity: 'uncommon', weight: 18 },
-          { id: 'lumos', text: 'Lumos', color: '#FFD700', rarity: 'common', weight: 20 },
-          { id: 'alohomora', text: 'Alohomora', color: '#4169E1', rarity: 'common', weight: 18 },
-          { id: 'expecto-patronum', text: 'Expecto Patronum', color: '#E6E6FA', rarity: 'legendary', weight: 5 },
-          { id: 'stupefy', text: 'Stupefy', color: '#DC143C', rarity: 'uncommon', weight: 15 },
-          { id: 'accio', text: 'Accio', color: '#32CD32', rarity: 'common', weight: 16 },
-          { id: 'protego', text: 'Protego', color: '#4682B4', rarity: 'uncommon', weight: 12 },
-          { id: 'avada-kedavra', text: 'Avada Kedavra', color: '#228B22', rarity: 'legendary', weight: 2 },
+          { id: 'disarm-spell', text: 'Mystic Disarm', color: '#FF6347', rarity: 'uncommon', weight: 18 },
+          { id: 'light-spell', text: 'Eternal Light', color: '#FFD700', rarity: 'common', weight: 20 },
+          { id: 'unlock-spell', text: 'Universal Key', color: '#4169E1', rarity: 'common', weight: 18 },
+          { id: 'guardian-spirit', text: 'Guardian Spirit', color: '#E6E6FA', rarity: 'legendary', weight: 5 },
+          { id: 'stun-spell', text: 'Lightning Stun', color: '#DC143C', rarity: 'uncommon', weight: 15 },
+          { id: 'summon-spell', text: 'Mystic Summon', color: '#32CD32', rarity: 'common', weight: 16 },
+          { id: 'shield-spell', text: 'Arcane Shield', color: '#4682B4', rarity: 'uncommon', weight: 12 },
+          { id: 'void-spell', text: 'Void Strike', color: '#228B22', rarity: 'legendary', weight: 2 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'harry-potter',
+        theme: 'mystical-academy',
       },
       // No defaultNextStep - this is the end of the sequence
     },
   ],
-  narrativeTemplate: "You are a {origin} wizard sorted into {house}, wielding a {wand} wand with your loyal {pet} by your side. At Hogwarts, you were known as a {school-performance}. Your purpose is to {purpose}, working as a {career}, with {spell} as your signature spell.",
+  narrativeTemplate: "You are a {origin} mage sorted into {house}, wielding a {wand} focus with your loyal {pet} by your side. At the Academy, you were known as a {school-performance}. Your purpose is to {purpose}, working as a {career}, with {spell} as your signature spell.",
   narrativeTemplates: {
-    // Easter Egg: The Chosen One Path (Harry Potter-like combination)
-    'chosen-one': "🔥 THE CHOSEN ONE 🔥\n\nYou are a {origin} wizard from {house} house, wielding the legendary {wand} wand - the brother to He-Who-Must-Not-Be-Named's own wand. At Hogwarts, you distinguished yourself as a {school-performance}, showing early signs of greatness. Your {pet} has been your faithful companion through countless dangers. Driven to {purpose}, you've become the most powerful {hero-career} of your generation. Your mastery of {spell} has saved the wizarding world itself. History will remember you as the one who changed everything.",
+    // Easter Egg: The Chosen One Path
+    'chosen-one': "🔥 THE CHOSEN ONE 🔥\n\nYou are a {origin} mage from {house}, wielding the legendary {wand} focus - one of the most powerful ever created. At the Academy, you distinguished yourself as a {school-performance}, showing early signs of greatness. Your {pet} has been your faithful companion through countless dangers. Driven to {purpose}, you've become the most powerful {hero-career} of your generation. Your mastery of {spell} has saved the magical world itself. History will remember you as the one who changed everything.",
     
-    // Easter Egg: The Dark Lord Path (Voldemort-like combination) 
-    'dark-lord': "💀 THE DARK LORD RISES 💀\n\nBorn a {origin} wizard, you were sorted into {house} where your ambition knew no bounds. Your {wand} wand trembles with dark power, while your {pet} serves as your most loyal servant. Your purpose to {purpose} has twisted into something far more sinister. As a master of the {dark-magic}, you've become the most feared {scholar-career} in wizarding history. Your signature spell {spell} strikes terror into the hearts of your enemies. The wizarding world whispers your name in fear.",
+    // Easter Egg: The Dark Lord Path
+    'dark-lord': "💀 THE DARK LORD RISES 💀\n\nBorn a {origin} mage, you were sorted into {house} where your ambition knew no bounds. Your {wand} focus trembles with dark power, while your {pet} serves as your most loyal servant. Your purpose to {purpose} has twisted into something far more sinister. As a master of the {dark-magic}, you've become the most feared {scholar-career} in magical history. Your signature spell {spell} strikes terror into the hearts of your enemies. The magical world whispers your name in fear.",
     
-    // Easter Egg: The Protector Path (Dumbledore-like combination)
-    'grand-protector': "✨ THE GRAND PROTECTOR ✨\n\nA wise {origin} wizard from {house} house, you wield your {wand} wand not for glory, but for the protection of all. Your {pet} has been witness to decades of your wisdom. Your calling to {purpose} has made you the greatest {scholar-career} of your time. Through your mastery of {light-magic} and your signature {spell}, you've become the guardian that the wizarding world turns to in its darkest hours. Love and wisdom guide your every action.",
+    // Easter Egg: The Grand Protector Path
+    'grand-protector': "✨ THE GRAND PROTECTOR ✨\n\nA wise {origin} mage from {house}, you wield your {wand} focus not for glory, but for the protection of all. Your {pet} has been witness to decades of your wisdom. Your calling to {purpose} has made you the greatest {scholar-career} of your time. Through your mastery of {light-magic} and your signature {spell}, you've become the guardian that the magical world turns to in its darkest hours. Love and wisdom guide your every action.",
     
     // Standard Path Templates
-    'hero-path': "⚔️ You are a brave {origin} wizard from {house} house. With your {wand} wand and {pet} companion, you've answered the call to {purpose} by becoming an elite {hero-career}. Your mastery of {spell} makes you a legendary protector of the wizarding world, feared by dark wizards and celebrated by the innocent.",
+    'hero-path': "⚔️ You are a brave {origin} mage from {house}. With your {wand} focus and {pet} companion, you've answered the call to {purpose} by becoming an elite {hero-career}. Your mastery of {spell} makes you a legendary protector of the magical world, feared by dark mages and celebrated by the innocent.",
     
-    'scholar-path': "📚 You are a brilliant {origin} wizard from {house} house, driven by an insatiable desire to {purpose}. As a renowned {scholar-career}, you wield your {wand} wand in the pursuit of forbidden knowledge, with your {pet} as your devoted research companion. Your groundbreaking work with {spell} has revolutionized magical understanding for generations.",
+    'scholar-path': "📚 You are a brilliant {origin} mage from {house}, driven by an insatiable desire to {purpose}. As a renowned {scholar-career}, you wield your {wand} focus in the pursuit of forbidden knowledge, with your {pet} as your devoted research companion. Your groundbreaking work with {spell} has revolutionized magical understanding for generations.",
     
-    'nature-path': "🌿 You are a gentle {origin} wizard from {house} house who has dedicated their life to {purpose}. Working as a legendary {nature-career}, you use your {wand} wand to heal and protect the magical creatures of the world. Your {pet} was the first to recognize your gift, and your signature {spell} allows you to speak the ancient language of the wild.",
+    'nature-path': "🌿 You are a gentle {origin} mage from {house} who has dedicated their life to {purpose}. Working as a legendary {nature-career}, you use your {wand} focus to heal and protect the magical creatures of the world. Your {pet} was the first to recognize your gift, and your signature {spell} allows you to speak the ancient language of the wild.",
     
-    'light-path': "🌟 You are a {origin} wizard from {house}, blessed with the rare gift of {light-magic}. With your {wand} wand and {pet} companion, you've devoted your life to {purpose}. Your mastery of {spell} brings hope and healing wherever darkness threatens to consume the wizarding world.",
+    'light-path': "🌟 You are a {origin} mage from {house}, blessed with the rare gift of {light-magic}. With your {wand} focus and {pet} companion, you've devoted your life to {purpose}. Your mastery of {spell} brings hope and healing wherever darkness threatens to consume the magical world.",
     
-    'dark-path': "🐍 You are a {origin} wizard from {house}, who has delved deep into the forbidden art of {dark-magic}. Your {wand} wand pulses with dangerous power, while your {pet} serves as both companion and co-conspirator. Driven to {purpose}, your mastery of {spell} makes even the bravest wizards step aside when you pass.",
+    'dark-path': "🐍 You are a {origin} mage from {house}, who has delved deep into the forbidden art of {dark-magic}. Your {wand} focus pulses with dangerous power, while your {pet} serves as both companion and co-conspirator. Driven to {purpose}, your mastery of {spell} makes even the bravest mages step aside when you pass.",
     
-    'default': "You are a {origin} wizard sorted into {house}, wielding a {wand} wand with your loyal {pet} by your side. Your purpose is to {purpose}, and {spell} is your signature spell."
+    'default': "You are a {origin} mage sorted into {house}, wielding a {wand} focus with your loyal {pet} by your side. Your purpose is to {purpose}, and {spell} is your signature spell."
   },
 };
 
-// Hunger Games Theme - The Arena Journey
-const hungerGamesTheme: SequenceTheme = {
-  id: 'hunger-games',
-  name: 'Hunger Games: Tribute Journey',
-  description: 'From District citizen to Arena survivor to potential rebel hero - survive the Games and overthrow the Capitol',
+// Survival Tournament Theme - The Arena Journey
+const survivalTournamentTheme: SequenceTheme = {
+  id: 'survival-tournament',
+  name: 'Survival Tournament: Arena Champion',
+  description: 'From Region citizen to Arena survivor to resistance hero - survive the Tournament and overthrow the Empire',
   color: '#8B0000', // Dark red for danger
-  startStepId: 'district',
+  startStepId: 'region',
   steps: [
-    // Wheel 1: District Origin
+    // Wheel 1: Region Origin
     {
-      id: 'district',
-      title: 'Your District Origin',
+      id: 'region',
+      title: 'Your Region Origin',
       description: 'Where you\'re from determines your skills, resources, and survival chances',
       wheelConfig: {
         segments: [
-          { id: 'district-1', text: 'District 1 - Luxury', color: '#FFD700', rarity: 'uncommon', weight: 15 },
-          { id: 'district-2', text: 'District 2 - Masonry', color: '#808080', rarity: 'uncommon', weight: 12 },
-          { id: 'district-3', text: 'District 3 - Technology', color: '#4169E1', rarity: 'common', weight: 8 },
-          { id: 'district-4', text: 'District 4 - Fishing', color: '#0080FF', rarity: 'uncommon', weight: 10 },
-          { id: 'district-5', text: 'District 5 - Power', color: '#FFFF00', rarity: 'common', weight: 7 },
-          { id: 'district-6', text: 'District 6 - Transportation', color: '#A0522D', rarity: 'common', weight: 7 },
-          { id: 'district-7', text: 'District 7 - Lumber', color: '#228B22', rarity: 'common', weight: 9 },
-          { id: 'district-8', text: 'District 8 - Textiles', color: '#800080', rarity: 'common', weight: 8 },
-          { id: 'district-9', text: 'District 9 - Grain', color: '#DAA520', rarity: 'common', weight: 7 },
-          { id: 'district-10', text: 'District 10 - Livestock', color: '#8B4513', rarity: 'common', weight: 8 },
-          { id: 'district-11', text: 'District 11 - Agriculture', color: '#6B8E23', rarity: 'common', weight: 8 },
-          { id: 'district-12', text: 'District 12 - Coal', color: '#2F2F2F', rarity: 'legendary', weight: 1 },
+          { id: 'region-1', text: 'Luxury Region', color: '#FFD700', rarity: 'uncommon', weight: 15 },
+          { id: 'region-2', text: 'Industrial Region', color: '#808080', rarity: 'uncommon', weight: 12 },
+          { id: 'region-3', text: 'Tech Region', color: '#4169E1', rarity: 'common', weight: 8 },
+          { id: 'region-4', text: 'Coastal Region', color: '#0080FF', rarity: 'uncommon', weight: 10 },
+          { id: 'region-5', text: 'Energy Region', color: '#FFFF00', rarity: 'common', weight: 7 },
+          { id: 'region-6', text: 'Transport Region', color: '#A0522D', rarity: 'common', weight: 7 },
+          { id: 'region-7', text: 'Forest Region', color: '#228B22', rarity: 'common', weight: 9 },
+          { id: 'region-8', text: 'Manufacturing Region', color: '#800080', rarity: 'common', weight: 8 },
+          { id: 'region-9', text: 'Agricultural Region', color: '#DAA520', rarity: 'common', weight: 7 },
+          { id: 'region-10', text: 'Ranch Region', color: '#8B4513', rarity: 'common', weight: 8 },
+          { id: 'region-11', text: 'Farming Region', color: '#6B8E23', rarity: 'common', weight: 8 },
+          { id: 'region-12', text: 'Mining Region', color: '#2F2F2F', rarity: 'legendary', weight: 1 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
-      defaultNextStep: 'tribute-status',
+      defaultNextStep: 'competitor-status',
     },
 
     // Wheel 2: Tribute Status  
     {
-      id: 'tribute-status',
-      title: 'Your Tribute Status',
-      description: 'How you entered the Games determines your preparation and mindset',
+      id: 'competitor-status',
+      title: 'Your Competitor Status',
+      description: 'How you entered the Tournament determines your preparation and mindset',
       wheelConfig: {
         segments: [
-          { id: 'career-volunteer', text: 'Career Volunteer', color: '#B8860B', rarity: 'uncommon', weight: 35 },
+          { id: 'elite-volunteer', text: 'Elite Volunteer', color: '#B8860B', rarity: 'uncommon', weight: 35 },
           { id: 'volunteer-save', text: 'Volunteer to Save Someone', color: '#DC143C', rarity: 'rare', weight: 10 },
           { id: 'reluctant-volunteer', text: 'Reluctant Volunteer', color: '#8B4513', rarity: 'uncommon', weight: 8 },
-          { id: 'reaped-first', text: 'Reaped - First Time', color: '#4682B4', rarity: 'common', weight: 40 },
-          { id: 'reaped-multiple', text: 'Reaped - Multiple Entries', color: '#8B0000', rarity: 'common', weight: 7 },
+          { id: 'selected-first', text: 'Selected - First Time', color: '#4682B4', rarity: 'common', weight: 40 },
+          { id: 'selected-multiple', text: 'Selected - Multiple Entries', color: '#8B0000', rarity: 'common', weight: 7 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
-      // Conditional logic for Career volunteers
+      // Conditional logic for Elite volunteers
       branches: [
-        createBranch('career-training', [
-          BranchingConditions.oneOf('district', ['district-1', 'district-2', 'district-4']),
-          BranchingConditions.equals('tribute-status', 'career-volunteer')
+        createBranch('elite-training', [
+          BranchingConditions.oneOf('region', ['region-1', 'region-2', 'region-4']),
+          BranchingConditions.equals('competitor-status', 'elite-volunteer')
         ])
       ],
       defaultNextStep: 'training-score',
@@ -408,8 +410,8 @@ const hungerGamesTheme: SequenceTheme = {
     // Wheel 3: Training Score
     {
       id: 'training-score', 
-      title: 'Your Pre-Games Training Score',
-      description: 'Gamemaker assessment determines sponsor attention and target level',
+      title: 'Your Pre-Tournament Training Score',
+      description: 'Official assessment determines sponsor attention and target level',
       wheelConfig: {
         segments: [
           { id: 'score-12', text: 'Score 12', color: '#FF0000', rarity: 'legendary', weight: 1 },
@@ -428,7 +430,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       defaultNextStep: 'arena-environment',
     },
@@ -452,7 +454,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       defaultNextStep: 'alliance-strategy',
     },
@@ -461,13 +463,13 @@ const hungerGamesTheme: SequenceTheme = {
     {
       id: 'alliance-strategy',
       title: 'Your Alliance Strategy',
-      description: 'Who you trust determines your mid-game survival',
+      description: 'Who you trust determines your mid-tournament survival',
       wheelConfig: {
         segments: [
-          { id: 'career-pack', text: 'Join Career Pack', color: '#B8860B', rarity: 'common', weight: 25 },
-          { id: 'district-alliance', text: 'Form District Alliance', color: '#4682B4', rarity: 'uncommon', weight: 15 },
+          { id: 'elite-pack', text: 'Join Elite Pack', color: '#B8860B', rarity: 'common', weight: 25 },
+          { id: 'region-alliance', text: 'Form Region Alliance', color: '#4682B4', rarity: 'uncommon', weight: 15 },
           { id: 'unexpected-alliance', text: 'Unexpected Alliance', color: '#9370DB', rarity: 'common', weight: 20 },
-          { id: 'protect-younger', text: 'Protect Younger Tribute', color: '#FFB6C1', rarity: 'uncommon', weight: 10 },
+          { id: 'protect-younger', text: 'Protect Younger Competitor', color: '#FFB6C1', rarity: 'uncommon', weight: 10 },
           { id: 'solo-survivor', text: 'Solo Survivor', color: '#2F4F2F', rarity: 'common', weight: 20 },
           { id: 'secret-romance', text: 'Secret Romance', color: '#FF69B4', rarity: 'rare', weight: 8 },
           { id: 'betrayal-plot', text: 'Betrayal Plot', color: '#8B0000', rarity: 'legendary', weight: 2 },
@@ -475,16 +477,16 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
-      defaultNextStep: 'cornucopia-bloodbath',
+      defaultNextStep: 'opening-bloodbath',
     },
 
     // Wheel 6: Cornucopia Bloodbath (BINARY)
     {
-      id: 'cornucopia-bloodbath',
-      title: 'Cornucopia Bloodbath',
-      description: 'The 60-second massacre that claims half the tributes',
+      id: 'opening-bloodbath',
+      title: 'Opening Bloodbath',
+      description: 'The 60-second massacre that claims half the competitors',
       wheelConfig: {
         segments: [
           { id: 'survive-bloodbath', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 75 },
@@ -493,12 +495,12 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         // Death branch - end sequence
         createBranch('bloodbath-death', [
-          BranchingConditions.equals('cornucopia-bloodbath', 'die-bloodbath')
+          BranchingConditions.equals('opening-bloodbath', 'die-bloodbath')
         ]),
         // Survival continues to next challenge
       ],
@@ -519,7 +521,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       // No next step - this ends the sequence
     },
@@ -537,7 +539,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         createBranch('exposure-death', [
@@ -561,7 +563,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
     },
 
@@ -578,7 +580,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         createBranch('tracker-death', [
@@ -596,7 +598,7 @@ const hungerGamesTheme: SequenceTheme = {
     {
       id: 'tracker-death',
       title: 'Death by Tracker Jackers',
-      description: 'The Capitol\'s twisted creatures claim another victim',
+      description: 'The Empire\'s twisted creatures claim another victim',
       wheelConfig: {
         segments: [
           { id: 'hallucination-death', text: 'Lost in Hallucinations', color: '#FF69B4', rarity: 'common', weight: 50 },
@@ -606,7 +608,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
     },
 
@@ -614,7 +616,7 @@ const hungerGamesTheme: SequenceTheme = {
     {
       id: 'arena-disaster-survival',
       title: 'Arena Disaster Survival',
-      description: 'Gamemaker manipulation: fire, floods, earthquakes, or toxic gas',
+      description: 'Official manipulation: fire, floods, earthquakes, or toxic gas',
       wheelConfig: {
         segments: [
           { id: 'survive-disaster', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 65 },
@@ -623,7 +625,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         createBranch('disaster-death', [
@@ -637,7 +639,7 @@ const hungerGamesTheme: SequenceTheme = {
     {
       id: 'disaster-death',
       title: 'Death by Arena Manipulation',
-      description: 'The Gamemakers\' cruelty claims another life',
+      description: 'The Officials\' cruelty claims another life',
       wheelConfig: {
         segments: [
           { id: 'fire-death', text: 'Consumed by Fire', color: '#FF4500', rarity: 'common', weight: 30 },
@@ -648,15 +650,15 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
     },
 
     // Wheel 10: Mutt Attack (BINARY)
     {
       id: 'mutt-attack',
-      title: 'Mutt Attack',
-      description: 'Capitol-engineered creatures designed to hunt and kill',
+      title: 'Beast Attack',
+      description: 'Empire-engineered creatures designed to hunt and kill',
       wheelConfig: {
         segments: [
           { id: 'survive-mutts', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 60 },
@@ -665,7 +667,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         createBranch('mutt-death', [
@@ -678,18 +680,18 @@ const hungerGamesTheme: SequenceTheme = {
     // DEATH ENDING: Mutt Attack
     {
       id: 'mutt-death',
-      title: 'Death by Muttations',
-      description: 'The Capitol\'s deadliest creatures prove unstoppable',
+      title: 'Death by Beasts',
+      description: 'The Empire\'s deadliest creatures prove unstoppable',
       wheelConfig: {
         segments: [
-          { id: 'wolf-mutts', text: 'Killed by Wolf Mutts', color: '#2F2F2F', rarity: 'common', weight: 40 },
-          { id: 'tracker-mutts', text: 'Hunted by Tracker Mutts', color: '#8B0000', rarity: 'common', weight: 30 },
-          { id: 'snake-mutts', text: 'Poisoned by Snake Mutts', color: '#228B22', rarity: 'common', weight: 30 },
+          { id: 'wolf-beasts', text: 'Killed by Wolf Beasts', color: '#2F2F2F', rarity: 'common', weight: 40 },
+          { id: 'tracker-beasts', text: 'Hunted by Tracker Beasts', color: '#8B0000', rarity: 'common', weight: 30 },
+          { id: 'snake-beasts', text: 'Poisoned by Snake Beasts', color: '#228B22', rarity: 'common', weight: 30 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
     },
 
@@ -706,7 +708,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       branches: [
         createBranch('betrayal-death', [
@@ -734,7 +736,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
     },
 
@@ -742,7 +744,7 @@ const hungerGamesTheme: SequenceTheme = {
     {
       id: 'final-showdown',
       title: 'Final Showdown', 
-      description: 'Last 2-3 tributes remaining - victory or death',
+      description: 'Last 2-3 competitors remaining - victory or death',
       wheelConfig: {
         segments: [
           { id: 'brutal-victory', text: 'Brutal Victory', color: '#8B0000', rarity: 'uncommon', weight: 30 },
@@ -755,7 +757,7 @@ const hungerGamesTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       defaultNextStep: 'rebellion-role',
     },
@@ -763,42 +765,42 @@ const hungerGamesTheme: SequenceTheme = {
     // Wheel 13: Rebellion Role (final wheel for survivors)
     {
       id: 'rebellion-role',
-      title: 'Your Rebellion Role',
-      description: 'Your part in overthrowing the Capitol determines Panem\'s future',
+      title: 'Your Resistance Role',
+      description: 'Your part in overthrowing the Empire determines the world\'s future',
       wheelConfig: {
         segments: [
-          { id: 'the-mockingjay', text: 'The Mockingjay', color: '#FFD700', rarity: 'legendary', weight: 25 },
+          { id: 'the-symbol', text: 'The Symbol of Hope', color: '#FFD700', rarity: 'legendary', weight: 25 },
           { id: 'underground-coordinator', text: 'Underground Coordinator', color: '#2F4F2F', rarity: 'rare', weight: 20 },
-          { id: 'district-liberator', text: 'District Liberator', color: '#228B22', rarity: 'rare', weight: 18 },
+          { id: 'region-liberator', text: 'Region Liberator', color: '#228B22', rarity: 'rare', weight: 18 },
           { id: 'mentor-rebel', text: 'Mentor Rebel', color: '#4682B4', rarity: 'uncommon', weight: 15 },
-          { id: 'capitol-infiltrator', text: 'Capitol Infiltrator', color: '#800080', rarity: 'rare', weight: 12 },
+          { id: 'empire-infiltrator', text: 'Empire Infiltrator', color: '#800080', rarity: 'rare', weight: 12 },
           { id: 'propaganda-star', text: 'Propaganda Star', color: '#FF6347', rarity: 'uncommon', weight: 8 },
-          { id: 'presidential-assassin', text: 'Presidential Assassin', color: '#8B0000', rarity: 'legendary', weight: 2 },
+          { id: 'emperor-assassin', text: 'Emperor Assassin', color: '#8B0000', rarity: 'legendary', weight: 2 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'hunger-games',
+        theme: 'survival-tournament',
       },
       // No defaultNextStep - this is the final wheel
     },
   ],
   
-  narrativeTemplate: "You were a tribute from {district} who entered the Games as a {tribute-status}, earning a training score of {training-score} in the {arena-environment} arena. Following a {alliance-strategy} strategy, you survived the bloodbath and fought through every deadly challenge the Capitol threw at you. Your {final-showdown} led to your role as {rebellion-role} in the revolution that would ultimately bring down President Snow's regime.",
+  narrativeTemplate: "You were a competitor from {region} who entered the Tournament as a {competitor-status}, earning a training score of {training-score} in the {arena-environment} arena. Following a {alliance-strategy} strategy, you survived the bloodbath and fought through every deadly challenge the Empire threw at you. Your {final-showdown} led to your role as {resistance-role} in the revolution that would ultimately bring down the Emperor's regime.",
   
   narrativeTemplates: {
     // Death storylines
-    'bloodbath-victim': "💀 THE BLOODBATH VICTIM 💀\n\nYou were a {tribute-status} from {district} with a training score of {training-score}. Your journey ended in the first 60 seconds of the Games - {bloodbath-death}. But even in death, your sacrifice became part of the fire that would eventually burn down the Capitol. Your district remembers you as a hero who faced impossible odds with courage.",
+    'bloodbath-victim': "💀 THE BLOODBATH VICTIM 💀\n\nYou were a {competitor-status} from {region} with a training score of {training-score}. Your journey ended in the first 60 seconds of the Tournament - {bloodbath-death}. But even in death, your sacrifice became part of the fire that would eventually burn down the Empire. Your region remembers you as a hero who faced impossible odds with courage.",
     
-    'exposure-victim': "❄️ CLAIMED BY THE ELEMENTS ❄️\n\nA {tribute-status} from {district}, you survived the bloodbath only to fall to the {arena-environment}'s harsh conditions. You {exposure-death}, but your determination to survive inspired others. Your family back home knows you fought until your last breath, and your memory fuels the growing rebellion.",
+    'exposure-victim': "❄️ CLAIMED BY THE ELEMENTS ❄️\n\nA {competitor-status} from {region}, you survived the bloodbath only to fall to the {arena-environment}'s harsh conditions. You {exposure-death}, but your determination to survive inspired others. Your family back home knows you fought until your last breath, and your memory fuels the growing resistance.",
     
-    'tracker-victim': "🐝 FALLEN TO THE CAPITOL'S CREATURES 🐝\n\nFrom {district} with a score of {training-score}, you made it through multiple Arena challenges before encountering the Capitol's deadliest trap. You {tracker-death} in the forest, but your survival skills kept you alive longer than most. The rebellion will remember how the Capitol's twisted science claimed one of their best.",
+    'tracker-victim': "🐝 FALLEN TO THE EMPIRE'S CREATURES 🐝\n\nFrom {region} with a score of {training-score}, you made it through multiple Arena challenges before encountering the Empire's deadliest trap. You {tracker-death} in the forest, but your survival skills kept you alive longer than most. The resistance will remember how the Empire's twisted science claimed one of their best.",
     
-    'disaster-victim': "🌋 GAMEMAKER MANIPULATION VICTIM 🌋\n\nA brave {tribute-status} from {district}, you proved your worth by surviving the bloodbath and early challenges. When the Gamemakers intervened, you {disaster-death}, showing the Capitol's true cruelty. Your death exposed their manipulation and became a rallying cry for the revolution.",
+    'disaster-victim': "🌋 OFFICIAL MANIPULATION VICTIM 🌋\n\nA brave {competitor-status} from {region}, you proved your worth by surviving the bloodbath and early challenges. When the Officials intervened, you {disaster-death}, showing the Empire's true cruelty. Your death exposed their manipulation and became a rallying cry for the revolution.",
     
-    'mutt-victim': "🐺 KILLED BY CAPITOL MONSTERS 🐺\n\nYou made it further than most - a {tribute-status} from {district} who survived every human threat in the Arena. But the Capitol's final weapons proved too much, and you were {mutt-death}. Your courage in facing these abominations showed Panem what they were truly fighting against.",
+    'mutt-victim': "🐺 KILLED BY EMPIRE MONSTERS 🐺\n\nYou made it further than most - a {competitor-status} from {region} who survived every human threat in the Arena. But the Empire's final weapons proved too much, and you were {mutt-death}. Your courage in facing these abominations showed the Empire what they were truly fighting against.",
     
-    'betrayal-victim': "💔 BETRAYED IN THE FINAL MOMENTS 💔\n\nA {tribute-status} from {district}, you survived every Arena trap through your {alliance-strategy} strategy. In the end, you were {betrayal-death}, proving how the Capitol corrupts everything it touches. Your loyalty and sacrifice became the foundation for the rebellion's unity.",
+    'betrayal-victim': "💔 BETRAYED IN THE FINAL MOMENTS 💔\n\nA {competitor-status} from {region}, you survived every Arena trap through your {alliance-strategy} strategy. In the end, you were {betrayal-death}, proving how the Empire corrupts everything it touches. Your loyalty and sacrifice became the foundation for the rebellion's unity.",
     
     // Victory storylines  
     'brutal-survivor': "⚔️ THE BRUTAL SURVIVOR ⚔️\n\nFrom {district} with a training score of {training-score}, you fought through every death trap with ruthless determination. Your {brutal-victory} came at a terrible cost - the lives you took haunt your dreams. But as {rebellion-role}, you channeled that pain into the fire that burned down Snow's empire. The Games made you a killer; the rebellion made you a liberator.",
@@ -807,7 +809,7 @@ const hungerGamesTheme: SequenceTheme = {
     
     'unlikely-hero': "🏹 THE UNLIKELY HERO 🏹\n\nYou were just a {tribute-status} from {district} - no one expected you to survive. But through your {sacrifice-victory} and pure determination, you became something more. As {rebellion-role}, you proved that heroes aren't born in Career districts - they're forged in the fires of impossible odds.",
     
-    'star-crossed': "💕 THE STAR-CROSSED SURVIVORS 💕\n\nTwo hearts from {district} who found love in the darkest place. Your {joint-victory} gave Panem something the Capitol couldn't destroy - hope. Together as {rebellion-role}, you became the symbol that love conquers even the cruelest tyranny.",
+    'star-crossed': "💕 THE STAR-CROSSED SURVIVORS 💕\n\nTwo hearts from {region} who found love in the darkest place. Your {joint-victory} gave the Empire something the Empire couldn't destroy - hope. Together as {rebellion-role}, you became the symbol that love conquers even the cruelest tyranny.",
     
     'mockingjay-perfect': "🔥 THE PERFECT MOCKINGJAY 🔥\n\nFrom the coal-stained district of {district}, you volunteered to save someone you loved and scored an impossible {training-score}. Your {joint-victory} after exploiting the Gamemakers' rules broke their system entirely. As {the-mockingjay}, you became the symbol that ignited the revolution and personally ensured President Snow's downfall. You are the girl on fire who burned down an empire.",
     
@@ -817,8 +819,8 @@ const hungerGamesTheme: SequenceTheme = {
 
 // Export all themes
 export const themes: SequenceTheme[] = [
-  harryPotterTheme,
-  hungerGamesTheme,
+  mysticalAcademyTheme,
+  survivalTournamentTheme,
 ];
 
 export const getThemeById = (id: string): SequenceTheme | undefined => {
