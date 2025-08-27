@@ -10,6 +10,7 @@ import { themes } from '@/data/themes';
 import { useState, useEffect, useMemo } from 'react';
 import { useSavedSequences } from '@/hooks/useSavedSequences';
 import { UserSequence } from '@/types/builder';
+import { TypewriterText } from '@/components/ui/TypewriterText';
 
 export default function Home() {
   const [showSequence, setShowSequence] = useState(false);
@@ -38,6 +39,41 @@ export default function Home() {
     if (theme) {
       startSequence(theme);
       setShowSequence(true);
+    }
+  };
+
+  const handleEditTemplate = (themeId: string) => {
+    const theme = themes.find(t => t.id === themeId);
+    if (theme) {
+      // Convert SequenceTheme to UserSequence for editing
+      const editableSequence: UserSequence = {
+        ...theme,
+        id: `template-${theme.id}-${Date.now()}`,
+        createdBy: 'user',
+        createdAt: new Date().toISOString(),
+        lastModified: new Date().toISOString(),
+        version: '1.0',
+        isPublic: false,
+        tags: ['template', 'cloned'],
+        baseTemplate: theme.id,
+        isCustom: true,
+        name: `${theme.name} (Custom)`,
+        // Convert steps to builder format
+        steps: theme.steps.map(step => ({
+          ...step,
+          isCustom: true,
+          wheelConfig: {
+            ...step.wheelConfig,
+            segments: step.wheelConfig.segments.map(segment => ({
+              ...segment,
+              description: segment.text // Add description field for builder
+            }))
+          }
+        }))
+      };
+
+      loadSequence(editableSequence);
+      setShowBuilder(true);
     }
   };
 
@@ -157,9 +193,12 @@ export default function Home() {
               </h1>
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
             </div>
-            <p className="text-2xl text-gray-100 font-medium tracking-wide">
-              Transform spins into epic stories
-            </p>
+            <TypewriterText 
+              text="Transform spins into epic stories"
+              className="text-2xl text-gray-100 font-medium tracking-wide font-pacifico"
+              delay={500}
+              speed={70}
+            />
           </div>
           
           {/* Settings Button */}
@@ -193,63 +232,14 @@ export default function Home() {
         {!showSequence ? (
           // Theme Selection Screen
           <div className="flex flex-col items-center gap-8">
-            <div className="text-center mb-4 cinematic-enter" style={{animationDelay: '0.2s'}}>
-              <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
-                🌟 Choose Your Epic Journey
-              </h2>
-            </div>
-            
-            <div className="grid md:grid-cols-1 gap-8 w-full max-w-lg">
-              {themes.map((theme, index) => (
-                <button
-                  key={theme.id}
-                  onClick={() => handleStartSequence(theme.id)}
-                  className="glass-panel hud-panel rounded-2xl p-8 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter"
-                  style={{ 
-                    borderLeft: `4px solid ${theme.color}`,
-                    animationDelay: `${0.3 + index * 0.1}s`
-                  }}
-                >
-                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300">
-                    {theme.name}
-                  </h3>
-                  <p className="text-gray-100 text-base mb-6 group-hover:text-white transition-colors font-medium">
-                    {theme.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-3">
-                      <span className="text-base font-bold px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" style={{ 
-                        color: theme.color,
-                        textShadow: '0 0 10px rgba(255,255,255,0.5)'
-                      }}>
-                        {theme.steps.length} Epic Steps
-                      </span>
-                      <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
-                    </div>
-                    <div className="flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-transform duration-300">
-                      {theme.id === 'mystical-academy' && (
-                        <span className="text-3xl">🧙‍♂️</span>
-                      )}
-                      {theme.id === 'survival-tournament' && (
-                        <span className="text-3xl">🏹</span>
-                      )}
-                      {!['mystical-academy', 'survival-tournament'].includes(theme.id) && (
-                        <span className="text-3xl">🎯</span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Create Your Own Journey Button */}
-            <div className="w-full max-w-lg mt-8">
+            {/* Create Your Own Journey Button - moved to top */}
+            <div className="w-full max-w-lg">
               <button
                 onClick={handleOpenBuilder}
                 className="w-full glass-panel hud-panel rounded-2xl p-8 text-center hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter border-2 border-emerald-500/30 hover:border-emerald-400/50"
                 style={{ 
                   borderLeft: '4px solid #10B981',
-                  animationDelay: '0.7s'
+                  animationDelay: '0.2s'
                 }}
               >
                 <div className="flex items-center justify-center mb-4">
@@ -276,10 +266,10 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Your Custom Stories Section */}
+            {/* Your Custom Stories Section - moved to second position */}
             {isClient && savedSequences.length > 0 && (
-              <div className="w-full max-w-lg mt-8">
-                <div className="glass-panel hud-panel rounded-2xl p-6 cinematic-enter" style={{animationDelay: '0.8s'}}>
+              <div className="w-full max-w-lg">
+                <div className="glass-panel hud-panel rounded-2xl p-6 cinematic-enter" style={{animationDelay: '0.3s'}}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
                       Your Custom Stories
@@ -379,7 +369,75 @@ export default function Home() {
               </div>
             )}
 
-            <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.6s'}}>
+            {/* SpinVerse Templates Section - moved to third position and renamed */}
+            <div className="text-center mb-4 cinematic-enter" style={{animationDelay: '0.4s'}}>
+              <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
+                SpinVerse Templates
+              </h2>
+            </div>
+            
+            <div className="grid md:grid-cols-1 gap-8 w-full max-w-lg">
+              {themes.map((theme, index) => (
+                <div
+                  key={theme.id}
+                  className="glass-panel hud-panel rounded-2xl p-8 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter relative"
+                  style={{ 
+                    borderLeft: `4px solid ${theme.color}`,
+                    animationDelay: `${0.5 + index * 0.1}s`
+                  }}
+                >
+                  {/* Edit Button - Positioned absolutely */}
+                  <button
+                    onClick={() => handleEditTemplate(theme.id)}
+                    className="absolute top-4 right-4 px-3 py-2 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 border border-emerald-500/30 hover:border-emerald-400/50 rounded-lg transition-all duration-300 flex items-center space-x-2 group/edit opacity-0 group-hover:opacity-100 z-10"
+                    title="Clone and Edit Template"
+                  >
+                    <svg className="w-4 h-4 text-emerald-400 group-hover/edit:text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span className="text-xs text-emerald-400 group-hover/edit:text-emerald-300 font-medium">Edit</span>
+                  </button>
+
+                  {/* Main clickable area for playing */}
+                  <div 
+                    onClick={() => handleStartSequence(theme.id)}
+                    className="cursor-pointer"
+                  >
+                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300 pr-20">
+                      {theme.name}
+                    </h3>
+                    <p className="text-gray-100 text-base mb-6 group-hover:text-white transition-colors font-medium">
+                      {theme.description}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-base font-bold px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" style={{ 
+                          color: theme.color,
+                          textShadow: '0 0 10px rgba(255,255,255,0.5)'
+                        }}>
+                          {theme.steps.length} Epic Steps
+                        </span>
+                        <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
+                      </div>
+                      <div className="flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-transform duration-300">
+                        {theme.id === 'mystical-academy' && (
+                          <span className="text-3xl">🧙‍♂️</span>
+                        )}
+                        {theme.id === 'survival-tournament' && (
+                          <span className="text-3xl">🏹</span>
+                        )}
+                        {!['mystical-academy', 'survival-tournament'].includes(theme.id) && (
+                          <span className="text-3xl">🎯</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+
+            <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.8s'}}>
               <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-6 text-center">
                 🚀 Next-Gen Storytelling Features
               </h2>
