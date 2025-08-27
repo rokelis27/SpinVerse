@@ -5,7 +5,7 @@ import { useBuilderStore } from '@/stores/builderStore';
 import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
 import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
-import { UserSequence } from '@/types/builder';
+import { UserSequence, SequenceStepBuilder } from '@/types/builder';
 
 interface SequenceBuilderProps {
   onClose: () => void;
@@ -261,9 +261,9 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-bold text-white">Steps</h3>
                   <button
-                    onClick={addStep}
+                    onClick={() => addStep()}
                     className="p-2 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300"
-                    title="Add Step"
+                    title={`Add Step After "${currentSequence.steps[selectedStepIndex]?.title || 'Current Step'}"`}
                   >
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -273,16 +273,16 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
 
                 <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-280px)]">
                   {currentSequence.steps.map((step, index) => (
-                    <div
-                      key={step.id}
-                      className={`p-4 rounded-xl cursor-pointer transition-all duration-300 ${
-                        index === selectedStepIndex
-                          ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30'
-                          : 'bg-white/5 hover:bg-white/10'
-                      }`}
-                      onClick={() => setSelectedStep(index)}
-                    >
-                      <div className="flex items-center justify-between">
+                    <div key={step.id}>
+                      <div
+                        className={`p-4 rounded-xl cursor-pointer transition-all duration-300 ${
+                          index === selectedStepIndex
+                            ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30'
+                            : 'bg-white/5 hover:bg-white/10'
+                        }`}
+                        onClick={() => setSelectedStep(index)}
+                      >
+                        <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <h4 className="font-semibold text-white text-sm">{step.title}</h4>
                           <p className="text-xs text-gray-400 mt-1">
@@ -339,7 +339,20 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                             </svg>
                           </button>
                         )}
+                        </div>
                       </div>
+                      
+                      {/* Visual indicator showing where new step would be inserted */}
+                      {index === selectedStepIndex && (
+                        <div className="flex items-center justify-center py-2">
+                          <div className="flex items-center text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-1">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>New step will be added here</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -350,7 +363,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
             <div className="lg:col-span-9">
               <div className="glass-panel h-full rounded-2xl p-6">
                 <StepEditor
-                  step={currentSequence.steps[selectedStepIndex]}
+                  step={currentSequence.steps[selectedStepIndex] as SequenceStepBuilder}
                   stepIndex={selectedStepIndex}
                 />
               </div>

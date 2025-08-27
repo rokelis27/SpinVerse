@@ -15,7 +15,7 @@ interface BuilderState {
   updateSequenceDescription: (description: string) => void;
   
   // Step management
-  addStep: () => void;
+  addStep: (afterIndex?: number) => void;
   removeStep: (index: number) => void;
   updateStep: (index: number, updates: Partial<SequenceStepBuilder>) => void;
   setSelectedStep: (index: number) => void;
@@ -163,9 +163,13 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   },
 
   // Step management
-  addStep: () => {
+  addStep: (afterIndex?: number) => {
     const state = get();
     if (!state.currentSequence) return;
+
+    // Determine where to insert: after the specified index, or after currently selected step
+    const insertAfterIndex = afterIndex !== undefined ? afterIndex : state.selectedStepIndex;
+    const insertPosition = insertAfterIndex + 1;
 
     const stepId = generateStepId();
     const newStep: SequenceStepBuilder = {
@@ -197,16 +201,35 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       }
     };
 
-    // Link previous step to this one if it exists
     const updatedSteps = [...state.currentSequence.steps];
-    if (updatedSteps.length > 0) {
-      const lastStep = updatedSteps[updatedSteps.length - 1];
-      if (!lastStep.defaultNextStep) {
-        lastStep.defaultNextStep = stepId;
+    
+    // Handle connection logic when inserting in the middle
+    if (insertPosition < updatedSteps.length) {
+      // We're inserting in the middle - set up connections
+      const previousStep = updatedSteps[insertAfterIndex];
+      
+      if (previousStep && previousStep.defaultNextStep) {
+        // Previous step had a connection - redirect it through our new step
+        newStep.defaultNextStep = previousStep.defaultNextStep;
+        previousStep.defaultNextStep = stepId;
+      } else if (previousStep && insertPosition < updatedSteps.length) {
+        // Previous step had no explicit connection, but there is a next step
+        // Connect: previousStep -> newStep -> nextStep
+        newStep.defaultNextStep = updatedSteps[insertPosition].id;
+        previousStep.defaultNextStep = stepId;
+      }
+    } else {
+      // We're adding at the end - link previous step if it has no connection
+      if (updatedSteps.length > 0) {
+        const previousStep = updatedSteps[insertAfterIndex];
+        if (previousStep && !previousStep.defaultNextStep) {
+          previousStep.defaultNextStep = stepId;
+        }
       }
     }
     
-    updatedSteps.push(newStep);
+    // Insert the new step at the calculated position
+    updatedSteps.splice(insertPosition, 0, newStep);
 
     set({
       currentSequence: {
@@ -214,7 +237,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         steps: updatedSteps,
         lastModified: new Date().toISOString()
       },
-      selectedStepIndex: updatedSteps.length - 1,
+      selectedStepIndex: insertPosition, // Select the newly inserted step
       isDirty: true
     });
   },
