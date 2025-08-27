@@ -9,7 +9,6 @@ export function evaluateCondition(
 ): boolean {
   const result = results.find(r => r.stepId === condition.stepId);
   if (!result) {
-    console.log('No result found for stepId:', condition.stepId);
     return false;
   }
   
@@ -17,12 +16,6 @@ export function evaluateCondition(
   const expectedValue = condition.value;
   const operator = condition.operator || 'equals';
   
-  console.log('Evaluating condition:', {
-    condition,
-    actualValue,
-    expectedValue,
-    operator
-  });
   
   switch (operator) {
     case 'equals':
@@ -63,24 +56,14 @@ export function getNextStepId(
   currentStep: SequenceStep,
   results: SequenceResult[]
 ): { nextStepId: string | null; weightOverrides?: import('@/types/sequence').WeightOverride[] } {
-  console.log('getNextStepId called with:', {
-    stepId: currentStep.id,
-    branches: currentStep.branches,
-    results: results.map(r => ({ stepId: r.stepId, segmentId: r.spinResult.segment.id, segmentText: r.spinResult.segment.text }))
-  });
   
   // Check branches in order
   if (currentStep.branches) {
     for (let i = 0; i < currentStep.branches.length; i++) {
       const branch = currentStep.branches[i];
       const branchResult = evaluateBranch(branch, results);
-      console.log(`Branch ${i} evaluation:`, {
-        branch,
-        result: branchResult
-      });
       
       if (branchResult) {
-        console.log(`Branch ${i} matched! Going to step:`, branch.nextStepId, 'with weight overrides:', branch.weightOverrides);
         return { 
           nextStepId: branch.nextStepId,
           weightOverrides: branch.weightOverrides
@@ -90,7 +73,6 @@ export function getNextStepId(
   }
   
   // Fall back to default next step
-  console.log('No branches matched, using defaultNextStep:', currentStep.defaultNextStep);
   return { nextStepId: currentStep.defaultNextStep || null };
 }
 
@@ -105,7 +87,6 @@ export function applyWeightOverrides(
     return step;
   }
 
-  console.log('Applying weight overrides:', weightOverrides, 'to step:', step.id);
 
   // Create a map of overridden weights
   const overrideMap = new Map(weightOverrides.map(override => [override.segmentId, override.newWeight]));
@@ -122,11 +103,9 @@ export function applyWeightOverrides(
   const updatedSegments = step.wheelConfig.segments.map(segment => {
     if (overrideMap.has(segment.id)) {
       const newWeight = overrideMap.get(segment.id)!;
-      console.log(`Override: ${segment.text} from ${segment.weight}% to ${newWeight}%`);
       return { ...segment, weight: newWeight };
     } else {
       const newWeight = Math.round(weightPerNonOverridden);
-      console.log(`Auto-adjust: ${segment.text} from ${segment.weight}% to ${newWeight}%`);
       return { ...segment, weight: newWeight };
     }
   });

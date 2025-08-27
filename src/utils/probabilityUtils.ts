@@ -108,16 +108,11 @@ export function findSegmentByAngle(
   // Find which segment this angle falls into
   let cumulativeAngle = 0;
   
-  console.log(`Looking for angle ${normalizedAngle} in segments:`);
-  
   for (let i = 0; i < segmentAngles.length; i++) {
     const segmentStart = cumulativeAngle;
     const segmentEnd = cumulativeAngle + segmentAngles[i];
     
-    console.log(`Segment ${i} (${segments[i].text}): ${segmentStart} to ${segmentEnd}`);
-    
     if (normalizedAngle >= segmentStart && normalizedAngle < segmentEnd) {
-      console.log(`✓ Found in segment ${i}: ${segments[i].text}`);
       return i;
     }
     

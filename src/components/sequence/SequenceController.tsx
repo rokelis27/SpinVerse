@@ -155,19 +155,17 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
           <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 rounded-lg blur opacity-30"></div>
           <div className="relative flex items-center justify-center space-x-4 px-4">
             {/* Theme Logo */}
-            {currentTheme.id === 'harry-potter' && (
-              <img 
-                src="/harry-potter-1.svg" 
-                alt="Harry Potter" 
-                className="w-10 h-10 filter brightness-0 invert opacity-60"
-              />
+            {currentTheme.id === 'mystical-academy' && (
+              <span className="text-3xl opacity-60">🧙‍♂️</span>
             )}
-            {currentTheme.id === 'hunger-games' && (
-              <img 
-                src="/the-hunger-games.svg" 
-                alt="Hunger Games" 
-                className="w-12 h-10 filter brightness-0 invert opacity-60"
-              />
+            {currentTheme.id === 'survival-tournament' && (
+              <span className="text-3xl opacity-60">🏹</span>
+            )}
+            {currentTheme.id === 'detective-mystery' && (
+              <span className="text-3xl opacity-60">🕵️‍♂️</span>
+            )}
+            {currentTheme.id === 'underground-racing' && (
+              <span className="text-3xl opacity-60">🏁</span>
             )}
             <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text">
               {currentStep.title}
@@ -188,6 +186,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
           {isComplete ? '✅ Complete' : '⚡ In Progress'}
         </div>
       </div>
+
 
       {/* Enhanced Wheel Container with Gaming Effects */}
       <div 

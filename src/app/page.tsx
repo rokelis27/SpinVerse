@@ -375,12 +375,12 @@ export default function Home() {
                 SpinVerse Templates
               </h2>
             </div>
-            
-            <div className="grid md:grid-cols-1 gap-8 w-full max-w-lg">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
               {themes.map((theme, index) => (
                 <div
                   key={theme.id}
-                  className="glass-panel hud-panel rounded-2xl p-8 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter relative"
+                  className="glass-panel hud-panel rounded-xl p-6 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter relative"
                   style={{ 
                     borderLeft: `4px solid ${theme.color}`,
                     animationDelay: `${0.5 + index * 0.1}s`
@@ -403,31 +403,37 @@ export default function Home() {
                     onClick={() => handleStartSequence(theme.id)}
                     className="cursor-pointer"
                   >
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300 pr-20">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-300 pr-16">
                       {theme.name}
                     </h3>
-                    <p className="text-gray-100 text-base mb-6 group-hover:text-white transition-colors font-medium">
+                    <p className="text-gray-100 text-sm mb-4 group-hover:text-white transition-colors font-medium">
                       {theme.description}
                     </p>
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <span className="text-base font-bold px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" style={{ 
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-bold px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30" style={{ 
                           color: theme.color,
                           textShadow: '0 0 10px rgba(255,255,255,0.5)'
                         }}>
-                          {theme.steps.length} Epic Steps
+                          {theme.steps.length} Steps
                         </span>
-                        <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-lg shadow-green-400/50"></div>
                       </div>
-                      <div className="flex items-center justify-center w-16 h-16 group-hover:scale-110 transition-transform duration-300">
+                      <div className="flex items-center justify-center w-12 h-12 group-hover:scale-110 transition-transform duration-300">
                         {theme.id === 'mystical-academy' && (
-                          <span className="text-3xl">🧙‍♂️</span>
+                          <span className="text-2xl">🧙‍♂️</span>
                         )}
                         {theme.id === 'survival-tournament' && (
-                          <span className="text-3xl">🏹</span>
+                          <span className="text-2xl">🏹</span>
                         )}
-                        {!['mystical-academy', 'survival-tournament'].includes(theme.id) && (
-                          <span className="text-3xl">🎯</span>
+                        {theme.id === 'detective-mystery' && (
+                          <span className="text-2xl">🕵️‍♂️</span>
+                        )}
+                        {theme.id === 'underground-racing' && (
+                          <span className="text-2xl">🏁</span>
+                        )}
+                        {!['mystical-academy', 'survival-tournament', 'detective-mystery', 'underground-racing'].includes(theme.id) && (
+                          <span className="text-2xl">🎯</span>
                         )}
                       </div>
                     </div>

@@ -43,17 +43,15 @@ export const useSequenceStore = create<SequenceStore>()(
       },
 
       completeStep: (spinResult: SpinResult) => {
-        const { currentTheme, currentStepId, results } = get();
+        const { currentTheme, currentStepId, results, isInMultiSpinMode } = get();
         
         if (!currentTheme || !currentStepId) {
-          console.log('Invalid completeStep call - no theme or current step');
           return;
         }
 
         // Check if this step is already completed to prevent duplicates
         const existingResult = results.find(r => r.stepId === currentStepId);
-        if (existingResult) {
-          console.log('Step already completed, ignoring duplicate:', currentStepId);
+        if (existingResult && !isInMultiSpinMode) {
           return;
         }
 
@@ -62,6 +60,7 @@ export const useSequenceStore = create<SequenceStore>()(
           spinResult,
           timestamp: Date.now(),
         };
+
 
         const newResults = [...results, sequenceResult];
         const completed = newResults.length;
@@ -82,13 +81,11 @@ export const useSequenceStore = create<SequenceStore>()(
         const { currentTheme, currentStepId, results, isTransitioning } = get();
         
         if (!currentTheme || !currentStepId || isTransitioning) {
-          console.log('NextStep blocked - no theme, no current step, or transitioning');
           return;
         }
 
         const currentStep = findStepById(currentTheme, currentStepId);
         if (!currentStep) {
-          console.log('NextStep blocked - current step not found');
           return;
         }
 
@@ -96,7 +93,6 @@ export const useSequenceStore = create<SequenceStore>()(
         const branchResult = getNextStepId(currentStep, results);
         
         if (!branchResult.nextStepId) {
-          console.log('Sequence complete - no next step found!');
           set({
             isTransitioning: false,
             // Keep isActive: true so results screen shows
@@ -106,11 +102,8 @@ export const useSequenceStore = create<SequenceStore>()(
 
         const nextStep = findStepById(currentTheme, branchResult.nextStepId);
         if (!nextStep) {
-          console.log('NextStep error - next step not found:', branchResult.nextStepId);
           return;
         }
-
-        console.log(`NextStep: ${currentStepId} → ${branchResult.nextStepId}`);
 
         // Start transition
         set({ isTransitioning: true }, false, 'sequence/startTransition');

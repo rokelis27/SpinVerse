@@ -817,10 +817,498 @@ const survivalTournamentTheme: SequenceTheme = {
   }
 };
 
+// Detective Mystery Theme - Complete Crime Story Arc
+const detectiveMysteryTheme: SequenceTheme = {
+  id: 'detective-mystery',
+  name: 'Detective Mystery: Justice Served',
+  description: 'Solve crimes, uncover suspects, catch criminals, and see justice served - experience the full detective story from crime scene to courtroom',
+  color: '#2F4F4F',
+  startStepId: 'city',
+  steps: [
+    // Step 1: Choose Your City
+    {
+      id: 'city',
+      title: 'Your Detective City',
+      description: 'Where does your detective story begin?',
+      wheelConfig: {
+        segments: [
+          { id: 'neo-tokyo', text: 'Neo-Tokyo', color: '#FF1493', rarity: 'uncommon', weight: 15 },
+          { id: 'victorian-london', text: 'Victorian London', color: '#8B4513', rarity: 'rare', weight: 10 },
+          { id: 'modern-new-york', text: 'Modern New York', color: '#4169E1', rarity: 'common', weight: 20 },
+          { id: 'coastal-town', text: 'Small Coastal Town', color: '#20B2AA', rarity: 'common', weight: 18 },
+          { id: 'las-vegas', text: 'Las Vegas', color: '#FFD700', rarity: 'uncommon', weight: 12 },
+          { id: 'new-orleans', text: 'New Orleans', color: '#9370DB', rarity: 'uncommon', weight: 25 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'crime-discovery',
+    },
+
+    // Step 2: The Crime Discovery
+    {
+      id: 'crime-discovery',
+      title: 'The Crime Scene',
+      description: 'What horrific scene greets you this morning?',
+      wheelConfig: {
+        segments: [
+          { id: 'locked-mansion', text: 'Locked Mansion Murder', color: '#8B0000', rarity: 'uncommon', weight: 18 },
+          { id: 'serial-killer', text: 'Serial Killer\'s Latest', color: '#DC143C', rarity: 'rare', weight: 12 },
+          { id: 'art-heist', text: 'High-Stakes Heist', color: '#B8860B', rarity: 'uncommon', weight: 15 },
+          { id: 'corporate-murder', text: 'Corporate Executive Found Dead', color: '#2F4F2F', rarity: 'common', weight: 20 },
+          { id: 'missing-child', text: 'Missing Child Case', color: '#FF69B4', rarity: 'common', weight: 20 },
+          { id: 'cold-case', text: 'Cold Case Reopened', color: '#4682B4', rarity: 'uncommon', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'detective-specialty',
+    },
+
+    // Step 3: Detective Specialty
+    {
+      id: 'detective-specialty',
+      title: 'Your Investigative Expertise',
+      description: 'What\'s your detective superpower?',
+      wheelConfig: {
+        segments: [
+          { id: 'forensic-genius', text: 'Forensic Genius', color: '#E6E6FA', rarity: 'uncommon', weight: 18 },
+          { id: 'psychology-master', text: 'Psychology Master', color: '#9370DB', rarity: 'uncommon', weight: 16 },
+          { id: 'tech-detective', text: 'Tech Detective', color: '#4169E1', rarity: 'rare', weight: 12 },
+          { id: 'street-veteran', text: 'Street Veteran', color: '#A0522D', rarity: 'common', weight: 22 },
+          { id: 'by-the-book', text: 'By-the-Book Professional', color: '#228B22', rarity: 'common', weight: 20 },
+          { id: 'undercover-specialist', text: 'Undercover Specialist', color: '#2F2F2F', rarity: 'rare', weight: 12 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'first-suspect',
+    },
+
+    // Step 4: First Suspect
+    {
+      id: 'first-suspect',
+      title: 'Your First Suspect',
+      description: 'Who immediately catches your attention?',
+      wheelConfig: {
+        segments: [
+          { id: 'grieving-family-member', text: 'The Grieving Family Member', color: '#4682B4', rarity: 'common', weight: 20 },
+          { id: 'business-partner', text: 'Business Partner', color: '#B8860B', rarity: 'common', weight: 18 },
+          { id: 'estranged-family', text: 'Estranged Family Member', color: '#8B0000', rarity: 'common', weight: 18 },
+          { id: 'former-employee', text: 'Former Employee', color: '#2F4F2F', rarity: 'common', weight: 16 },
+          { id: 'mysterious-stranger', text: 'Mysterious Stranger', color: '#800080', rarity: 'uncommon', weight: 14 },
+          { id: 'best-friend', text: 'Best Friend', color: '#FF69B4', rarity: 'uncommon', weight: 14 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'investigation-method',
+    },
+
+    // Step 5: Investigation Method
+    {
+      id: 'investigation-method',
+      title: 'Your Investigation Approach',
+      description: 'How do you pursue the truth?',
+      wheelConfig: {
+        segments: [
+          { id: 'follow-money', text: 'Follow the Money', color: '#FFD700', rarity: 'common', weight: 18 },
+          { id: 'psychological-pressure', text: 'Psychological Pressure', color: '#9370DB', rarity: 'uncommon', weight: 15 },
+          { id: 'surveillance', text: 'Surveillance Operation', color: '#2F2F2F', rarity: 'uncommon', weight: 16 },
+          { id: 'forensic-analysis', text: 'Forensic Deep Dive', color: '#E6E6FA', rarity: 'uncommon', weight: 17 },
+          { id: 'witness-protection', text: 'Witness Protection', color: '#4682B4', rarity: 'rare', weight: 12 },
+          { id: 'undercover-infiltration', text: 'Undercover Infiltration', color: '#8B0000', rarity: 'rare', weight: 22 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'plot-twist',
+    },
+
+    // Step 6: Plot Twist
+    {
+      id: 'plot-twist',
+      title: 'The Shocking Revelation',
+      description: 'What revelation changes everything?',
+      wheelConfig: {
+        segments: [
+          { id: 'wrong-victim', text: 'Wrong Victim', color: '#FF4500', rarity: 'uncommon', weight: 18 },
+          { id: 'inside-job', text: 'Inside Job', color: '#8B0000', rarity: 'rare', weight: 12 },
+          { id: 'false-memory', text: 'False Memory', color: '#9370DB', rarity: 'rare', weight: 10 },
+          { id: 'twin-switch', text: 'Twin Switch', color: '#4169E1', rarity: 'legendary', weight: 8 },
+          { id: 'victim-alive', text: 'Victim Still Alive', color: '#228B22', rarity: 'rare', weight: 14 },
+          { id: 'time-paradox', text: 'Time Paradox', color: '#800080', rarity: 'legendary', weight: 38 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'real-culprit',
+    },
+
+    // Step 7: Real Culprit
+    {
+      id: 'real-culprit',
+      title: 'The Real Mastermind',
+      description: 'Who was behind it all along?',
+      wheelConfig: {
+        segments: [
+          { id: 'innocent-bystander', text: 'The Innocent Bystander', color: '#4682B4', rarity: 'uncommon', weight: 16 },
+          { id: 'victims-child', text: 'Victim\'s Own Child', color: '#8B0000', rarity: 'rare', weight: 14 },
+          { id: 'dirty-partner', text: 'Your Original Partner', color: '#2F2F2F', rarity: 'rare', weight: 12 },
+          { id: 'corrupt-official', text: 'Mayor/Judge/Chief', color: '#800080', rarity: 'legendary', weight: 8 },
+          { id: 'professional-hitman', text: 'Professional Hitman', color: '#DC143C', rarity: 'uncommon', weight: 18 },
+          { id: 'jealous-ex', text: 'Jealous Ex-Lover', color: '#FF69B4', rarity: 'common', weight: 32 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'confrontation',
+    },
+
+    // Step 8: Confrontation
+    {
+      id: 'confrontation',
+      title: 'The Final Confrontation',
+      description: 'How do you face the suspect?',
+      wheelConfig: {
+        segments: [
+          { id: 'high-speed-chase', text: 'High-Speed Chase', color: '#FF4500', rarity: 'uncommon', weight: 18 },
+          { id: 'rooftop-standoff', text: 'Rooftop Standoff', color: '#4169E1', rarity: 'uncommon', weight: 16 },
+          { id: 'warehouse-trap', text: 'Warehouse Trap', color: '#2F2F2F', rarity: 'uncommon', weight: 15 },
+          { id: 'courtroom-confession', text: 'Public Confession', color: '#B8860B', rarity: 'rare', weight: 12 },
+          { id: 'quiet-arrest', text: 'Quiet Arrest', color: '#228B22', rarity: 'common', weight: 24 },
+          { id: 'hostage-situation', text: 'Hostage Situation', color: '#8B0000', rarity: 'rare', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'trial-outcome',
+    },
+
+    // Step 9: Trial Outcome
+    {
+      id: 'trial-outcome',
+      title: 'The Jury\'s Decision',
+      description: 'What does justice decide?',
+      wheelConfig: {
+        segments: [
+          { id: 'life-sentence', text: 'Life Without Parole', color: '#2F2F2F', rarity: 'common', weight: 25 },
+          { id: 'death-penalty', text: 'Death Penalty', color: '#8B0000', rarity: 'uncommon', weight: 15 },
+          { id: 'twenty-five-to-life', text: '25-to-Life', color: '#4682B4', rarity: 'common', weight: 22 },
+          { id: 'insanity-verdict', text: 'Guilty But Insane', color: '#9370DB', rarity: 'uncommon', weight: 16 },
+          { id: 'shocking-acquittal', text: 'Shocking Acquittal', color: '#DC143C', rarity: 'rare', weight: 10 },
+          { id: 'plea-bargain', text: 'Plea Bargain', color: '#B8860B', rarity: 'uncommon', weight: 12 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'aftermath',
+    },
+
+    // Step 10: Aftermath
+    {
+      id: 'aftermath',
+      title: 'Your Story\'s End',
+      description: 'How does your detective story conclude?',
+      wheelConfig: {
+        segments: [
+          { id: 'hero-detective', text: 'Hero Detective', color: '#FFD700', rarity: 'common', weight: 22 },
+          { id: 'haunted-by-case', text: 'Haunted by Case', color: '#2F2F2F', rarity: 'common', weight: 20 },
+          { id: 'corruption-exposed', text: 'Corruption Exposed', color: '#FF4500', rarity: 'rare', weight: 15 },
+          { id: 'cold-case-unit', text: 'Cold Case Unit', color: '#4682B4', rarity: 'uncommon', weight: 18 },
+          { id: 'private-practice', text: 'Private Practice', color: '#228B22', rarity: 'common', weight: 17 },
+          { id: 'family-revenge', text: 'Victim\'s Family Revenge', color: '#8B0000', rarity: 'rare', weight: 8 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      // Final step - no defaultNextStep
+    },
+  ],
+
+  narrativeTemplate: "In {city}, you investigated a {crime-discovery} using your expertise as a {detective-specialty}. Your first suspect was {first-suspect}, but through {investigation-method}, you uncovered a shocking {plot-twist}. The real mastermind was {real-culprit}, leading to a dramatic {confrontation}. The trial resulted in {trial-outcome}, and your story ended with {aftermath}.",
+
+  narrativeTemplates: {
+    // Legendary Case: The Perfect Detective
+    'perfect-detective': "🔍 THE PERFECT DETECTIVE 🔍\n\nIn {city}, you faced the impossible - a {crime-discovery} that seemed unsolvable. As a brilliant {detective-specialty}, you saw through every deception, from suspecting {first-suspect} to uncovering the {plot-twist} that revealed {real-culprit} as the mastermind. Your {confrontation} became legendary, the {trial-outcome} brought perfect justice, and you became a {hero-detective} whose methods are still taught at police academies worldwide.",
+
+    // Dark Path: The Haunted Investigator  
+    'haunted-detective': "👻 THE HAUNTED DETECTIVE 👻\n\nThe {crime-discovery} in {city} changed you forever. Your {detective-specialty} skills led you through a maze of suspects, starting with {first-suspect}, but the {plot-twist} revealing {real-culprit} shattered your faith in justice. Even after the {confrontation} and {trial-outcome}, you remain {haunted-by-case}, carrying the weight of what you've seen in the darkest corners of human nature.",
+
+    // Corruption Path: The System Fighter
+    'corruption-fighter': "⚖️ THE CORRUPTION FIGHTER ⚖️\n\nIn {city}, your investigation of a {crime-discovery} uncovered more than just a crime - it exposed a web of corruption reaching the highest levels. Your {detective-specialty} training and {investigation-method} revealed that {real-culprit} was just a pawn. The {confrontation} was dangerous, but the {trial-outcome} led to massive reforms. You became the detective who {corruption-exposed}, reshaping law enforcement forever.",
+
+    // Hero Path: The People's Champion
+    'peoples-champion': "👮 THE PEOPLE'S CHAMPION 👮\n\nStarting as a {detective-specialty} in {city}, you turned a simple {crime-discovery} into a career-defining moment. When you suspected {first-suspect} but discovered {real-culprit} was the true villain, your {confrontation} became the stuff of legends. The {trial-outcome} brought justice, and as a {hero-detective}, you became the symbol of what law enforcement should be.",
+
+    // Tragic Path: The Broken Detective
+    'broken-detective': "💔 THE BROKEN DETECTIVE 💔\n\nIn {city}, the {crime-discovery} seemed routine until the {plot-twist} revealed truths you weren't prepared for. Your {detective-specialty} skills couldn't protect you from the psychological damage when {real-culprit}'s true nature was exposed. Despite the {confrontation} and {trial-outcome}, you're {haunted-by-case}, forever changed by a case that revealed the depths of human evil.",
+
+    // Victory Path: The Master Investigator
+    'master-investigator': "🏆 THE MASTER INVESTIGATOR 🏆\n\nYour reputation as a {detective-specialty} in {city} was built on cases like the {crime-discovery}. While others focused on obvious suspects like {first-suspect}, your {investigation-method} uncovered the {plot-twist} that led directly to {real-culprit}. The {confrontation} showcased your skills, the {trial-outcome} delivered justice, and you ended as a {hero-detective} whose methods revolutionized police work.",
+
+    'default': "In {city}, you solved a {crime-discovery} as a {detective-specialty}, discovered {real-culprit} was the true culprit after a {plot-twist}, and saw justice served with {trial-outcome}."
+  }
+};
+
+// Underground Racing Circuit Theme - Street to Legend Journey
+const undergroundRacingTheme: SequenceTheme = {
+  id: 'underground-racing',
+  name: 'Underground Racing: Street Legend',
+  description: 'From street rookie to racing legend - build your crew, dominate the underground scene, and choose your legacy',
+  color: '#FF4500',
+  startStepId: 'racing-origin',
+  steps: [
+    // Step 1: Racing Origin
+    {
+      id: 'racing-origin',
+      title: 'Your Racing Origin',
+      description: 'How did you get into underground racing?',
+      wheelConfig: {
+        segments: [
+          { id: 'rich-kid-rebel', text: 'Rich Kid Rebel', color: '#FFD700', rarity: 'uncommon', weight: 15 },
+          { id: 'mechanics-apprentice', text: 'Mechanic\'s Apprentice', color: '#2F4F2F', rarity: 'common', weight: 20 },
+          { id: 'street-survivor', text: 'Street Survivor', color: '#8B0000', rarity: 'common', weight: 18 },
+          { id: 'former-pro-racer', text: 'Former Pro Racer', color: '#4169E1', rarity: 'rare', weight: 12 },
+          { id: 'military-veteran', text: 'Military Veteran', color: '#556B2F', rarity: 'uncommon', weight: 16 },
+          { id: 'college-dropout', text: 'College Dropout', color: '#9370DB', rarity: 'common', weight: 19 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'first-ride',
+    },
+
+    // Step 2: First Ride
+    {
+      id: 'first-ride',
+      title: 'Your First Ride',
+      description: 'What wheels get you started in the underground?',
+      wheelConfig: {
+        segments: [
+          { id: 'classic-muscle', text: 'Classic Muscle Car', color: '#DC143C', rarity: 'uncommon', weight: 18 },
+          { id: 'import-tuner', text: 'Import Tuner', color: '#FF6347', rarity: 'common', weight: 22 },
+          { id: 'european-exotic', text: 'European Exotic', color: '#B8860B', rarity: 'rare', weight: 10 },
+          { id: 'modified-pickup', text: 'Modified Pickup', color: '#A0522D', rarity: 'uncommon', weight: 15 },
+          { id: 'vintage-sports', text: 'Vintage Sports Car', color: '#4682B4', rarity: 'uncommon', weight: 16 },
+          { id: 'stolen-supercar', text: 'Stolen Supercar', color: '#8B0000', rarity: 'legendary', weight: 19 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'racing-specialty',
+    },
+
+    // Step 3: Racing Specialty
+    {
+      id: 'racing-specialty',
+      title: 'Your Racing Specialty',
+      description: 'What type of racing defines your reputation?',
+      wheelConfig: {
+        segments: [
+          { id: 'street-sprint', text: 'Street Sprint King', color: '#FFD700', rarity: 'common', weight: 18 },
+          { id: 'drift-master', text: 'Drift Master', color: '#FF1493', rarity: 'uncommon', weight: 16 },
+          { id: 'circuit-dominator', text: 'Circuit Dominator', color: '#4169E1', rarity: 'common', weight: 20 },
+          { id: 'canyon-carver', text: 'Canyon Carver', color: '#8B4513', rarity: 'rare', weight: 12 },
+          { id: 'urban-navigator', text: 'Urban Navigator', color: '#2F2F2F', rarity: 'common', weight: 19 },
+          { id: 'offroad-warrior', text: 'Off-Road Warrior', color: '#DAA520', rarity: 'uncommon', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'crew-formation',
+    },
+
+    // Step 4: Crew Formation
+    {
+      id: 'crew-formation',
+      title: 'Your Crew Formation',
+      description: 'Who joins your racing crew?',
+      wheelConfig: {
+        segments: [
+          { id: 'mechanic-genius', text: 'The Mechanic Genius', color: '#2F4F2F', rarity: 'rare', weight: 14 },
+          { id: 'former-cop', text: 'The Former Cop', color: '#4169E1', rarity: 'rare', weight: 12 },
+          { id: 'the-hacker', text: 'The Hacker', color: '#9370DB', rarity: 'uncommon', weight: 16 },
+          { id: 'street-informant', text: 'The Street Informant', color: '#A0522D', rarity: 'common', weight: 20 },
+          { id: 'rich-sponsor', text: 'The Rich Sponsor', color: '#FFD700', rarity: 'uncommon', weight: 15 },
+          { id: 'loyal-friend', text: 'The Loyal Best Friend', color: '#FF69B4', rarity: 'common', weight: 23 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'first-victory',
+    },
+
+    // Step 5: First Major Victory
+    {
+      id: 'first-victory',
+      title: 'Your First Major Victory',
+      description: 'How do you make your mark in the underground?',
+      wheelConfig: {
+        segments: [
+          { id: 'beat-champion', text: 'Beat the Local Champion', color: '#FFD700', rarity: 'uncommon', weight: 18 },
+          { id: 'outrun-police', text: 'Outrun Police Pursuit', color: '#4169E1', rarity: 'uncommon', weight: 16 },
+          { id: 'win-tournament', text: 'Win Underground Tournament', color: '#32CD32', rarity: 'common', weight: 20 },
+          { id: 'heist-getaway', text: 'Perfect Heist Getaway', color: '#8B0000', rarity: 'rare', weight: 12 },
+          { id: 'viral-video', text: 'Viral Racing Video', color: '#FF1493', rarity: 'common', weight: 19 },
+          { id: 'rescue-rival', text: 'Rescue Rival from Crash', color: '#FF6347', rarity: 'uncommon', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'primary-sponsor',
+    },
+
+    // Step 6: Primary Sponsor
+    {
+      id: 'primary-sponsor',
+      title: 'Your Primary Sponsor',
+      description: 'Who becomes your main financial backer?',
+      wheelConfig: {
+        segments: [
+          { id: 'performance-parts', text: 'Performance Parts Company', color: '#2F4F2F', rarity: 'common', weight: 18 },
+          { id: 'energy-drink', text: 'Energy Drink Brand', color: '#32CD32', rarity: 'common', weight: 16 },
+          { id: 'betting-ring', text: 'Underground Betting Ring', color: '#8B0000', rarity: 'rare', weight: 12 },
+          { id: 'luxury-watch', text: 'Luxury Watch Brand', color: '#FFD700', rarity: 'uncommon', weight: 14 },
+          { id: 'custom-shop', text: 'Custom Shop Owner', color: '#4682B4', rarity: 'common', weight: 15 },
+          { id: 'crypto-mogul', text: 'Cryptocurrency Mogul', color: '#9370DB', rarity: 'rare', weight: 10 },
+          { id: 'street-gang', text: 'Street Gang Alliance', color: '#8B0000', rarity: 'rare', weight: 8 },
+          { id: 'underground-kingpin', text: 'Underground Kingpin', color: '#DC143C', rarity: 'legendary', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'biggest-challenge',
+    },
+
+
+    // Step 7: Biggest Challenge
+    {
+      id: 'biggest-challenge',
+      title: 'Your Biggest Racing Challenge',
+      description: 'What ultimate test defines your career?',
+      wheelConfig: {
+        segments: [
+          { id: 'cross-country', text: 'Cross-Country Cannonball', color: '#DAA520', rarity: 'rare', weight: 15 },
+          { id: 'rival-showdown', text: 'Rival Crew Showdown', color: '#8B0000', rarity: 'uncommon', weight: 18 },
+          { id: 'police-hunt', text: 'Police Task Force Hunt', color: '#4169E1', rarity: 'common', weight: 20 },
+          { id: 'international-gp', text: 'International Underground GP', color: '#FFD700', rarity: 'rare', weight: 12 },
+          { id: 'mountain-pass', text: 'Deadly Mountain Pass', color: '#8B4513', rarity: 'uncommon', weight: 16 },
+          { id: 'corporate-sabotage', text: 'Corporate Sabotage Mission', color: '#2F2F2F', rarity: 'rare', weight: 19 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'heat-level',
+    },
+
+    // Step 8: Heat Level
+    {
+      id: 'heat-level',
+      title: 'The Heat Closes In',
+      description: 'How do the authorities respond to your success?',
+      wheelConfig: {
+        segments: [
+          { id: 'fbi-investigation', text: 'FBI Investigation', color: '#8B0000', rarity: 'rare', weight: 12 },
+          { id: 'media-exposure', text: 'Media Exposure', color: '#FF6347', rarity: 'uncommon', weight: 16 },
+          { id: 'police-infiltration', text: 'Police Infiltration', color: '#4169E1', rarity: 'uncommon', weight: 18 },
+          { id: 'crew-betrayal', text: 'Rival Crew Betrayal', color: '#9370DB', rarity: 'common', weight: 20 },
+          { id: 'family-targeted', text: 'Family Targeted', color: '#DC143C', rarity: 'rare', weight: 14 },
+          { id: 'clean-record', text: 'Clean Record Maintained', color: '#32CD32', rarity: 'common', weight: 20 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      defaultNextStep: 'racing-legacy',
+    },
+
+    // Step 9: Racing Legacy
+    {
+      id: 'racing-legacy',
+      title: 'Your Racing Legacy',
+      description: 'How does your underground racing story end?',
+      wheelConfig: {
+        segments: [
+          { id: 'retired-undefeated', text: 'Retired Undefeated', color: '#FFD700', rarity: 'rare', weight: 15 },
+          { id: 'gone-legitimate', text: 'Gone Legitimate Pro', color: '#32CD32', rarity: 'common', weight: 20 },
+          { id: 'international-fugitive', text: 'International Fugitive', color: '#8B0000', rarity: 'uncommon', weight: 16 },
+          { id: 'underground-kingpin', text: 'Underground Kingpin', color: '#2F2F2F', rarity: 'rare', weight: 12 },
+          { id: 'killed-racing', text: 'Killed in Final Race', color: '#DC143C', rarity: 'legendary', weight: 8 },
+          { id: 'prison-sentence', text: 'Prison Sentence', color: '#4682B4', rarity: 'uncommon', weight: 29 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'underground-racing',
+      },
+      // Final step - no defaultNextStep
+    },
+  ],
+
+  narrativeTemplate: "You started as a {racing-origin} with your {first-ride}, specializing in {racing-specialty} racing. With {crew-formation} by your side, you made your mark through a {first-victory}. You secured backing from {primary-sponsor}, leading to your biggest challenge: {biggest-challenge}. Despite {heat-level}, your racing story ended with {racing-legacy}.",
+
+  narrativeTemplates: {
+    // Legendary Path: The Perfect Racer
+    'perfect-racer': "🏁 THE PERFECT RACER 🏁\n\nStarting as a {racing-origin} behind the wheel of a {first-ride}, you became the ultimate {racing-specialty}. With {crew-formation} as your trusted ally, your {first-victory} launched you into legend status. Your reputation attracted multiple sponsors, but it was {biggest-challenge} that truly tested your limits. Even as {heat-level} threatened everything, you achieved the impossible: {racing-legacy}. The streets still echo with stories of your perfect racing career.",
+
+    // Criminal Path: The Underground King
+    'underground-king': "👑 THE UNDERGROUND KING 👑\n\nFrom humble beginnings as a {racing-origin} with a {first-ride}, you carved out your empire through {racing-specialty} dominance. Your {crew-formation} became your lieutenants as your {first-victory} marked the beginning of your rise to power. Corporate backing and {biggest-challenge} expanded your influence until {heat-level} forced you to consolidate control. Your {racing-legacy} represents the ultimate underground success story - feared, respected, and untouchable.",
+
+    // Hero Path: The People's Champion
+    'peoples-champion': "⚡ THE PEOPLE'S CHAMPION ⚡\n\nYou began as a {racing-origin} with nothing but a {first-ride} and a dream. Your {racing-specialty} skills caught the attention of {crew-formation}, who believed in your potential. After your legendary {first-victory}, sponsors flocked to support your clean racing style. Facing {biggest-challenge} with integrity, you handled {heat-level} by staying true to your principles, ultimately achieving {racing-legacy} as a role model for future street racers.",
+
+    // Tragic Path: The Fallen Legend
+    'fallen-legend': "💔 THE FALLEN LEGEND 💔\n\nOnce a promising {racing-origin} with a beautiful {first-ride}, you dominated the {racing-specialty} scene with {crew-formation} watching your back. Your {first-victory} seemed like the beginning of something special, but the pressure of sponsorship and {biggest-challenge} began taking its toll. When {heat-level} reached its peak, everything you built came crashing down, leading to {racing-legacy}. The streets remember what you could have been.",
+
+    // Speed Path: The Velocity Demon
+    'velocity-demon': "🚀 THE VELOCITY DEMON 🚀\n\nAs a {racing-origin} with an obsession for speed, you pushed your {first-ride} beyond all limits. Your {racing-specialty} reputation was built on pure adrenaline, with {crew-formation} struggling to keep up with your reckless ambition. The {first-victory} only fueled your hunger for more, leading to dangerous sponsorship deals and {biggest-challenge} that should have killed you. Despite {heat-level} and the constant risk, you achieved {racing-legacy} by never backing down from any race.",
+
+    'default': "You were a {racing-origin} racer who specialized in {racing-specialty}, formed a crew with {crew-formation}, achieved {first-victory}, and ultimately reached {racing-legacy} in the underground racing world."
+  }
+};
+
 // Export all themes
 export const themes: SequenceTheme[] = [
   mysticalAcademyTheme,
   survivalTournamentTheme,
+  detectiveMysteryTheme,
+  undergroundRacingTheme,
 ];
 
 export const getThemeById = (id: string): SequenceTheme | undefined => {

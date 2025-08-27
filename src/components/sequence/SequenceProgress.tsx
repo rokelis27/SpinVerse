@@ -58,19 +58,17 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-3">
             {/* Theme Logo */}
-            {currentTheme.id === 'harry-potter' && (
-              <img 
-                src="/harry-potter-1.svg" 
-                alt="Harry Potter" 
-                className="w-8 h-8 filter brightness-0 invert opacity-80"
-              />
+            {currentTheme.id === 'mystical-academy' && (
+              <span className="text-2xl opacity-80">🧙‍♂️</span>
             )}
-            {currentTheme.id === 'hunger-games' && (
-              <img 
-                src="/the-hunger-games.svg" 
-                alt="Hunger Games" 
-                className="w-10 h-8 filter brightness-0 invert opacity-80"
-              />
+            {currentTheme.id === 'survival-tournament' && (
+              <span className="text-2xl opacity-80">🏹</span>
+            )}
+            {currentTheme.id === 'detective-mystery' && (
+              <span className="text-2xl opacity-80">🕵️‍♂️</span>
+            )}
+            {currentTheme.id === 'underground-racing' && (
+              <span className="text-2xl opacity-80">🏁</span>
             )}
             <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
               {currentTheme.name}

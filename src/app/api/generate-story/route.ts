@@ -65,9 +65,8 @@ export async function POST(req: NextRequest) {
     
     Your story should include:
     1. A compelling narrative (3-4 paragraphs) that weaves the choices into a coherent journey
-    2. Character archetype analysis (what type of character this creates)
+    2. Character archetype analysis that connects to real-world examples when relevant
     3. Rarity assessment with estimated percentage of how unique this combination is
-    4. What makes this particular combination special or memorable
     
     ${isActuallyCustom ? 
       `Focus on the unique themes and elements that make this custom sequence special. Draw connections between the choices to create meaningful narrative progression.` :
@@ -100,9 +99,9 @@ export async function POST(req: NextRequest) {
       rarityScore,
       rarityPercentage: rarityData.percentage,
       rarityTier: rarityData.tier,
-      characterLookalike: isActuallyCustom 
-        ? getCustomCharacterArchetype(results, themeName)
-        : getCharacterLookalike(results, themeId),
+      characterArchetype: isActuallyCustom 
+        ? getPersonalizedArchetype(results, themeName)
+        : getPersonalizedArchetype(results, themeName, themeId),
     });
 
   } catch (error) {
@@ -197,168 +196,75 @@ function getRarityPercentage(score: number): { percentage: string; tier: string 
   return { percentage: '45%', tier: 'Common' };
 }
 
-function getCharacterLookalike(results: SequenceResult[], themeId?: string): string {
+function getPersonalizedArchetype(results: SequenceResult[], themeName: string, themeId?: string): string {
+  const totalResults = results.length;
   const resultMap = results.reduce((acc, r) => {
     acc[r.stepId] = r.spinResult.segment.id;
     return acc;
   }, {} as Record<string, string>);
   
+  // Football/Sports career example
+  if (themeName.toLowerCase().includes('football') || themeName.toLowerCase().includes('soccer')) {
+    const hasLeadership = results.some(r => r.spinResult.segment.text.toLowerCase().includes('captain') || r.spinResult.segment.text.toLowerCase().includes('leader'));
+    const hasSkill = results.some(r => r.spinResult.segment.text.toLowerCase().includes('skill') || r.spinResult.segment.text.toLowerCase().includes('talented'));
+    
+    if (hasLeadership && hasSkill) {
+      return 'The Complete Player - Combines technical skill with natural leadership';
+    } else if (hasLeadership) {
+      return 'The Captain - Natural leader who inspires teammates';
+    } else if (hasSkill) {
+      return 'The Technical Master - Pure talent and skill-focused player';
+    }
+    return 'The Unique Footballer - Your own distinctive playing style';
+  }
+  
+  // Business/Entrepreneur theme
+  if (themeName.toLowerCase().includes('business') || themeName.toLowerCase().includes('entrepreneur')) {
+    const hasRisk = results.some(r => (r.spinResult.segment.weight || 50) < 30);
+    const hasInnovation = results.some(r => r.spinResult.segment.text.toLowerCase().includes('innovation') || r.spinResult.segment.text.toLowerCase().includes('new'));
+    
+    if (hasRisk && hasInnovation) {
+      return 'The Visionary Disruptor - Bold innovator who takes calculated risks';
+    } else if (hasRisk) {
+      return 'The Risk-Taking Executive - Thrives on high-stakes decisions';
+    }
+    return 'The Strategic Builder - Methodical approach to growth';
+  }
+  
+  // Fantasy/Adventure themes
+  if (themeId === 'mystical-academy' || themeName.toLowerCase().includes('magic')) {
+    const house = resultMap.house;
+    if (house === 'courage-house') return 'The Brave Pathfinder - Courage-driven magical journey';
+    if (house === 'wisdom-house') return 'The Scholarly Innovator - Knowledge-seeking mage';
+    if (house === 'ambition-house') return 'The Ambitious Achiever - Power-focused magical path';
+    if (house === 'loyalty-house') return 'The Loyal Protector - Community-centered magical journey';
+  }
+  
   if (themeId === 'survival-tournament') {
-    return getSurvivalTournamentCharacterMatch(resultMap);
+    const region = resultMap.region;
+    const hasVictory = Object.values(resultMap).some(v => v.includes('victory'));
+    
+    if (hasVictory) {
+      return 'The Resilient Victor - Overcame impossible odds through determination';
+    }
+    return 'The Fallen Hero - Sacrificed everything for the cause';
   }
   
-  // Mystical Academy character matching
-  const { origin, house, purpose, spell } = resultMap;
-  const schoolPerf = resultMap['school-performance'];
-  const career = resultMap['hero-career'] || resultMap['scholar-career'] || resultMap['nature-career'];
+  // Generic analysis based on choice patterns
+  const hasHighRiskChoices = results.some(r => (r.spinResult.segment.weight || 50) < 25);
+  const hasConsistentTheme = totalResults >= 3;
   
-  // Specific character archetypes
-  if (house === 'courage-house' && spell === 'disarm-spell' && purpose === 'defeat-darkness') {
-    return 'The Chosen Hero - The brave one destined for greatness';
+  if (hasHighRiskChoices && hasConsistentTheme) {
+    return `The Bold Explorer - Unique ${themeName} character who chose the unlikely path`;
   }
   
-  if (house === 'courage-house' && origin === 'muggle-born' && schoolPerf === 'top-grades') {
-    return 'The Brilliant Scholar - The studious one who mastered magic through knowledge';
+  if (totalResults >= 5) {
+    return `The Epic Journey Maker - Complex ${themeName} character with a rich story`;
   }
   
-  if (house === 'ambition-house' && spell === 'void-spell' && origin === 'pure-blood') {
-    return 'The Dark Master - The ambitious one who sought forbidden power';
-  }
-  
-  if (house === 'wisdom-house' && schoolPerf === 'head-student' && purpose === 'teach-academy') {
-    return 'The Wise Mentor - The protector of magical knowledge';
-  }
-  
-  if (house === 'ambition-house' && career === 'potions-master' && schoolPerf === 'top-grades') {
-    return 'The Master Alchemist - The skilled potion maker';
-  }
-  
-  if (house === 'loyalty-house' && schoolPerf === 'flight-captain') {
-    return 'The True Champion - The loyal leader and skyball master';
-  }
-  
-  if (house === 'wisdom-house' && schoolPerf === 'quiet-genius') {
-    return 'The Unique Dreamer - The wise one who sees beyond the ordinary';
-  }
-  
-  // General matches based on house
-  const houseMatches = {
-    'courage-house': 'The Brave Guardian - The courageous one who found their strength',
-    'ambition-house': 'The Ambitious Achiever - The driven one who seeks greatness',
-    'loyalty-house': 'The Faithful Friend - The loyal one who stands by others',
-    'wisdom-house': 'The Wise Scholar - The intelligent one who values knowledge'
-  };
-  
-  return houseMatches[house as keyof typeof houseMatches] || 'A unique mage of your own making';
+  return `The ${themeName} Pioneer - A unique path through your custom world`;
 }
 
-function getSurvivalTournamentCharacterMatch(resultMap: Record<string, string>): string {
-  const region = resultMap.region;
-  const competitorStatus = resultMap['competitor-status'];
-  const trainingScore = resultMap['training-score'];
-  const alliance = resultMap['alliance-strategy'];
-  const victory = resultMap['final-showdown'];
-  const rebellion = resultMap['rebellion-role'];
-  
-  // Check for death outcomes first
-  const hasDied = Object.values(resultMap).some(value => value.includes('death') || value.includes('die-'));
-  
-  if (hasDied) {
-    // Tragic heroes who died but inspired others
-    if (region === 'region-11') {
-      return 'The Young Ally - The one whose death sparked outrage';
-    }
-    if (region === 'region-12') {
-      return 'The Symbol - A sign of resistance even in death';
-    }
-    return 'Fallen Competitor - Your sacrifice fueled the rebellion';
-  }
-  
-  // Perfect Symbol Path
-  if (
-    region === 'region-12' &&
-    competitorStatus === 'volunteer-save' &&
-    (trainingScore === 'score-11' || trainingScore === 'score-12') &&
-    (victory === 'joint-victory' || victory === 'rule-change-victory') &&
-    rebellion === 'the-symbol'
-  ) {
-    return 'The Fire Symbol - The one who ignited the revolution';
-  }
-  
-  // Star-Crossed Lovers
-  if (alliance === 'secret-romance' && victory === 'joint-victory') {
-    if (region === 'region-12') {
-      return 'The Beloved - The one whose love conquered the Empire';
-    }
-    return 'Star-Crossed Survivor - Your love story gave the Empire hope';
-  }
-  
-  // Career Competitors
-  if (competitorStatus === 'career-volunteer') {
-    if (region === 'region-2' && victory === 'brutal-victory') {
-      return 'The Brutal Elite - The trained fighter who fell to arena cruelty';
-    }
-    if (region === 'region-1') {
-      return 'The Elite Killer - The trained assassin who underestimated heart';
-    }
-    if (region === 'region-4' && rebellion) {
-      return 'The Elite Rebel - The trained fighter who joined the rebellion';
-    }
-    return 'Career Competitor - Trained to kill, learned to question';
-  }
-  
-  // Region-specific matches
-  if (region === 'region-7' && alliance === 'solo-survivor') {
-    return 'The Axe Wielder - The forest survivor who played the game';
-  }
-  
-  if (region === 'region-3' && victory === 'strategic-victory') {
-    return 'The Tech Genius - The brilliant mind who outsmarted the arena';
-  }
-  
-  if (region === 'region-11' && alliance === 'region-alliance') {
-    return 'The Honorable Warrior - The powerful competitor who honored alliances';
-  }
-  
-  if (region === 'region-5' && trainingScore?.includes('score-5')) {
-    return 'The Clever Fox - The smart competitor who survived through intelligence';
-  }
-  
-  // Rebellion roles
-  if (rebellion === 'emperor-assassin') {
-    return 'The Assassin - The one who personally ended the Emperor\'s reign';
-  }
-  
-  if (rebellion === 'underground-coordinator') {
-    return 'The Mastermind - The genius behind the revolution';
-  }
-  
-  if (rebellion === 'region-liberator') {
-    return 'The Commander - The military leader who freed the regions';
-  }
-  
-  if (rebellion === 'capitol-infiltrator') {
-    return 'The Inside Rebel - The spy who brought down the system from within';
-  }
-  
-  // General region matches
-  const regionMatches: Record<string, string> = {
-    'region-1': 'Luxury Competitor - Raised in wealth, learned about suffering',
-    'region-2': 'Stone Warrior - Trained for combat, forged in rebellion',
-    'region-3': 'Tech Survivor - Used intelligence over strength',
-    'region-4': 'Water Competitor - Flowed like the tide, adapted to survive',
-    'region-5': 'Power Player - Generated energy for the revolution',
-    'region-6': 'Transport Rebel - Carried the revolution forward',
-    'region-7': 'Forest Fighter - Strong as the trees, sharp as an axe',
-    'region-8': 'Fabric Weaver - Wove the threads of rebellion',
-    'region-9': 'Grain Guardian - Fed the hope of a hungry nation',
-    'region-10': 'Animal Ally - Understood the call of the wild and free',
-    'region-11': 'Agricultural Rebel - Planted seeds of revolution',
-    'region-12': 'Coal Fire - Burned bright against the darkness',
-  };
-  
-  return regionMatches[region] || 'Unique Competitor - Your story stands alone in the Empire\'s history';
-}
 
 function isHeroPath(results: Record<string, string>): boolean {
   return (
@@ -431,9 +337,8 @@ ${resultsList}
 
 Please create:
 1. A compelling 3-4 paragraph narrative that follows their journey from Region to Arena to (potential) rebellion
-2. Compare this character to a tournament archetype (explain the similarities)
+2. Character analysis: What real-world leader, athlete, or historical figure does this path most resemble? Focus on personality traits, leadership style, and decision-making patterns rather than appearance
 3. Explain the rarity (what makes this combination special in the Empire's history)
-4. Make it feel authentic to the brutal world of survival competition
 
 If they died in the Arena, focus on their heroic sacrifice and how it inspired the rebellion.
 If they survived, show their transformation from competitor to rebel leader.
@@ -441,7 +346,7 @@ Include specific details about their Region skills, Arena survival tactics, and 
 Make the reader feel the stakes, the brutality, but also the hope that drives the revolution.`;
   }
   
-  // Default Mystical Academy prompt
+  // Default Mystical Academy prompt  
   return `Generate a magical story for this ${themeName} character with rarity score ${rarityScore}/100:
 
 RESULTS:
@@ -449,9 +354,8 @@ ${resultsList}
 
 Please create:
 1. A compelling 3-4 paragraph narrative that weaves these results into an engaging story
-2. Compare this character to a magical archetype (be specific about why)
+2. Character analysis: What type of person does this magical journey create? Reference real-world examples of leaders, innovators, or historical figures with similar traits and decision-making patterns
 3. Explain the rarity (what makes this combination special/unique)
-4. Make it feel authentic to the magical academy universe
 
 Focus on storytelling that brings these random results to life as a coherent, magical journey. Make the reader feel like this is THEIR unique mage story.`;
 }
@@ -519,43 +423,11 @@ ${resultsList}
 
 Please create:
 1. A compelling 3-4 paragraph narrative that connects these choices into a meaningful journey
-2. Identify what character archetype this creates (based on the combination of choices)
+2. Character analysis: What type of person does this journey create? If relevant to the theme (e.g., sports, leadership, business), reference real-world figures with similar traits or decision-making patterns
 3. Explain why this particular combination is special or rare (${rarityScore}/100 rarity)
-4. Make the story feel personal and unique to this specific path
 
 Focus on storytelling that transforms these individual choices into a coherent, engaging narrative. The reader should feel like this story is uniquely theirs, born from their specific decisions. Connect the choices in unexpected ways and highlight the narrative threads that make this combination special.
 
 Make it immersive and authentic to the "${themeName}" concept while celebrating the uniqueness of this particular path through the sequence.`;
 }
 
-function getCustomCharacterArchetype(results: SequenceResult[], themeName: string): string {
-  // Analyze the pattern of choices to determine archetype
-  const totalResults = results.length;
-  
-  // Look for common archetypes based on choice patterns
-  const hasHighRiskChoices = results.some(r => (r.spinResult.segment.weight || 50) < 20);
-  const hasConsistentTheme = results.filter(r => 
-    r.spinResult.segment.text.toLowerCase().includes('dark') ||
-    r.spinResult.segment.text.toLowerCase().includes('light') ||
-    r.spinResult.segment.text.toLowerCase().includes('good') ||
-    r.spinResult.segment.text.toLowerCase().includes('evil')
-  ).length > totalResults / 2;
-  
-  if (hasHighRiskChoices && hasConsistentTheme) {
-    return `The Rare Path Walker - A unique ${themeName} character who chose the unlikely path`;
-  }
-  
-  if (hasHighRiskChoices) {
-    return `The Risk Taker - A bold ${themeName} character who defied the odds`;
-  }
-  
-  if (hasConsistentTheme) {
-    return `The Consistent Journeyer - A focused ${themeName} character with clear convictions`;
-  }
-  
-  if (totalResults >= 5) {
-    return `The Epic Adventurer - A ${themeName} character with a complex, multi-faceted journey`;
-  }
-  
-  return `The Unique ${themeName} Character - A one-of-a-kind journey through your custom world`;
-}

@@ -21,7 +21,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
     rarityScore: number;
     rarityPercentage: string;
     rarityTier: string;
-    characterLookalike: string;
+    characterArchetype: string;
   } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -137,19 +137,17 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         </div>
         <div className="flex items-center justify-center space-x-4">
           {/* Theme Logo */}
-          {currentTheme.id === 'harry-potter' && (
-            <img 
-              src="/harry-potter-1.svg" 
-              alt="Harry Potter" 
-              className="w-10 h-10 filter brightness-0 invert opacity-80"
-            />
+          {currentTheme.id === 'mystical-academy' && (
+            <span className="text-3xl opacity-80">🧙‍♂️</span>
           )}
-          {currentTheme.id === 'hunger-games' && (
-            <img 
-              src="/the-hunger-games.svg" 
-              alt="Hunger Games" 
-              className="w-12 h-10 filter brightness-0 invert opacity-80"
-            />
+          {currentTheme.id === 'survival-tournament' && (
+            <span className="text-3xl opacity-80">🏹</span>
+          )}
+          {currentTheme.id === 'detective-mystery' && (
+            <span className="text-3xl opacity-80">🕵️‍♂️</span>
+          )}
+          {currentTheme.id === 'underground-racing' && (
+            <span className="text-3xl opacity-80">🏁</span>
           )}
           <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text">
             🌟 {currentTheme.name} Universe 🌟
@@ -188,10 +186,9 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
               <div className="glass-panel hud-panel rounded-xl p-6 mb-6 border border-yellow-400/30 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-orange-600/10"></div>
                 <div className="relative flex items-center space-x-4">
-                  <div className="text-4xl animate-pulse">🧙‍♂️</div>
                   <div>
-                    <p className="font-bold text-yellow-400 text-lg mb-1">Character Match:</p>
-                    <p className="text-yellow-200 text-xl font-semibold">{generatedStory.characterLookalike}</p>
+                    <p className="font-bold text-yellow-400 text-lg mb-1">Character Analysis:</p>
+                    <p className="text-yellow-200 text-xl font-semibold">{generatedStory.characterArchetype}</p>
                   </div>
                 </div>
               </div>

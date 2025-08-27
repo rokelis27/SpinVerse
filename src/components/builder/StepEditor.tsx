@@ -21,7 +21,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
   
   const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
 
-  const handleStepUpdate = (field: string, value: string) => {
+  const handleStepUpdate = (field: string, value: string | boolean | number) => {
     updateStep(stepIndex, { [field]: value });
   };
 
@@ -46,7 +46,9 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
       {/* Header with Step Info and Enhance Button */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-white">{step.title}</h2>
+          <h2 className="text-xl font-bold text-white flex items-center space-x-3">
+            <span>{step.title}</span>
+          </h2>
           <p className="text-sm text-gray-400">Step {stepIndex + 1} • {step.wheelConfig.segments.length} options</p>
         </div>
         <EnhanceStepButton step={step} stepIndex={stepIndex} />
@@ -128,6 +130,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               <p className="text-xs text-gray-500 mt-1">{(step.description || '').length}/200 characters</p>
             </div>
 
+
           </div>
         )}
 
@@ -203,7 +206,9 @@ const SegmentEditor: React.FC<SegmentEditorProps> = ({
               style={{ backgroundColor: segment.color }}
             />
             <div>
-              <h5 className="font-medium text-white">{segment.text}</h5>
+              <h5 className="font-medium text-white flex items-center space-x-2">
+                <span>{segment.text}</span>
+              </h5>
               <p className="text-xs text-gray-400">Weight: {segment.weight}%</p>
             </div>
           </div>
@@ -309,6 +314,7 @@ const SegmentEditor: React.FC<SegmentEditorProps> = ({
               />
             </div>
           )}
+
         </div>
       )}
     </div>

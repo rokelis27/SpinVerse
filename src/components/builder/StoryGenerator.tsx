@@ -13,7 +13,7 @@ interface GeneratedStory {
   rarityScore: number;
   rarityPercentage: string;
   rarityTier: string;
-  characterLookalike: string;
+  characterArchetype: string;
 }
 
 export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
@@ -27,7 +27,6 @@ export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
     if (!isSequenceComplete) return;
     
     setIsGenerating(true);
-    setError(null);
     
     try {
       const response = await fetch('/api/generate-story', {
@@ -82,7 +81,7 @@ export const StoryGenerator: React.FC<StoryGeneratorProps> = ({ sequence }) => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-2xl font-bold text-white mb-1">{sequence.name} Story</h3>
-                <p className="text-purple-300 font-medium">{generatedStory.characterLookalike}</p>
+                <p className="text-purple-300 font-medium">{generatedStory.characterArchetype}</p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
