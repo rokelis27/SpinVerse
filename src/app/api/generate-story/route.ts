@@ -23,6 +23,16 @@ function getThemeConfig(themeId: string): ThemeConfig {
       universe: 'Survival Tournament',
       worldDescription: 'the dystopian tournament world',
       specialInstructions: 'Focus on survival, arena challenges, and rebellion against oppression. Reference regions, the empire, official manipulation, and resistance. Emphasize themes of sacrifice, hope, and fighting tyranny.'
+    },
+    'underground-racing': {
+      universe: 'Underground Racing',
+      worldDescription: 'the street racing underworld',
+      specialInstructions: 'Focus on speed, adrenaline, crew loyalty, and the underground racing scene. Reference cars, racing techniques, crew dynamics, sponsorships, and the constant tension between street racing and law enforcement.'
+    },
+    'detective-mystery': {
+      universe: 'Detective Mystery',
+      worldDescription: 'the crime investigation world',
+      specialInstructions: 'Focus on investigation techniques, evidence analysis, suspect interviews, and solving complex crimes. Reference detective work, clues, plot twists, and the pursuit of justice.'
     }
   };
   
@@ -63,10 +73,15 @@ export async function POST(req: NextRequest) {
       `You're working with the ${themeConfig.universe} universe. Create immersive stories that feel authentic to ${themeConfig.worldDescription}.`
     }
     
-    Your story should include:
-    1. A compelling narrative (3-4 paragraphs) that weaves the choices into a coherent journey
-    2. Character archetype analysis that connects to real-world examples when relevant
-    3. Rarity assessment with estimated percentage of how unique this combination is
+    **CRITICAL LANGUAGE REQUIREMENT**: Automatically detect the language used in the user's sequence choices and story content. Generate your entire response (narrative, character analysis, all text) in the SAME LANGUAGE as the user's content. If my sequence choices are in English, write the story in English. If my sequence choices are in another language, write in that language.
+    
+    IMPORTANT: Format your response exactly like this:
+    
+    **STORY:**
+    [Write a compelling narrative (3-4 paragraphs) that weaves the choices into a coherent journey]
+    
+    **CHARACTER:**
+    [Character archetype analysis that connects to real-world examples when relevant - write this in the same language as the story above]
     
     ${isActuallyCustom ? 
       `Focus on the unique themes and elements that make this custom sequence special. Draw connections between the choices to create meaningful narrative progression.` :
@@ -90,18 +105,19 @@ export async function POST(req: NextRequest) {
       temperature: parseFloat(process.env.OPENAI_TEMPERATURE || '0.8'),
     });
 
-    const generatedStory = completion.choices[0]?.message?.content || 'Story generation failed';
+    const generatedContent = completion.choices[0]?.message?.content || 'Story generation failed';
+    
+    // Parse the AI response to extract story and character analysis
+    const { story, characterArchetype } = parseAIResponse(generatedContent);
 
     const rarityData = getRarityPercentage(rarityScore);
     
     return NextResponse.json({
-      story: generatedStory,
+      story,
       rarityScore,
       rarityPercentage: rarityData.percentage,
       rarityTier: rarityData.tier,
-      characterArchetype: isActuallyCustom 
-        ? getPersonalizedArchetype(results, themeName)
-        : getPersonalizedArchetype(results, themeName, themeId),
+      characterArchetype,
     });
 
   } catch (error) {
@@ -117,17 +133,33 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
   let totalRarityPoints = 0;
   
   for (const result of results) {
-    const segment = result.spinResult.segment;
-    
-    // Base rarity points
-    const rarityPoints = {
-      common: 1,
-      uncommon: 3,
-      rare: 8,
-      legendary: 20
-    };
-    
-    totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+    // Handle multi-spin results if they exist
+    if (result.multiSpinResults && result.multiSpinResults.length > 1) {
+      // Calculate rarity for all spins in multi-spin sequence
+      for (const spinResult of result.multiSpinResults) {
+        const segment = spinResult.segment;
+        const rarityPoints = {
+          common: 1,
+          uncommon: 3,
+          rare: 8,
+          legendary: 20
+        };
+        totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+      }
+    } else {
+      // Single spin result
+      const segment = result.spinResult.segment;
+      
+      // Base rarity points
+      const rarityPoints = {
+        common: 1,
+        uncommon: 3,
+        rare: 8,
+        legendary: 20
+      };
+      
+      totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+    }
     
     // Theme-specific bonus points
     if (themeId === 'mystical-academy') {
@@ -241,7 +273,6 @@ function getPersonalizedArchetype(results: SequenceResult[], themeName: string, 
   }
   
   if (themeId === 'survival-tournament') {
-    const region = resultMap.region;
     const hasVictory = Object.values(resultMap).some(v => v.includes('victory'));
     
     if (hasVictory) {
@@ -327,7 +358,17 @@ function isUnderdogPath(results: Record<string, string>): boolean {
 }
 
 function generateStoryPrompt(results: SequenceResult[], themeName: string, rarityScore: number, themeId?: string): string {
-  const resultsList = results.map(r => `${r.stepId}: ${r.spinResult.segment.text}`).join('\n');
+  const resultsList = results.map(r => {
+    const stepTitle = r.stepId.replace(/-/g, ' ');
+    if (r.multiSpinResults && r.multiSpinResults.length > 1) {
+      // Multi-spin step: show all results
+      const allSpins = r.multiSpinResults.map((spin, index) => `Spin ${index + 1}: ${spin.segment.text}`).join(', ');
+      return `${stepTitle}: [Multi-Spin] ${allSpins}`;
+    } else {
+      // Single spin step
+      return `${stepTitle}: ${r.spinResult.segment.text}`;
+    }
+  }).join('\n');
   
   if (themeId === 'survival-tournament') {
     return `Generate an epic survival tournament competitor story for this ${themeName} character with rarity score ${rarityScore}/100:
@@ -335,10 +376,15 @@ function generateStoryPrompt(results: SequenceResult[], themeName: string, rarit
 COMPETITOR JOURNEY:
 ${resultsList}
 
-Please create:
-1. A compelling 3-4 paragraph narrative that follows their journey from Region to Arena to (potential) rebellion
-2. Character analysis: What real-world leader, athlete, or historical figure does this path most resemble? Focus on personality traits, leadership style, and decision-making patterns rather than appearance
-3. Explain the rarity (what makes this combination special in the Empire's history)
+**IMPORTANT**: Detect the language used in the sequence choices above and write your ENTIRE response in that same language. 
+
+Format your response exactly like this:
+
+**STORY:**
+[A compelling 3-4 paragraph narrative that follows their journey from Region to Arena to (potential) rebellion. Explain the rarity (what makes this combination special in the Empire's history)]
+
+**CHARACTER:**
+[Character analysis: What real-world leader, athlete, or historical figure does this path most resemble? Focus on personality traits, leadership style, and decision-making patterns rather than appearance - write this in the same language as the story above]
 
 If they died in the Arena, focus on their heroic sacrifice and how it inspired the rebellion.
 If they survived, show their transformation from competitor to rebel leader.
@@ -352,10 +398,15 @@ Make the reader feel the stakes, the brutality, but also the hope that drives th
 RESULTS:
 ${resultsList}
 
-Please create:
-1. A compelling 3-4 paragraph narrative that weaves these results into an engaging story
-2. Character analysis: What type of person does this magical journey create? Reference real-world examples of leaders, innovators, or historical figures with similar traits and decision-making patterns
-3. Explain the rarity (what makes this combination special/unique)
+**IMPORTANT**: Detect the language used in the sequence choices above and write your ENTIRE response in that same language. If my sequence choices are in English, write the story in English. If my sequence choices are in another language, write in that language.
+
+Format your response exactly like this:
+
+**STORY:**
+[A compelling 3-4 paragraph narrative that weaves these results into an engaging magical journey. Explain the rarity (what makes this combination special/unique)]
+
+**CHARACTER:**
+[Character analysis: What type of person does this magical journey create? Reference real-world examples of leaders, innovators, or historical figures with similar traits and decision-making patterns - write this in the same language as the story above]
 
 Focus on storytelling that brings these random results to life as a coherent, magical journey. Make the reader feel like this is THEIR unique mage story.`;
 }
@@ -374,22 +425,46 @@ function calculateCustomRarityScore(results: SequenceResult[]): number {
   
   // Base calculation for custom sequences
   for (const result of results) {
-    const segment = result.spinResult.segment;
-    const weightFactor = 100 - (segment.weight || 50); // Lower weight = higher rarity
-    
-    // Convert weight to rarity points (0-100 weight becomes 0-15 points)
-    const weightRarityPoints = Math.round(weightFactor * 0.15);
-    totalRarityPoints += weightRarityPoints;
-    
-    // Bonus for user-defined rarity levels
-    const rarityPoints = {
-      common: 1,
-      uncommon: 3,
-      rare: 8,
-      legendary: 20
-    };
-    
-    totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+    // Handle multi-spin results if they exist
+    if (result.multiSpinResults && result.multiSpinResults.length > 1) {
+      // Calculate rarity for all spins in multi-spin sequence
+      for (const spinResult of result.multiSpinResults) {
+        const segment = spinResult.segment;
+        const weightFactor = 100 - (segment.weight || 50); // Lower weight = higher rarity
+        
+        // Convert weight to rarity points (0-100 weight becomes 0-15 points)
+        const weightRarityPoints = Math.round(weightFactor * 0.15);
+        totalRarityPoints += weightRarityPoints;
+        
+        // Bonus for user-defined rarity levels
+        const rarityPoints = {
+          common: 1,
+          uncommon: 3,
+          rare: 8,
+          legendary: 20
+        };
+        
+        totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+      }
+    } else {
+      // Single spin result
+      const segment = result.spinResult.segment;
+      const weightFactor = 100 - (segment.weight || 50); // Lower weight = higher rarity
+      
+      // Convert weight to rarity points (0-100 weight becomes 0-15 points)
+      const weightRarityPoints = Math.round(weightFactor * 0.15);
+      totalRarityPoints += weightRarityPoints;
+      
+      // Bonus for user-defined rarity levels
+      const rarityPoints = {
+        common: 1,
+        uncommon: 3,
+        rare: 8,
+        legendary: 20
+      };
+      
+      totalRarityPoints += rarityPoints[segment.rarity || 'common'];
+    }
   }
   
   // Bonus for sequence length (longer sequences are rarer)
@@ -411,7 +486,14 @@ function generateCustomStoryPrompt(
 ): string {
   const resultsList = results.map((r, index) => {
     const stepTitle = r.stepId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    return `Step ${index + 1} - ${stepTitle}: ${r.spinResult.segment.text}`;
+    if (r.multiSpinResults && r.multiSpinResults.length > 1) {
+      // Multi-spin step: show all results
+      const allSpins = r.multiSpinResults.map((spin, spinIndex) => `Spin ${spinIndex + 1}: ${spin.segment.text}`).join(', ');
+      return `Step ${index + 1} - ${stepTitle}: [Multi-Spin] ${allSpins}`;
+    } else {
+      // Single spin step
+      return `Step ${index + 1} - ${stepTitle}: ${r.spinResult.segment.text}`;
+    }
   }).join('\n');
   
   return `Generate a personalized story for this "${themeName}" journey with rarity score ${rarityScore}/100:
@@ -421,13 +503,55 @@ SEQUENCE CONCEPT: ${description || `A custom ${themeName} experience`}
 PLAYER CHOICES:
 ${resultsList}
 
-Please create:
-1. A compelling 3-4 paragraph narrative that connects these choices into a meaningful journey
-2. Character analysis: What type of person does this journey create? If relevant to the theme (e.g., sports, leadership, business), reference real-world figures with similar traits or decision-making patterns
-3. Explain why this particular combination is special or rare (${rarityScore}/100 rarity)
+**IMPORTANT**: Detect the language used in the sequence choices above and write your ENTIRE response in that same language. If my sequence choices are in English, write the story in English. If my sequence choices are in another language, write in that language.
+
+Format your response exactly like this:
+
+**STORY:**
+[A compelling 3-4 paragraph narrative that connects these choices into a meaningful journey. Explain why this particular combination is special or rare (${rarityScore}/100 rarity)]
+
+**CHARACTER:**
+[Character analysis: What type of person does this journey create? If relevant to the theme (e.g., sports, leadership, business), reference real-world figures with similar traits or decision-making patterns - write this in the same language as the story above]
 
 Focus on storytelling that transforms these individual choices into a coherent, engaging narrative. The reader should feel like this story is uniquely theirs, born from their specific decisions. Connect the choices in unexpected ways and highlight the narrative threads that make this combination special.
 
 Make it immersive and authentic to the "${themeName}" concept while celebrating the uniqueness of this particular path through the sequence.`;
+}
+
+// Parse AI response to extract story and character analysis
+function parseAIResponse(content: string): { story: string; characterArchetype: string } {
+  try {
+    // Look for **STORY:** and **CHARACTER:** sections
+    const storyMatch = content.match(/\*\*STORY:\*\*\s*([\s\S]*?)(?=\*\*CHARACTER:\*\*|$)/i);
+    const characterMatch = content.match(/\*\*CHARACTER:\*\*\s*([\s\S]*?)$/i);
+    
+    if (storyMatch && characterMatch) {
+      return {
+        story: storyMatch[1].trim(),
+        characterArchetype: characterMatch[1].trim()
+      };
+    }
+    
+    // Fallback: if structured format not found, try to split by common patterns
+    const sections = content.split(/(?:character analysis|character archetype|análisis de personaje|análisis del personaje)/i);
+    if (sections.length >= 2) {
+      return {
+        story: sections[0].trim(),
+        characterArchetype: sections[1].trim()
+      };
+    }
+    
+    // Final fallback: return the whole content as story with generic character
+    return {
+      story: content,
+      characterArchetype: 'A unique character shaped by their distinctive journey'
+    };
+  } catch (error) {
+    console.error('Error parsing AI response:', error);
+    return {
+      story: content,
+      characterArchetype: 'A unique character shaped by their distinctive journey'
+    };
+  }
 }
 

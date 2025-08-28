@@ -22,6 +22,17 @@ export interface SpinResult {
   index: number;
   angle: number;
   timestamp: number;
+  stepId?: string; // For multi-spin tracking
+  spinIndex?: number; // 0 for initial, 1+ for multi-spins
+}
+
+export interface MultiSpinState {
+  isActive: boolean;
+  currentCount: number;
+  totalCount: number;
+  results: SpinResult[];
+  currentStepId: string;
+  aggregateResults: boolean;
 }
 
 export interface WheelPhysics {

@@ -21,11 +21,11 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
   
   const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
 
-  const handleStepUpdate = (field: string, value: string | boolean | number) => {
+  const handleStepUpdate = (field: string, value: any) => {
     updateStep(stepIndex, { [field]: value });
   };
 
-  const handleSegmentUpdate = (segmentId: string, field: string, value: string | number) => {
+  const handleSegmentUpdate = (segmentId: string, field: string, value: any) => {
     updateSegment(stepIndex, segmentId, { [field]: value });
   };
 
@@ -40,6 +40,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
     ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
 
   return (
     <div className="h-full flex flex-col">
@@ -91,7 +92,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
       {/* Tab Content */}
       <div className="flex-1 overflow-hidden">
         {activeTab === 'basic' && (
-          <div className="space-y-6">
+          <div className="h-full overflow-y-auto pr-2 space-y-6" style={{maxHeight: 'calc(100vh - 300px)'}}>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Step Title
@@ -130,6 +131,82 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               <p className="text-xs text-gray-500 mt-1">{(step.description || '').length}/200 characters</p>
             </div>
 
+            {/* Step-Level Multi-Spin Configuration */}
+            <div className="border-t border-white/10 pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-medium text-white flex items-center space-x-2">
+                    <span>🎰</span>
+                    <span>Multi-Spin Feature</span>
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1">Make this step spin multiple times for richer results</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={step.multiSpin?.enabled || false}
+                  onChange={(e) => {
+                    const multiSpin = e.target.checked
+                      ? { enabled: true, mode: 'fixed', fixedCount: 3, aggregateResults: true }
+                      : { enabled: false, mode: 'fixed', fixedCount: 1, aggregateResults: true };
+                    handleStepUpdate('multiSpin', multiSpin);
+                  }}
+                  className="w-5 h-5 text-cyan-600 bg-white/10 border-white/20 rounded focus:ring-cyan-500 focus:ring-2"
+                />
+              </div>
+
+              {step.multiSpin?.enabled && (
+                <div className="space-y-6 bg-cyan-950/20 rounded-lg p-4 border border-cyan-500/20">
+                  {/* Coming Soon: Dynamic Mode */}
+                  <div>
+                    <label className="block text-sm font-medium text-cyan-300 mb-2">Number of Spins</label>
+                    <p className="text-xs text-cyan-400/80 mb-3">Set how many times this step will spin automatically</p>
+                    <div className="p-3 bg-cyan-900/20 rounded-lg border border-cyan-500/20 mb-4">
+                      <p className="text-xs text-cyan-400/70">
+                        🚧 <strong>Coming Soon:</strong> Dynamic spin count where a previous step determines the number of spins
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Fixed Count Configuration */}
+                  <div>
+                    <label className="block text-sm font-medium text-cyan-300 mb-2">
+                      Spin Count: {step.multiSpin?.fixedCount || 3}
+                    </label>
+                    <input
+                      type="range"
+                      min="2"
+                      max="5"
+                      value={step.multiSpin?.fixedCount || 3}
+                      onChange={(e) => handleStepUpdate('multiSpin', {
+                        ...step.multiSpin,
+                        mode: 'fixed',
+                        fixedCount: parseInt(e.target.value),
+                        aggregateResults: true // Always true
+                      })}
+                      className="w-full h-2 bg-cyan-900/50 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-cyan-400 mt-1">
+                      <span>2 spins</span>
+                      <span>5 spins</span>
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  <div className="text-xs text-cyan-400/70 bg-cyan-950/30 rounded p-3">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span>💡</span>
+                    </div>
+                    <div>
+                      When players reach this step, the wheel will automatically spin{' '}
+                      <span className="text-cyan-300 font-medium">
+                        {step.multiSpin?.fixedCount || 3} times
+                      </span>
+                      {' '}and all results will be woven into the story for complex, detailed narratives.
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
           </div>
         )}
@@ -314,6 +391,7 @@ const SegmentEditor: React.FC<SegmentEditorProps> = ({
               />
             </div>
           )}
+
 
         </div>
       )}

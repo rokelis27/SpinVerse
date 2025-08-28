@@ -28,6 +28,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   });
   
   const [isIdleRotating, setIsIdleRotating] = useState(true);
+  const [hasCompletedSpin, setHasCompletedSpin] = useState(false);
 
   // Generate stable particle positions for spinning effect
   const spinParticles = useMemo(() => 
@@ -140,7 +141,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Draw text with rarity indicator
+      // Draw text with rarity and multi-spin indicators
       ctx.save();
       const textAngle = startAngle + segmentAngles[index] / 2;
       ctx.rotate(textAngle);
@@ -163,6 +164,8 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.shadowBlur = 4;
       ctx.fillText(displayText, radius * 0.7, 0);
       ctx.shadowBlur = 0;
+      
+      
       ctx.restore();
     });
 
@@ -308,7 +311,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       while (newAngle < 0) newAngle += 2 * Math.PI;
 
       // Check if should stop spinning (much lower threshold)
-      if (Math.abs(newVelocity) < MIN_VELOCITY) {
+      if (Math.abs(newVelocity) < MIN_VELOCITY && !hasCompletedSpin) {
         // Calculate which segment the pointer is naturally pointing to
         // The pointer points down from top, and segments are drawn starting from right (0 radians)
         // We need to account for the wheel rotation and pointer position
@@ -322,6 +325,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         
         // DON'T SNAP - just stop where physics naturally stopped
         const finalAngle = newAngle;
+        
+        // Mark spin as completed to prevent duplicate calls
+        setHasCompletedSpin(true);
         
         // Call completion callback with dramatic pause
         if (onSpinComplete && selectedSegment) {
@@ -361,6 +367,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
 
     // Stop idle rotation and start spinning
     setIsIdleRotating(false);
+    setHasCompletedSpin(false); // Reset completion guard for new spin
     
     const spinPower = SPIN_POWER_MIN + Math.random() * (SPIN_POWER_MAX - SPIN_POWER_MIN);
     
@@ -384,14 +391,15 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   }, [spin, wheelSettings.enableHapticFeedback]);
 
   // Handle touch for swipe-to-spin (future enhancement)
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+  const handleTouchStart = useCallback(() => {
     // Prepare for potential swipe gesture
-    // const touch = e.touches[0]; // Future: store for swipe implementation
-    e.preventDefault();
+    // Future: store touch position for swipe implementation
+    // Note: preventDefault() removed to avoid passive event listener warning
   }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault(); // Prevent scrolling
+  const handleTouchMove = useCallback(() => {
+    // Note: preventDefault() removed to avoid passive event listener warning
+    // Future: implement touch handling with proper passive event management
   }, []);
 
   // Setup canvas and start animation

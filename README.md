@@ -1,15 +1,16 @@
 # SpinVerse MVP 🎯
 
-**The future of interactive content creation** - Transform spinning wheels into shareable stories with auto-advancing themed sequences.
+**The future of interactive content creation** - Transform spinning wheels into shareable stories with auto-advancing themed sequences and AI-powered narrative generation.
 
 ## 🌟 What is SpinVerse?
 
-SpinVerse solves the problem of creators spending hours manually building multiple wheels and struggling with video stitching. We provide **pre-built themed sequences** that auto-advance through connected wheels and generate social-ready content.
+SpinVerse revolutionizes interactive storytelling by combining spinning wheels with intelligent sequence management and AI-powered narrative generation. Create engaging, shareable stories through choice-driven wheel sequences.
 
 ### Core Value Proposition
-- **5-8 individual wheels** → **1 cohesive sequence**  
-- **Manual stitching** → **Auto-advancing flow**
-- **Static results** → **Shareable stories**
+- **Multiple individual wheels** → **Cohesive story sequences**  
+- **Manual content creation** → **AI-enhanced storytelling**
+- **Static results** → **Rich narrative experiences**
+- **Generic wheels** → **Themed story universes**
 
 ---
 
@@ -21,69 +22,94 @@ SpinVerse solves the problem of creators spending hours manually building multip
 - **Touch-optimized** for mobile devices
 - **Haptic feedback** and smooth interactions
 - **Auto-contrast text** for perfect readability
+- **Customizable speeds** (Slow, Normal, Fast, Turbo)
 
-### ✅ **Sequence State Management**
+### ✅ **Advanced Sequence Management**
 - **Auto-advancing flow** between connected wheels
 - **Progress tracking** with visual indicators
-- **Smooth transitions** and animations  
-- **Result persistence** throughout sequence
-- **Completion detection** with celebration screen
+- **Smooth transitions** and cinematic animations  
+- **Result persistence** throughout sequences
+- **Conditional branching** based on previous choices
+- **Weighted probability system** for balanced gameplay
+- **Step reordering** in sequence builder
 
-### ✅ **Mystical Academy Theme** 🧙‍♂️
-Complete 7-step magical journey:
-1. **Your Origin** - Muggle-born, Half-blood, Pure-blood, or Squib Family
-2. **Your House** - Courage, Ambition, Loyalty, or Wisdom House
-3. **Your Magic Specialization** - Light Magic or Advanced Magic paths
-4. **Your Wand** - Different mystical focus and core combinations
-5. **Your Academy Achievement** - How you distinguished yourself at school
-6. **Your Pet** - Wise Owl, Mystical Cat, Oracle Toad, or other magical companions
-7. **Your Signature Spell** - 8 mystical spells to master
+### ✅ **Four Complete Story Templates**
 
-### ✅ **Survival Tournament Theme** 🏹
-Epic 13-step survival journey:
-1. **Your Region** - 12 different regions with unique skills and resources
-2. **Competitor Status** - How you entered the tournament
-3. **Training Score** - Official assessment from 1-12
-4. **Arena Environment** - The battleground that tests your skills
-5. **Alliance Strategy** - Who you trust determines survival
-6. **Opening Bloodbath** - The deadly first challenge (binary survival)
-7. **First Night** - Exposure and basic survival (binary)
-8. **Tracker Attack** - Empire creatures hunt you (binary)
-9. **Arena Disaster** - Official manipulation (binary)
-10. **Beast Attack** - Engineered monsters (binary) 
-11. **Alliance Betrayal** - Trust becomes weakness (binary)
-12. **Final Showdown** - Victory or death
-13. **Resistance Role** - Your part in overthrowing the Empire
+#### 🧙‍♂️ **Mystical Academy** (9 steps)
+Complete magical journey from origin to career:
+- Your magical origin and house sorting
+- Specialization and wand selection  
+- Academy achievements and signature spells
+- Career path determination
 
-### ✅ **Story Generation**
-- **Narrative templates** that convert results into readable stories
-- **Themed storytelling** - "You are a Pure-blood mage sorted into the House of Courage..."
-- **Visual result display** with emojis and themed colors
-- **Complete journey summary** at the end
+#### 🏹 **Survival Tournament** (13 steps)
+Epic survival competition with rebellion arc:
+- Regional background and training
+- Arena challenges and alliances
+- Binary survival events
+- Victory and resistance role
 
-### ✅ **Advanced Settings System**
-- **4 Speed Presets**:
-  - 🐌 **Slow**: Long, suspenseful spins
-  - ⚖️ **Normal**: Balanced spinning experience  
-  - 🏃 **Fast**: Quick spins with brief suspense
-  - ⚡ **Turbo**: Nearly instant results
+#### 🕵️‍♂️ **Detective Mystery** (10 steps)
+Crime investigation from discovery to trial:
+- Crime discovery and investigation methods
+- Suspect analysis and evidence gathering
+- Dramatic revelations and trial outcomes
+- Justice served or escaped
+
+#### 🏁 **Underground Racing** (9 steps)
+High-stakes racing career progression:
+- Racing origins and vehicle selection
+- Crew formation and victory moments
+- Sponsorship and biggest challenges
+- Heat levels and racing legacy
+
+### ✅ **AI-Powered Story Generation** 🤖
+- **Multi-language support** - Automatically detects and responds in user's language
+- **Personalized narratives** based on specific choice combinations
+- **Character archetype analysis** with real-world comparisons
+- **Rarity scoring system** (1-100) for unique combinations
+- **Context-aware storytelling** that weaves choices into coherent narratives
+- **Theme-specific prompts** optimized for each story universe
+
+### ✅ **Professional Sequence Builder** 🛠️
+- **Visual step editor** with drag-and-drop interface
+- **AI-powered step enhancement** for options and descriptions
+- **Custom wheel configuration** (colors, weights, descriptions)
+- **Branching logic editor** with conditional next steps
+- **Weight override system** for dynamic probability adjustment
+- **Real-time preview** of sequences during building
+- **Narrative template system** for story generation
+
+### ✅ **Save & Share System** 💾
+- **Local storage** for user-created sequences
+- **Import/Export functionality** with JSON format
+- **Sequence catalog** with play, edit, and delete options
+- **Template cloning** - Edit existing templates as starting points
+- **Story export** capabilities for sharing narratives
+
+### ✅ **Enhanced Settings System** ⚙️
+- **4 Speed Presets**: Slow, Normal, Fast, Turbo
 - **Configurable popup duration** (1-5 seconds)
 - **Haptic feedback toggle** for mobile devices
-- **Persistent settings** with localStorage
+- **Persistent user preferences**
 
-### ✅ **Enhanced Results Screen**
-- **🎉 Celebration display** with animations
-- **📖 Complete story narrative** 
-- **📊 Visual results grid** showing all choices
-- **🔄 Restart option** - Create another story with same theme
-- **🏠 Back to themes** - Choose different adventure
-- **🎥 Video export placeholder** - Coming soon!
+### ✅ **Modern UI/UX Design** 🎨
+- **Gaming-inspired interface** with HUD elements
+- **Cinematic animations** and transitions
+- **Glass morphism effects** and neon highlights
+- **Responsive 2x2 template grid** layout
+- **Mobile-first design** optimized for all devices
+- **Theme-specific iconography** and visual branding
+- **Progress visualization** with completion tracking
 
-### ✅ **Mobile-First Design**
-- **Responsive layout** optimized for portrait mode
-- **Touch-friendly controls** with proper hit targets
-- **Progressive enhancement** for all devices
-- **Portrait optimization** for TikTok/Reels format
+### ✅ **Advanced Technical Features** 🔧
+- **Next.js 15** with App Router architecture
+- **TypeScript** for type safety
+- **Zustand** for state management
+- **Canvas-based wheel rendering** with physics
+- **Probability utility system** for fair randomization
+- **Conditional branching logic** for dynamic storytelling
+- **Performance optimized** with 60fps animations
 
 ---
 
@@ -92,6 +118,7 @@ Epic 13-step survival journey:
 ### Prerequisites
 - **Node.js** 18+ 
 - **npm** or **yarn**
+- **OpenAI API Key** (for AI features)
 
 ### Installation
 
@@ -103,8 +130,21 @@ cd spinverse-mvp
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env.local
+# Add your OpenAI API key to .env.local
+
 # Start development server
 npm run dev
+```
+
+### Environment Variables
+
+```bash
+# .env.local
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_MAX_TOKENS=1500
 ```
 
 ### Development Scripts
@@ -121,6 +161,9 @@ npm start
 
 # Run linting
 npm run lint
+
+# Type checking
+npm run type-check
 ```
 
 ### Project Structure
@@ -128,134 +171,80 @@ npm run lint
 ```
 src/
 ├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   ├── enhance-step/  # AI step enhancement
+│   │   └── generate-story/ # AI story generation
 │   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Main page with theme selection
+│   └── page.tsx           # Main page with template selection
 ├── components/
-│   ├── sequence/          # Sequence flow components
-│   │   ├── SequenceController.tsx    # Main sequence logic
-│   │   ├── SequenceProgress.tsx      # Progress indicator
-│   │   └── SequenceResultsScreen.tsx # Final results display
+│   ├── builder/           # Sequence builder components
+│   │   ├── SequenceBuilder.tsx    # Main builder interface
+│   │   ├── StepEditor.tsx         # Individual step editor
+│   │   ├── BranchEditor.tsx       # Conditional branching
+│   │   └── EnhanceStepButton.tsx  # AI enhancement trigger
+│   ├── sequence/          # Sequence playthrough components
+│   │   ├── SequenceController.tsx # Main sequence logic
+│   │   ├── SequenceProgress.tsx   # Progress indicator
+│   │   └── SequenceResultsScreen.tsx # Final results with AI story
 │   ├── settings/          # Settings system
-│   │   └── SettingsPanel.tsx         # Settings modal
+│   │   └── SettingsPanel.tsx      # Settings modal
+│   ├── ui/                # Reusable UI components
+│   │   └── TypewriterText.tsx     # Animated text effects
 │   └── wheel/             # Core wheel components
-│       ├── SpinWheel.tsx             # Canvas-based wheel
-│       └── ResultPopup.tsx           # Result display popup
+│       ├── SpinWheel.tsx          # Canvas-based wheel with physics
+│       └── ResultPopup.tsx        # Result display popup
 ├── data/
-│   └── themes.ts          # Theme definitions (Harry Potter)
+│   └── themes.ts          # All 4 story templates definitions
+├── hooks/                 # Custom React hooks
+│   └── useSavedSequences.ts       # Manage saved sequences
 ├── stores/                # Zustand state management
-│   ├── sequenceStore.ts   # Sequence flow state
+│   ├── builderStore.ts    # Sequence builder state
+│   ├── sequenceStore.ts   # Sequence playthrough state
 │   └── settingsStore.ts   # User preferences
 ├── types/                 # TypeScript definitions
-│   ├── sequence.ts        # Sequence-related types
-│   ├── settings.ts        # Settings and speed presets
-│   └── wheel.ts           # Wheel component types
-└── utils/
-    └── wheelThemes.ts     # Theme utilities (legacy)
+│   ├── builder.ts         # Builder-specific types
+│   ├── sequence.ts        # Core sequence types
+│   ├── settings.ts        # Settings types
+│   └── wheel.ts           # Wheel and segment types
+└── utils/                 # Utility functions
+    ├── branchingUtils.ts  # Conditional logic handling
+    └── probabilityUtils.ts # Randomization and weighting
 ```
 
 ---
 
 ## 🎮 How to Use
 
-### 1. **Start a Sequence**
-- Open the app at `http://localhost:3000`
-- Click on "Mystical Academy: Your Magical Destiny"
-- Begin your magical journey!
-
-### 2. **Customize Settings**  
-- Click the ⚙️ settings icon in the top-right
-- Choose your preferred wheel speed
-- Adjust popup duration and haptic feedback
-- Settings are automatically saved
-
-### 3. **Experience the Flow**
-- Spin the wheel for each step
-- Watch results appear with celebration animations
-- Automatically advance to the next wheel
-- Complete all steps to see your full story (7 for Mystical Academy, 13 for Survival Tournament)
-
-### 4. **View Your Story**
-- See the complete narrative generated from your choices
-- Review all your results in the organized grid
-- Choose to restart with the same theme or try the Survival Tournament
+1. **Choose a Template**: Select from 4 professionally crafted story universes
+2. **Experience the Journey**: Spin through auto-advancing wheel sequences  
+3. **Get Your Story**: Receive AI-generated narrative based on your unique choices
+4. **Build Custom Sequences**: Use the builder to create your own story universes
+5. **Enhance with AI**: Let AI improve your sequences with better options and descriptions
+6. **Save & Share**: Export sequences and stories for sharing
 
 ---
 
-## 🔧 Technical Architecture
+## 🌍 Multi-Language Support
 
-### **Frontend Stack**
-- **Next.js 15** with App Router
-- **React 19** with hooks and modern patterns  
-- **TypeScript** for type safety
-- **Tailwind CSS 4** for styling
-- **Canvas API** for wheel rendering
-
-### **State Management** 
-- **Zustand** for lightweight, fast state management
-- **Persistent storage** with localStorage integration
-- **DevTools support** for debugging
-
-### **Key Technical Decisions**
-- **Canvas over SVG/CSS** for maximum performance and customization
-- **RequestAnimationFrame** for smooth 60fps animations  
-- **Touch event handling** with momentum calculation
-- **Modular component architecture** for easy theme expansion
+SpinVerse automatically detects the language of your content and responds accordingly:
+- **AI Step Enhancer**: Enhances options in the same language as your sequence
+- **AI Story Generator**: Creates narratives in the detected language
+- **Supported**: All major languages including Spanish, French, German, Portuguese, Italian, Chinese, Japanese, Korean, Russian, and more
 
 ---
 
-## 🎯 Coming Next (Week 2+)
+## 📊 Current Statistics
 
-### **Video Export System** 🎥
-- Canvas recording during sequence playback
-- MP4 export with 1080x1920 vertical format  
-- Direct download to camera roll
-- SpinVerse watermark for viral growth
-
-### **More Themes** 🦸‍♂️
-- **Superhero Origin Generator** - Powers, origin, team, nemesis
-- **Startup Founder Path** - Business journey simulation  
-- **Community theme creation** tools
-
-### **Advanced Features**
-- Social sharing integrations
-- Theme marketplace  
-- Custom wheel builder
-- Analytics and success tracking
+- **4 Complete Templates** with 39+ total story steps
+- **100+ Unique Wheel Options** across all templates  
+- **AI-Enhanced Storytelling** with GPT-4 integration
+- **Conditional Branching Logic** for dynamic narratives
+- **Mobile-Optimized Experience** for all devices
+- **Professional Builder Tools** for content creators
 
 ---
 
-## 📱 Browser Support
+## 🔮 What's Next?
 
-- **Chrome** 88+ (recommended)
-- **Safari** 14+ (iOS/macOS)
-- **Firefox** 85+
-- **Edge** 88+
-
-**Mobile Optimization**: 
-- iOS Safari (primary target)
-- Chrome Android
-- Touch gestures and haptic feedback
-
----
-
-## 🤝 Contributing
-
-This is an MVP in active development. Key areas for contribution:
-
-1. **New theme creation** - Add themed sequences
-2. **Video export implementation** - Core differentiator  
-3. **Mobile performance** optimization
-4. **Accessibility** improvements
-
----
-
-## 📄 License
-
-Private MVP - All rights reserved.
-
----
-
-**Built with ❤️ for creators who want to turn simple spins into shareable stories.**
-
-🎯 *SpinVerse: Where every spin tells a story.*
+See [TODO_LIST_MVP_V2.md](./TODO_LIST_MVP_V2.md) for planned features and improvements.

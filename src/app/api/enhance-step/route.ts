@@ -279,6 +279,7 @@ CRITICAL REQUIREMENTS:
 6. Create meaningful option text that advances the story
 7. Each segment must have: id, text, color, weight (integer), rarity
 8. Keep the same wheelConfig structure (size, spinDuration, friction, theme)
+9. **LANGUAGE DETECTION**: Automatically detect the language of the user's content and respond in the SAME LANGUAGE. If my sequence choices are in English, write the story in English. If my sequence choices are in another language, write in that language.
 
 ENHANCEMENT FOCUS:
 - More diverse and interesting wheel options that fit the story context
@@ -286,6 +287,7 @@ ENHANCEMENT FOCUS:
 - Varied option weights for balanced but realistic gameplay
 - Options that create story momentum and meaningful consequences
 - Clear, engaging option text that players want to choose
+- **Maintain the original language throughout all enhanced content**
 
 INPUT: Single step + sequence context (theme, previous choices)
 OUTPUT: Enhanced single step JSON (no additional text, pure JSON only)`;
@@ -320,6 +322,7 @@ ENHANCEMENT INSTRUCTIONS:
 - Ensure all options feel meaningful and contribute to story progression
 - Use appropriate weights (higher numbers = more likely outcomes)
 - Consider the story context when creating new options
+- **IMPORTANT**: Detect the language of the existing content and respond in that SAME LANGUAGE. Do not translate or change the language. If my sequence choices are in English, write the story in English. If my sequence choices are in another language, write in that language.
 
 EXAMPLE OPTION IMPROVEMENTS:
 - Instead of "Option 1" → "Train with the first team"

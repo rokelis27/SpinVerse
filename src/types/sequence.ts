@@ -17,6 +17,14 @@ export interface SequenceBranch {
   weightOverrides?: WeightOverride[]; // Override weights for the target step if this branch is taken
 }
 
+export interface StepMultiSpinConfig {
+  enabled: boolean;
+  mode: 'fixed' | 'dynamic'; // Fixed count or determined by previous step
+  fixedCount?: number; // Number of spins (1-5) for fixed mode
+  determinerStepId?: string; // ID of step that determines spin count for dynamic mode
+  aggregateResults: boolean; // Whether to collect all results
+}
+
 export interface SequenceStep {
   id: string;
   title: string;
@@ -24,6 +32,7 @@ export interface SequenceStep {
   description?: string;
   branches?: SequenceBranch[]; // Conditional next steps
   defaultNextStep?: string; // Fallback if no branches match
+  multiSpin?: StepMultiSpinConfig; // Step-level multi-spin configuration
 }
 
 export interface SequenceTheme {
@@ -41,6 +50,7 @@ export interface SequenceResult {
   stepId: string;
   spinResult: import('./wheel').SpinResult;
   timestamp: number;
+  multiSpinResults?: import('./wheel').SpinResult[]; // Store all multi-spin results for aggregate mode
 }
 
 export interface SequenceState {
@@ -55,6 +65,7 @@ export interface SequenceState {
     total: number;
     percentage: number;
   };
+  multiSpinState: import('./wheel').MultiSpinState;
 }
 
 export interface SequenceActions {
@@ -64,4 +75,10 @@ export interface SequenceActions {
   resetSequence: () => void;
   goToStep: (stepIndex: number) => void;
   setTransitioning: (isTransitioning: boolean) => void;
+  
+  // Multi-spin actions
+  initializeStepMultiSpin: (stepId: string, config: StepMultiSpinConfig, spinCount: number) => void;
+  executeNextMultiSpin: () => Promise<void>;
+  completeMultiSpin: (results: import('./wheel').SpinResult[]) => void;
+  cancelMultiSpin: () => void;
 }

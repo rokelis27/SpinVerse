@@ -55,8 +55,17 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       return `You are a ${resultMap.origin || 'magical'} wizard who was sorted into ${resultMap.house || 'a great house'}. Your ${resultMap.wand || 'powerful wand'} chose you, and your loyal ${resultMap.pet || 'companion'} is always by your side. Your signature spell is ${resultMap.spell || 'a mighty incantation'} - use it wisely in your magical adventures!`;
     }
     
-    // Generic narrative for other themes
-    return results.map(r => r.spinResult.segment.text).join(' → ');
+    // Generic narrative for other themes - include multi-spin results
+    return results.map(r => {
+      if (r.multiSpinResults && r.multiSpinResults.length > 1) {
+        // Multi-spin step: show all results
+        const allSpins = r.multiSpinResults.map(spin => spin.segment.text).join(' + ');
+        return `[${allSpins}]`;
+      } else {
+        // Single spin step
+        return r.spinResult.segment.text;
+      }
+    }).join(' → ');
   };
 
   const storyText = generateStoryText(results);
@@ -275,21 +284,44 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
             const step = currentTheme.steps.find(s => s.id === result.stepId);
             return (
               <div
-                key={result.stepId}
+                key={`${result.stepId}-${result.timestamp}-${index}`}
                 className="glass-panel hud-panel rounded-xl p-6 hover:scale-105 transition-all duration-300 micro-bounce relative overflow-hidden"
                 style={{animationDelay: `${0.1 * index}s`}}
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
                 <div className="relative flex items-center justify-between">
                   <div className="text-left space-y-2">
-                    <div className="font-semibold text-gray-300 text-sm uppercase tracking-wider">
+                    <div className="font-semibold text-gray-300 text-sm uppercase tracking-wider flex items-center gap-2">
                       {step?.title || `Step ${index + 1}`}
+                      {result.multiSpinResults && result.multiSpinResults.length > 1 && (
+                        <span className="text-xs bg-purple-600/30 text-purple-300 px-2 py-1 rounded-full border border-purple-400/30">
+                          🎰 {result.multiSpinResults.length} Spins
+                        </span>
+                      )}
                     </div>
-                    <div 
-                      className="font-bold text-xl"
-                      style={{ color: result.spinResult.segment.color }}
-                    >
-                      {result.spinResult.segment.text}
+                    <div className="space-y-1">
+                      {result.multiSpinResults && result.multiSpinResults.length > 1 ? (
+                        // Show all multi-spin results
+                        result.multiSpinResults.map((spinResult, spinIndex) => (
+                          <div key={spinIndex} className="flex items-center gap-2">
+                            <span className="text-xs text-gray-400 w-6">#{spinIndex + 1}</span>
+                            <div 
+                              className="font-bold text-sm"
+                              style={{ color: spinResult.segment.color }}
+                            >
+                              {spinResult.segment.text}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        // Show single result
+                        <div 
+                          className="font-bold text-xl"
+                          style={{ color: result.spinResult.segment.color }}
+                        >
+                          {result.spinResult.segment.text}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-4xl animate-pulse">

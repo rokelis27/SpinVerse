@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { SpinWheel } from '@/components/wheel/SpinWheel';
 import { ResultPopup } from '@/components/wheel/ResultPopup';
 import { SequenceResultsScreen } from './SequenceResultsScreen';
+import { MultiSpinResults } from './MultiSpinResults';
+import { MultiSpinProgress } from './MultiSpinProgress';
 import { useSequenceStore, useCurrentStep, useIsSequenceComplete } from '@/stores/sequenceStore';
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SpinResult, WheelConfig } from '@/types/wheel';
@@ -17,12 +19,15 @@ interface SequenceControllerProps {
 export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackToHome, className }) => {
   const [lastResult, setLastResult] = useState<SpinResult | null>(null);
   const [showResultPopup, setShowResultPopup] = useState(false);
+  const [showMultiSpinResults, setShowMultiSpinResults] = useState(false);
   const wheelSettings = useWheelSettings();
 
   const {
     currentTheme,
+    currentStepId,
     isActive,
     isTransitioning,
+    multiSpinState,
     completeStep,
     nextStep,
     resetSequence,
@@ -62,16 +67,34 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
   const handleSpinComplete = (result: SpinResult) => {
     if (!isActive || isTransitioning || showResultPopup) return;
     
+    // If we're in the middle of a multi-spin, let the store handle everything
+    if (multiSpinState.isActive) {
+      completeStep(result);
+      return;
+    }
+    
+    // Check if this will trigger multi-spin (check step-level config, not segment-level)
+    const currentStep = currentTheme?.steps.find(step => step.id === currentStepId);
+    const hasMultiSpin = currentStep?.multiSpin?.enabled && !multiSpinState.isActive;
+    
     // Show result popup immediately
     setLastResult(result);
     setShowResultPopup(true);
     
-    // Complete step immediately (saves result but doesn't advance)
+    // Complete step immediately (saves result but doesn't advance, or starts multi-spin)
     completeStep(result);
     
     // Add haptic feedback for mobile (if enabled)
     if (wheelSettings.enableHapticFeedback && 'vibrate' in navigator) {
       navigator.vibrate([50, 50, 100]); // Success vibration pattern
+    }
+
+    // If multi-spin was triggered, hide popup faster and show multi-spin UI
+    if (hasMultiSpin) {
+      setTimeout(() => {
+        setShowResultPopup(false);
+      }, 1000); // Shorter popup for multi-spin trigger
+      return;
     }
 
     // Check if sequence will be complete after this step
@@ -93,6 +116,25 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   const handleClosePopup = () => {
     setShowResultPopup(false);
+  };
+
+  // Handle multi-spin completion display (DO NOT call nextStep - it's handled in the store)
+  useEffect(() => {
+    if (!multiSpinState.isActive && multiSpinState.results.length > 1) {
+      // Multi-spin just completed, show results
+      setShowMultiSpinResults(true);
+      
+      // Auto-close results display after timeout
+      setTimeout(() => {
+        setShowMultiSpinResults(false);
+        // Note: nextStep is already called by completeMultiSpin in the store
+      }, 4000); // Show multi-spin results for 4 seconds
+    }
+  }, [multiSpinState.isActive, multiSpinState.results.length]);
+
+  const handleCloseMultiSpinResults = () => {
+    setShowMultiSpinResults(false);
+    // Note: nextStep is already called by completeMultiSpin in the store, no need to call again
   };
 
   // Log completion for debugging
@@ -149,6 +191,8 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   return (
     <div className={`space-y-6 ${className}`} key={`step-${currentStep.id}`}>
+      {/* Multi-Spin Progress Overlay */}
+      <MultiSpinProgress />
       {/* Enhanced Step Info */}
       <div className="text-center space-y-4 cinematic-enter">
         <div className="relative inline-block">
@@ -179,6 +223,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
             </p>
           </div>
         )}
+        
         {/* Enhanced debug info for development */}
         <div className="text-xs text-gray-500 font-mono bg-black/20 rounded-lg px-3 py-1 inline-block">
           🎯 {currentStep.id} | {useSequenceStore.getState().currentStepIndex + 1}/{currentTheme.steps.length} | 
@@ -234,6 +279,17 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
             ))}
           </div>
         </div>
+      )}
+
+      {/* Multi-Spin Progress Indicator - now inline, not popup */}
+
+      {/* Multi-Spin Results Modal */}
+      {showMultiSpinResults && (
+        <MultiSpinResults
+          results={multiSpinState.results}
+          isAggregated={multiSpinState.aggregateResults}
+          onClose={handleCloseMultiSpinResults}
+        />
       )}
     </div>
   );

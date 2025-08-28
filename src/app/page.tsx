@@ -62,6 +62,7 @@ export default function Home() {
         steps: theme.steps.map(step => ({
           ...step,
           isCustom: true,
+          multiSpin: step.multiSpin, // Preserve multi-spin configuration
           wheelConfig: {
             ...step.wheelConfig,
             segments: step.wheelConfig.segments.map(segment => ({
@@ -106,6 +107,7 @@ export default function Home() {
         description: step.description,
         branches: step.branches,
         defaultNextStep: step.defaultNextStep,
+        multiSpin: step.multiSpin, // Transfer multi-spin configuration
         wheelConfig: {
           ...step.wheelConfig,
           segments: step.wheelConfig.segments.map(segment => ({

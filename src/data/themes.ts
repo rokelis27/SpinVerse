@@ -1167,7 +1167,7 @@ const undergroundRacingTheme: SequenceTheme = {
       defaultNextStep: 'first-victory',
     },
 
-    // Step 5: First Major Victory
+    // Step 5: First Major Victory 
     {
       id: 'first-victory',
       title: 'Your First Major Victory',
@@ -1189,11 +1189,17 @@ const undergroundRacingTheme: SequenceTheme = {
       defaultNextStep: 'primary-sponsor',
     },
 
-    // Step 6: Primary Sponsor
+    // Step 6: Primary Sponsor (with multi-spin)
     {
       id: 'primary-sponsor',
       title: 'Your Primary Sponsor',
       description: 'Who becomes your main financial backer?',
+      multiSpin: {
+        enabled: true,
+        mode: 'fixed',
+        fixedCount: 3,
+        aggregateResults: true
+      },
       wheelConfig: {
         segments: [
           { id: 'performance-parts', text: 'Performance Parts Company', color: '#2F4F2F', rarity: 'common', weight: 18 },
