@@ -133,23 +133,13 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
   let totalRarityPoints = 0;
   
   for (const result of results) {
-    // Handle multi-spin results if they exist
-    if (result.multiSpinResults && result.multiSpinResults.length > 1) {
-      // Calculate rarity for all spins in multi-spin sequence
-      for (const spinResult of result.multiSpinResults) {
-        const segment = spinResult.segment;
-        const rarityPoints = {
-          common: 1,
-          uncommon: 3,
-          rare: 8,
-          legendary: 20
-        };
-        totalRarityPoints += rarityPoints[segment.rarity || 'common'];
-      }
-    } else {
-      // Single spin result
-      const segment = result.spinResult.segment;
-      
+    // Get all segments for this result (multi-spin or single)
+    const allSegments = result.multiSpinResults && result.multiSpinResults.length > 1 
+      ? result.multiSpinResults.map(spin => spin.segment)
+      : [result.spinResult.segment];
+
+    // Process each segment for base rarity and theme bonuses
+    for (const segment of allSegments) {
       // Base rarity points
       const rarityPoints = {
         common: 1,
@@ -159,32 +149,32 @@ function calculateRarityScore(results: SequenceResult[], themeId?: string): numb
       };
       
       totalRarityPoints += rarityPoints[segment.rarity || 'common'];
-    }
-    
-    // Theme-specific bonus points
-    if (themeId === 'mystical-academy') {
-      if (segment.id === 'void-spell') totalRarityPoints += 15; // Ultra rare spell
-      if (segment.id === 'phoenix' || segment.id === 'shadow-horse') totalRarityPoints += 10; // Ultra rare pets
-      if (segment.id === 'crystal-phoenix') totalRarityPoints += 12; // Ultra rare wand
-    }
-    
-    if (themeId === 'survival-tournament') {
-      if (segment.id === 'region-12') totalRarityPoints += 15; // Ultra rare region (1% chance)
-      if (segment.id === 'score-11' || segment.id === 'score-12') totalRarityPoints += 12; // Perfect scores
-      if (segment.id === 'rule-change-victory') totalRarityPoints += 18; // Official manipulation
-      if (segment.id === 'the-symbol') totalRarityPoints += 15; // Rebellion symbol
-      if (segment.id === 'emperor-assassin') totalRarityPoints += 20; // Ultimate rebellion
-      if (segment.id === 'volcanic-hellscape') totalRarityPoints += 10; // Ultra rare arena
-      if (segment.id === 'betrayal-plot') totalRarityPoints += 12; // Ultra rare strategy
       
-      // Death outcomes reduce points (but still concompetitor to story)
-      if (segment.id.includes('death') || segment.id.includes('die-')) {
-        totalRarityPoints -= 5; // Deaths are common outcomes
+      // Theme-specific bonus points for each segment
+      if (themeId === 'mystical-academy') {
+        if (segment.id === 'void-spell') totalRarityPoints += 15; // Ultra rare spell
+        if (segment.id === 'phoenix' || segment.id === 'shadow-horse') totalRarityPoints += 10; // Ultra rare pets
+        if (segment.id === 'crystal-phoenix') totalRarityPoints += 12; // Ultra rare wand
       }
       
-      // Survival bonuses
-      if (segment.id.includes('survive') && result.stepId.includes('bloodbath')) {
-        totalRarityPoints += 3; // Surviving bloodbath
+      if (themeId === 'survival-tournament') {
+        if (segment.id === 'region-12') totalRarityPoints += 15; // Ultra rare region (1% chance)
+        if (segment.id === 'score-11' || segment.id === 'score-12') totalRarityPoints += 12; // Perfect scores
+        if (segment.id === 'rule-change-victory') totalRarityPoints += 18; // Official manipulation
+        if (segment.id === 'the-symbol') totalRarityPoints += 15; // Rebellion symbol
+        if (segment.id === 'emperor-assassin') totalRarityPoints += 20; // Ultimate rebellion
+        if (segment.id === 'volcanic-hellscape') totalRarityPoints += 10; // Ultra rare arena
+        if (segment.id === 'betrayal-plot') totalRarityPoints += 12; // Ultra rare strategy
+        
+        // Death outcomes reduce points (but still contribute to story)
+        if (segment.id.includes('death') || segment.id.includes('die-')) {
+          totalRarityPoints -= 5; // Deaths are common outcomes
+        }
+        
+        // Survival bonuses
+        if (segment.id.includes('survive') && result.stepId.includes('bloodbath')) {
+          totalRarityPoints += 3; // Surviving bloodbath
+        }
       }
     }
   }
