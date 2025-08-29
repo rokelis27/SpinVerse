@@ -33,6 +33,9 @@ export interface SequenceStep {
   branches?: SequenceBranch[]; // Conditional next steps
   defaultNextStep?: string; // Fallback if no branches match
   multiSpin?: StepMultiSpinConfig; // Step-level multi-spin configuration
+  // Determiner step properties for dynamic multi-spin
+  isDeterminer?: boolean; // Marks system-generated determiner steps
+  targetStepId?: string;  // Links determiner to its target multi-spin step
 }
 
 export interface SequenceTheme {

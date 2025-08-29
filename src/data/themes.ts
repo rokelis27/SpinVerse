@@ -888,22 +888,80 @@ const detectiveMysteryTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'detective-mystery',
       },
-      defaultNextStep: 'first-suspect',
+      defaultNextStep: 'suspect-count-determiner',
     },
 
-    // Step 4: First Suspect
+    // Step 4A: Suspect Count Determiner (System-Generated)
     {
-      id: 'first-suspect',
-      title: 'Your First Suspect',
-      description: 'Who immediately catches your attention?',
+      id: 'suspect-count-determiner',
+      title: 'Suspect Count Determiner',
+      description: 'How many potential suspects emerge from your initial investigation?',
+      isDeterminer: true,
+      targetStepId: 'potential-suspects',
       wheelConfig: {
         segments: [
-          { id: 'grieving-family-member', text: 'The Grieving Family Member', color: '#4682B4', rarity: 'common', weight: 20 },
-          { id: 'business-partner', text: 'Business Partner', color: '#B8860B', rarity: 'common', weight: 18 },
-          { id: 'estranged-family', text: 'Estranged Family Member', color: '#8B0000', rarity: 'common', weight: 18 },
-          { id: 'former-employee', text: 'Former Employee', color: '#2F4F2F', rarity: 'common', weight: 16 },
-          { id: 'mysterious-stranger', text: 'Mysterious Stranger', color: '#800080', rarity: 'uncommon', weight: 14 },
-          { id: 'best-friend', text: 'Best Friend', color: '#FF69B4', rarity: 'uncommon', weight: 14 },
+          { id: '1-spin', text: '1', color: '#FF6B6B', weight: 20, rarity: 'common' },
+          { id: '2-spins', text: '2', color: '#4ECDC4', weight: 25, rarity: 'common' },
+          { id: '3-spins', text: '3', color: '#45B7D1', weight: 25, rarity: 'common' },
+          { id: '4-spins', text: '4', color: '#96CEB4', weight: 20, rarity: 'uncommon' },
+          { id: '5-spins', text: '5', color: '#FECA57', weight: 10, rarity: 'rare' },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery'
+      },
+      defaultNextStep: 'potential-suspects',
+    },
+
+    // Step 4B: Potential Suspects (Multi-Spin Dynamic)
+    {
+      id: 'potential-suspects',
+      title: 'Potential Suspects',
+      description: 'Each person of interest in your investigation becomes a lead to follow',
+      multiSpin: {
+        enabled: true,
+        mode: 'dynamic',
+        determinerStepId: 'suspect-count-determiner',
+        aggregateResults: true
+      },
+      wheelConfig: {
+        segments: [
+          // Family & Personal Connections
+          { id: 'grieving-spouse', text: 'The Grieving Spouse', color: '#4682B4', rarity: 'common', weight: 15 },
+          { id: 'estranged-child', text: 'Estranged Adult Child', color: '#8B0000', rarity: 'common', weight: 14 },
+          { id: 'jealous-sibling', text: 'Jealous Sibling', color: '#DC143C', rarity: 'common', weight: 13 },
+          { id: 'best-friend', text: 'Longtime Best Friend', color: '#FF69B4', rarity: 'common', weight: 12 },
+          { id: 'secret-lover', text: 'Secret Lover', color: '#FF1493', rarity: 'uncommon', weight: 10 },
+          
+          // Professional Connections
+          { id: 'business-partner', text: 'Business Partner', color: '#B8860B', rarity: 'common', weight: 14 },
+          { id: 'former-employee', text: 'Disgruntled Ex-Employee', color: '#2F4F2F', rarity: 'common', weight: 13 },
+          { id: 'rival-competitor', text: 'Business Rival', color: '#800080', rarity: 'uncommon', weight: 11 },
+          { id: 'crooked-lawyer', text: 'Shady Lawyer', color: '#556B2F', rarity: 'uncommon', weight: 9 },
+          { id: 'corrupt-accountant', text: 'Corrupt Accountant', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          
+          // Criminal Connections
+          { id: 'loan-shark', text: 'Loan Shark Enforcer', color: '#8B0000', rarity: 'uncommon', weight: 10 },
+          { id: 'drug-dealer', text: 'Local Drug Dealer', color: '#228B22', rarity: 'uncommon', weight: 9 },
+          { id: 'gang-member', text: 'Gang Associate', color: '#4B0082', rarity: 'rare', weight: 7 },
+          { id: 'hitman', text: 'Professional Hitman', color: '#2F2F2F', rarity: 'rare', weight: 6 },
+          
+          // Mysterious & Unusual
+          { id: 'mysterious-stranger', text: 'Mysterious Stranger', color: '#9370DB', rarity: 'uncommon', weight: 11 },
+          { id: 'obsessed-stalker', text: 'Obsessed Stalker', color: '#DC143C', rarity: 'rare', weight: 8 },
+          { id: 'cult-member', text: 'Cult Member', color: '#8B008B', rarity: 'rare', weight: 6 },
+          { id: 'serial-killer', text: 'Serial Killer', color: '#000000', rarity: 'legendary', weight: 4 },
+          
+          // Authority Figures
+          { id: 'corrupt-cop', text: 'Corrupt Police Officer', color: '#191970', rarity: 'rare', weight: 7 },
+          { id: 'dirty-politician', text: 'Dirty Politicians', color: '#800000', rarity: 'rare', weight: 6 },
+          { id: 'judge-connection', text: 'Connected Judge', color: '#2F4F4F', rarity: 'legendary', weight: 3 },
+          
+          // Unexpected Suspects
+          { id: 'victim-double', text: 'Victim\'s Body Double', color: '#FFD700', rarity: 'legendary', weight: 2 },
+          { id: 'identical-twin', text: 'Secret Identical Twin', color: '#FF4500', rarity: 'legendary', weight: 2 },
+          { id: 'witness', text: 'Key Witness', color: '#32CD32', rarity: 'uncommon', weight: 10 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -1046,28 +1104,28 @@ const detectiveMysteryTheme: SequenceTheme = {
     },
   ],
 
-  narrativeTemplate: "In {city}, you investigated a {crime-discovery} using your expertise as a {detective-specialty}. Your first suspect was {first-suspect}, but through {investigation-method}, you uncovered a shocking {plot-twist}. The real mastermind was {real-culprit}, leading to a dramatic {confrontation}. The trial resulted in {trial-outcome}, and your story ended with {aftermath}.",
+  narrativeTemplate: "In {city}, you investigated a {crime-discovery} using your expertise as a {detective-specialty}. Your investigation revealed multiple suspects: {potential-suspects}. Through {investigation-method}, you uncovered a shocking {plot-twist}. The real mastermind was {real-culprit}, leading to a dramatic {confrontation}. The trial resulted in {trial-outcome}, and your story ended with {aftermath}.",
 
   narrativeTemplates: {
     // Legendary Case: The Perfect Detective
-    'perfect-detective': "🔍 THE PERFECT DETECTIVE 🔍\n\nIn {city}, you faced the impossible - a {crime-discovery} that seemed unsolvable. As a brilliant {detective-specialty}, you saw through every deception, from suspecting {first-suspect} to uncovering the {plot-twist} that revealed {real-culprit} as the mastermind. Your {confrontation} became legendary, the {trial-outcome} brought perfect justice, and you became a {hero-detective} whose methods are still taught at police academies worldwide.",
+    'perfect-detective': "🔍 THE PERFECT DETECTIVE 🔍\n\nIn {city}, you faced the impossible - a {crime-discovery} that seemed unsolvable. As a brilliant {detective-specialty}, you methodically investigated every lead, from multiple suspects including {potential-suspects} to uncovering the {plot-twist} that revealed {real-culprit} as the mastermind. Your {confrontation} became legendary, the {trial-outcome} brought perfect justice, and you became a {hero-detective} whose methods are still taught at police academies worldwide.",
 
     // Dark Path: The Haunted Investigator  
-    'haunted-detective': "👻 THE HAUNTED DETECTIVE 👻\n\nThe {crime-discovery} in {city} changed you forever. Your {detective-specialty} skills led you through a maze of suspects, starting with {first-suspect}, but the {plot-twist} revealing {real-culprit} shattered your faith in justice. Even after the {confrontation} and {trial-outcome}, you remain {haunted-by-case}, carrying the weight of what you've seen in the darkest corners of human nature.",
+    'haunted-detective': "👻 THE HAUNTED DETECTIVE 👻\n\nThe {crime-discovery} in {city} changed you forever. Your {detective-specialty} skills led you through a maze of suspects, investigating everyone from {potential-suspects}, but the {plot-twist} revealing {real-culprit} shattered your faith in justice. Even after the {confrontation} and {trial-outcome}, you remain {haunted-by-case}, carrying the weight of what you've seen in the darkest corners of human nature.",
 
     // Corruption Path: The System Fighter
-    'corruption-fighter': "⚖️ THE CORRUPTION FIGHTER ⚖️\n\nIn {city}, your investigation of a {crime-discovery} uncovered more than just a crime - it exposed a web of corruption reaching the highest levels. Your {detective-specialty} training and {investigation-method} revealed that {real-culprit} was just a pawn. The {confrontation} was dangerous, but the {trial-outcome} led to massive reforms. You became the detective who {corruption-exposed}, reshaping law enforcement forever.",
+    'corruption-fighter': "⚖️ THE CORRUPTION FIGHTER ⚖️\n\nIn {city}, your investigation of a {crime-discovery} uncovered more than just a crime - it exposed a web of corruption reaching the highest levels. Your {detective-specialty} training led you to investigate suspects like {potential-suspects}, but your {investigation-method} revealed that {real-culprit} was just a pawn. The {confrontation} was dangerous, but the {trial-outcome} led to massive reforms. You became the detective who {corruption-exposed}, reshaping law enforcement forever.",
 
     // Hero Path: The People's Champion
-    'peoples-champion': "👮 THE PEOPLE'S CHAMPION 👮\n\nStarting as a {detective-specialty} in {city}, you turned a simple {crime-discovery} into a career-defining moment. When you suspected {first-suspect} but discovered {real-culprit} was the true villain, your {confrontation} became the stuff of legends. The {trial-outcome} brought justice, and as a {hero-detective}, you became the symbol of what law enforcement should be.",
+    'peoples-champion': "👮 THE PEOPLE'S CHAMPION 👮\n\nStarting as a {detective-specialty} in {city}, you turned a simple {crime-discovery} into a career-defining moment. Your thorough investigation of suspects like {potential-suspects} eventually led you to discover {real-culprit} was the true villain, your {confrontation} became the stuff of legends. The {trial-outcome} brought justice, and as a {hero-detective}, you became the symbol of what law enforcement should be.",
 
     // Tragic Path: The Broken Detective
-    'broken-detective': "💔 THE BROKEN DETECTIVE 💔\n\nIn {city}, the {crime-discovery} seemed routine until the {plot-twist} revealed truths you weren't prepared for. Your {detective-specialty} skills couldn't protect you from the psychological damage when {real-culprit}'s true nature was exposed. Despite the {confrontation} and {trial-outcome}, you're {haunted-by-case}, forever changed by a case that revealed the depths of human evil.",
+    'broken-detective': "💔 THE BROKEN DETECTIVE 💔\n\nIn {city}, the {crime-discovery} seemed routine until the {plot-twist} revealed truths you weren't prepared for. Your {detective-specialty} skills led you to investigate multiple suspects including {potential-suspects}, but couldn't protect you from the psychological damage when {real-culprit}'s true nature was exposed. Despite the {confrontation} and {trial-outcome}, you're {haunted-by-case}, forever changed by a case that revealed the depths of human evil.",
 
     // Victory Path: The Master Investigator
-    'master-investigator': "🏆 THE MASTER INVESTIGATOR 🏆\n\nYour reputation as a {detective-specialty} in {city} was built on cases like the {crime-discovery}. While others focused on obvious suspects like {first-suspect}, your {investigation-method} uncovered the {plot-twist} that led directly to {real-culprit}. The {confrontation} showcased your skills, the {trial-outcome} delivered justice, and you ended as a {hero-detective} whose methods revolutionized police work.",
+    'master-investigator': "🏆 THE MASTER INVESTIGATOR 🏆\n\nYour reputation as a {detective-specialty} in {city} was built on cases like the {crime-discovery}. While others focused on obvious suspects, your methodical approach investigated everyone from {potential-suspects}, and your {investigation-method} uncovered the {plot-twist} that led directly to {real-culprit}. The {confrontation} showcased your skills, the {trial-outcome} delivered justice, and you ended as a {hero-detective} whose methods revolutionized police work.",
 
-    'default': "In {city}, you solved a {crime-discovery} as a {detective-specialty}, discovered {real-culprit} was the true culprit after a {plot-twist}, and saw justice served with {trial-outcome}."
+    'default': "In {city}, you solved a {crime-discovery} as a {detective-specialty}, investigated suspects like {potential-suspects}, discovered {real-culprit} was the true culprit after a {plot-twist}, and saw justice served with {trial-outcome}."
   }
 };
 

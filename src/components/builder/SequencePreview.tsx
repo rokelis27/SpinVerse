@@ -35,6 +35,9 @@ export const SequencePreview: React.FC<SequencePreviewProps> = ({ sequence }) =>
         branches: step.branches,
         defaultNextStep: step.defaultNextStep,
         multiSpin: step.multiSpin, // Transfer multi-spin configuration
+        // Transfer determiner step properties for dynamic multi-spin
+        isDeterminer: step.isDeterminer,
+        targetStepId: step.targetStepId,
         wheelConfig: {
           ...step.wheelConfig,
           segments: step.wheelConfig.segments.map(segment => ({

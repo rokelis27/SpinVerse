@@ -20,6 +20,11 @@ interface BuilderState {
   updateStep: (index: number, updates: Partial<SequenceStepBuilder>) => void;
   setSelectedStep: (index: number) => void;
   
+  // Determiner step management
+  insertDeterminerStep: (targetIndex: number) => void;
+  removeDeterminerStep: (targetIndex: number) => void;
+  findDeterminerStep: (targetIndex: number) => number;
+  
   // Segment management
   addSegment: (stepIndex: number) => void;
   removeSegment: (stepIndex: number, segmentId: string) => void;
@@ -41,6 +46,64 @@ interface BuilderState {
 
 const generateStepId = () => `step-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 const generateSegmentId = () => `segment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+// Create standard determiner step with 1-5 options
+const createDeterminerStep = (targetStepId: string): SequenceStepBuilder => ({
+  id: `${targetStepId}-determiner`,
+  title: "Spin Count Determiner",
+  description: "This step determines how many times the next step will spin.",
+  isCustom: true,
+  isDeterminer: true,
+  targetStepId,
+  wheelConfig: {
+    segments: [
+      { 
+        id: '1-spin', 
+        text: '1', 
+        color: '#FF6B6B', 
+        weight: 20, 
+        rarity: 'common',
+        description: '1 spin'
+      },
+      { 
+        id: '2-spins', 
+        text: '2', 
+        color: '#4ECDC4', 
+        weight: 25, 
+        rarity: 'common',
+        description: '2 spins'
+      },
+      { 
+        id: '3-spins', 
+        text: '3', 
+        color: '#45B7D1', 
+        weight: 25, 
+        rarity: 'common',
+        description: '3 spins'
+      },
+      { 
+        id: '4-spins', 
+        text: '4', 
+        color: '#96CEB4', 
+        weight: 20, 
+        rarity: 'uncommon',
+        description: '4 spins'
+      },
+      { 
+        id: '5-spins', 
+        text: '5', 
+        color: '#FECA57', 
+        weight: 10, 
+        rarity: 'rare',
+        description: '5 spins'
+      },
+    ],
+    size: 400,
+    spinDuration: 3000,
+    friction: 0.02,
+    theme: 'system'
+  }
+});
 
 export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Initial state
@@ -290,6 +353,117 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
   setSelectedStep: (index) => {
     set({ selectedStepIndex: index });
+  },
+
+  // Determiner step management
+  insertDeterminerStep: (targetIndex) => {
+    const state = get();
+    if (!state.currentSequence) return;
+
+    const targetStep = state.currentSequence.steps[targetIndex];
+    if (!targetStep) return;
+
+    // Create the determiner step with connection to target step
+    const determinerStep = {
+      ...createDeterminerStep(targetStep.id),
+      defaultNextStep: targetStep.id // Ensure determiner flows to target step
+    };
+    
+    // Insert determiner step before the target step
+    const updatedSteps = [
+      ...state.currentSequence.steps.slice(0, targetIndex),
+      determinerStep,
+      ...state.currentSequence.steps.slice(targetIndex)
+    ];
+
+    // Update any previous step that was connecting to the target step to now connect to determiner
+    if (targetIndex > 0) {
+      const previousStep = updatedSteps[targetIndex - 1];
+      if (previousStep && previousStep.defaultNextStep === targetStep.id) {
+        previousStep.defaultNextStep = determinerStep.id;
+      }
+      // Also check branches in previous steps
+      updatedSteps.forEach(step => {
+        if (step.branches) {
+          step.branches = step.branches.map(branch => 
+            branch.nextStepId === targetStep.id 
+              ? { ...branch, nextStepId: determinerStep.id }
+              : branch
+          );
+        }
+      });
+    }
+
+    // Update the target step's determiner reference and mode (now at targetIndex + 1)
+    const updatedTargetStep = {
+      ...updatedSteps[targetIndex + 1],
+      multiSpin: {
+        ...updatedSteps[targetIndex + 1].multiSpin,
+        mode: 'dynamic',
+        determinerStepId: determinerStep.id,
+        aggregateResults: true
+      }
+    };
+    updatedSteps[targetIndex + 1] = updatedTargetStep;
+
+    set({
+      currentSequence: {
+        ...state.currentSequence,
+        steps: updatedSteps,
+        lastModified: new Date().toISOString()
+      },
+      isDirty: true,
+      selectedStepIndex: targetIndex + 1 // Select the multi-spin step (now moved one position down)
+    });
+  },
+
+  removeDeterminerStep: (targetIndex) => {
+    const state = get();
+    if (!state.currentSequence) return;
+
+    const determinerIndex = get().findDeterminerStep(targetIndex);
+    if (determinerIndex === -1) return;
+
+    // Remove determiner step and clear reference
+    const updatedSteps = state.currentSequence.steps.filter((_, index) => index !== determinerIndex);
+    
+    // Clear determinerStepId and reset to fixed mode for the target step (adjust index if determiner was before it)
+    const adjustedTargetIndex = determinerIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    if (updatedSteps[adjustedTargetIndex]?.multiSpin) {
+      updatedSteps[adjustedTargetIndex] = {
+        ...updatedSteps[adjustedTargetIndex],
+        multiSpin: {
+          ...updatedSteps[adjustedTargetIndex].multiSpin,
+          mode: 'fixed',
+          fixedCount: updatedSteps[adjustedTargetIndex].multiSpin?.fixedCount || 3,
+          determinerStepId: undefined,
+          aggregateResults: true
+        }
+      };
+    }
+
+    set({
+      currentSequence: {
+        ...state.currentSequence,
+        steps: updatedSteps,
+        lastModified: new Date().toISOString()
+      },
+      isDirty: true,
+      selectedStepIndex: Math.min(adjustedTargetIndex, updatedSteps.length - 1)
+    });
+  },
+
+  findDeterminerStep: (targetIndex) => {
+    const state = get();
+    if (!state.currentSequence) return -1;
+
+    const targetStep = state.currentSequence.steps[targetIndex];
+    if (!targetStep) return -1;
+
+    // Look for a determiner step that targets this step
+    return state.currentSequence.steps.findIndex(step => 
+      step.isDeterminer && step.targetStepId === targetStep.id
+    );
   },
 
   // Segment management

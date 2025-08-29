@@ -27,6 +27,10 @@ export interface SequenceStepBuilder extends SequenceStep {
   isCustom: boolean;
   position?: { x: number; y: number }; // For future canvas positioning
   
+  // Determiner step properties (for dynamic multi-spin)
+  isDeterminer?: boolean; // Marks system-generated determiner steps
+  targetStepId?: string;  // Links determiner to its target multi-spin step
+  
   // Enhanced configuration
   wheelConfig: WheelConfigBuilder;
 }
@@ -46,9 +50,10 @@ export interface BuilderUIState {
 // Validation
 export interface ValidationError {
   id: string;
-  type: 'error' | 'warning';
+  type: 'error' | 'warning' | 'missing-determiner' | 'orphaned-determiner';
   message: string;
   stepIndex?: number;
+  stepId?: string;
   segmentId?: string;
   autoFix?: () => void;
 }

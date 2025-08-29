@@ -133,21 +133,30 @@ export const useSequenceStore = create<SequenceStore>()(
             // Find the result from the determiner step to get spin count
             const determinerResult = results.find(r => r.stepId === currentStep.multiSpin?.determinerStepId);
             if (determinerResult) {
-              // Parse spin count from the determiner result (assuming segment text contains the count)
-              const determinerText = determinerResult.spinResult.segment.text.toLowerCase();
-              if (determinerText.includes('none') || determinerText.includes('skip')) {
-                spinCount = 0;
-              } else if (determinerText.includes('1')) {
+              // Parse spin count using ID-based approach for reliability
+              const segmentId = determinerResult.spinResult.segment.id;
+              
+              // Parse spin count from standardized segment IDs
+              const spinCountMap: Record<string, number> = {
+                '1-spin': 1,
+                '2-spins': 2,
+                '3-spins': 3,
+                '4-spins': 4,
+                '5-spins': 5
+              };
+              
+              const parsedSpinCount = spinCountMap[segmentId];
+              
+              // Validation with fallback
+              if (typeof parsedSpinCount === 'number' && parsedSpinCount >= 1 && parsedSpinCount <= 5) {
+                spinCount = parsedSpinCount;
+              } else {
+                console.warn('Invalid determiner result, falling back to 1 spin:', segmentId);
                 spinCount = 1;
-              } else if (determinerText.includes('2')) {
-                spinCount = 2;
-              } else if (determinerText.includes('3')) {
-                spinCount = 3;
-              } else if (determinerText.includes('4')) {
-                spinCount = 4;
-              } else if (determinerText.includes('5')) {
-                spinCount = 5;
               }
+            } else {
+              console.warn('Dynamic multi-spin missing determiner result, falling back to 1 spin');
+              spinCount = 1;
             }
           }
           

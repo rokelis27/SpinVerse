@@ -16,7 +16,10 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
     updateStep,
     addSegment,
     removeSegment,
-    updateSegment
+    updateSegment,
+    insertDeterminerStep,
+    removeDeterminerStep,
+    findDeterminerStep
   } = useBuilderStore();
   
   const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
@@ -33,6 +36,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
     updateStep(stepIndex, { branches });
   };
 
+  // Enhanced mode change handler that manages determiner steps
+  const handleModeChange = (mode: 'fixed' | 'dynamic') => {
+    if (mode === 'dynamic') {
+      // Insert determiner step (this will also update the target step's multiSpin config)
+      insertDeterminerStep(stepIndex);
+    } else {
+      // Remove determiner step (this will also reset the mode to fixed)
+      removeDeterminerStep(stepIndex);
+    }
+  };
+
+  // Check if this is a protected determiner step
+  const isProtectedStep = step.isDeterminer;
+
   const getRandomColor = () => {
     const colors = [
       '#4682B4', '#32CD32', '#FF6347', '#9370DB', '#FFD700',
@@ -44,6 +61,22 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
 
   return (
     <div className="h-full flex flex-col">
+      {/* Protected Step Warning */}
+      {isProtectedStep && (
+        <div className="mb-4 p-3 bg-orange-950/20 rounded-lg border border-orange-500/30">
+          <div className="flex items-center space-x-2">
+            <span className="text-orange-400">🔒</span>
+            <div>
+              <h4 className="text-sm font-medium text-orange-200">System-Generated Determiner Step</h4>
+              <p className="text-xs text-orange-400/80 mt-1">
+                This step determines spin count for the next multi-spin step. 
+                You can edit the title and description, but wheel options and connections are protected.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Header with Step Info and Enhance Button */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -69,23 +102,31 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
         </button>
         <button
           onClick={() => setActiveTab('segments')}
+          disabled={isProtectedStep}
           className={`px-4 py-2 rounded-lg transition-all duration-300 ${
             activeTab === 'segments'
               ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
-              : 'text-gray-400 hover:text-white hover:bg-white/10'
+              : isProtectedStep 
+                ? 'text-gray-600 cursor-not-allowed'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
           Wheel Options ({step.wheelConfig.segments.length})
+          {isProtectedStep && <span className="ml-1 text-orange-400">🔒</span>}
         </button>
         <button
           onClick={() => setActiveTab('connections')}
+          disabled={isProtectedStep}
           className={`px-4 py-2 rounded-lg transition-all duration-300 ${
             activeTab === 'connections'
               ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25'
-              : 'text-gray-400 hover:text-white hover:bg-white/10'
+              : isProtectedStep 
+                ? 'text-gray-600 cursor-not-allowed'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
           }`}
         >
           Connections ({(step.branches || []).length})
+          {isProtectedStep && <span className="ml-1 text-orange-400">🔒</span>}
         </button>
       </div>
 
@@ -132,7 +173,8 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
             </div>
 
             {/* Step-Level Multi-Spin Configuration */}
-            <div className="border-t border-white/10 pt-6">
+            {!isProtectedStep && (
+              <div className="border-t border-white/10 pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-medium text-white flex items-center space-x-2">
@@ -145,10 +187,18 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
                   type="checkbox"
                   checked={step.multiSpin?.enabled || false}
                   onChange={(e) => {
-                    const multiSpin = e.target.checked
-                      ? { enabled: true, mode: 'fixed', fixedCount: 3, aggregateResults: true }
-                      : { enabled: false, mode: 'fixed', fixedCount: 1, aggregateResults: true };
-                    handleStepUpdate('multiSpin', multiSpin);
+                    if (e.target.checked) {
+                      // Enabling multi-spin
+                      const multiSpin = { enabled: true, mode: 'fixed', fixedCount: 3, aggregateResults: true };
+                      handleStepUpdate('multiSpin', multiSpin);
+                    } else {
+                      // Disabling multi-spin - check if we need to remove determiner step
+                      if (step.multiSpin?.mode === 'dynamic') {
+                        removeDeterminerStep(stepIndex);
+                      }
+                      const multiSpin = { enabled: false, mode: 'fixed', fixedCount: 1, aggregateResults: true };
+                      handleStepUpdate('multiSpin', multiSpin);
+                    }
                   }}
                   className="w-5 h-5 text-cyan-600 bg-white/10 border-white/20 rounded focus:ring-cyan-500 focus:ring-2"
                 />
@@ -156,97 +206,203 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
 
               {step.multiSpin?.enabled && (
                 <div className="space-y-6 bg-cyan-950/20 rounded-lg p-4 border border-cyan-500/20">
-                  {/* Coming Soon: Dynamic Mode */}
+                  {/* Mode Selection */}
                   <div>
-                    <label className="block text-sm font-medium text-cyan-300 mb-2">Number of Spins</label>
-                    <p className="text-xs text-cyan-400/80 mb-3">Set how many times this step will spin automatically</p>
-                    <div className="p-3 bg-cyan-900/20 rounded-lg border border-cyan-500/20 mb-4">
-                      <p className="text-xs text-cyan-400/70">
-                        🚧 <strong>Coming Soon:</strong> Dynamic spin count where a previous step determines the number of spins
-                      </p>
+                    <label className="block text-sm font-medium text-cyan-300 mb-2">Spin Count Mode</label>
+                    <p className="text-xs text-cyan-400/80 mb-3">Choose how the number of spins is determined</p>
+                    
+                    <div className="space-y-3">
+                      {/* Fixed Mode */}
+                      <div 
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          step.multiSpin?.mode === 'fixed' 
+                            ? 'border-cyan-500 bg-cyan-950/30' 
+                            : 'border-cyan-800/50 bg-cyan-900/10 hover:border-cyan-600/50'
+                        }`}
+                        onClick={() => handleModeChange('fixed')}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            name={`mode-${step.id}`}
+                            checked={step.multiSpin?.mode === 'fixed'}
+                            onChange={() => {}} // Handled by parent click
+                            className="w-4 h-4 text-cyan-500 focus:ring-cyan-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-cyan-200">🎯 Fixed Count</div>
+                            <div className="text-xs text-cyan-400/70">Set a specific number of spins (2-5)</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dynamic Mode */}
+                      <div 
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          step.multiSpin?.mode === 'dynamic' 
+                            ? 'border-cyan-500 bg-cyan-950/30' 
+                            : 'border-cyan-800/50 bg-cyan-900/10 hover:border-cyan-600/50'
+                        }`}
+                        onClick={() => handleModeChange('dynamic')}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <input
+                            type="radio"
+                            name={`mode-${step.id}`}
+                            checked={step.multiSpin?.mode === 'dynamic'}
+                            onChange={() => {}} // Handled by parent click
+                            className="w-4 h-4 text-cyan-500 focus:ring-cyan-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-cyan-200">🎲 Dynamic Count</div>
+                            <div className="text-xs text-cyan-400/70">Previous step determines spin count (1-5)</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Fixed Count Configuration */}
-                  <div>
-                    <label className="block text-sm font-medium text-cyan-300 mb-2">
-                      Spin Count: {step.multiSpin?.fixedCount || 3}
-                    </label>
-                    <input
-                      type="range"
-                      min="2"
-                      max="5"
-                      value={step.multiSpin?.fixedCount || 3}
-                      onChange={(e) => handleStepUpdate('multiSpin', {
-                        ...step.multiSpin,
-                        mode: 'fixed',
-                        fixedCount: parseInt(e.target.value),
-                        aggregateResults: true // Always true
-                      })}
-                      className="w-full h-2 bg-cyan-900/50 rounded-lg appearance-none cursor-pointer"
-                    />
-                    <div className="flex justify-between text-xs text-cyan-400 mt-1">
-                      <span>2 spins</span>
-                      <span>5 spins</span>
+                  {step.multiSpin?.mode === 'fixed' && (
+                    <div>
+                      <label className="block text-sm font-medium text-cyan-300 mb-2">
+                        Spin Count: {step.multiSpin?.fixedCount || 3}
+                      </label>
+                      <input
+                        type="range"
+                        min="2"
+                        max="5"
+                        value={step.multiSpin?.fixedCount || 3}
+                        onChange={(e) => handleStepUpdate('multiSpin', {
+                          ...step.multiSpin,
+                          mode: 'fixed',
+                          fixedCount: parseInt(e.target.value),
+                          aggregateResults: true // Always true
+                        })}
+                        className="w-full h-2 bg-cyan-900/50 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-cyan-400 mt-1">
+                        <span>2 spins</span>
+                        <span>5 spins</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Dynamic Count Configuration */}
+                  {step.multiSpin?.mode === 'dynamic' && (
+                    <div className="space-y-3">
+                    
+                      
+                      <div className="flex items-center justify-between p-3 bg-purple-950/20 rounded-lg border border-purple-500/20">
+                        <div className="flex items-center space-x-2">
+                          <span>🎲</span>
+                          <span className="text-sm text-purple-200">Dynamic spin count: 1-5 spins</span>
+                        </div>
+                        <div className="text-xs text-purple-400/70">
+                          Determined by previous step result
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Preview */}
                   <div className="text-xs text-cyan-400/70 bg-cyan-950/30 rounded p-3">
                     <div className="flex items-center space-x-2 mb-2">
                       <span>💡</span>
+                      <span className="font-medium">Preview</span>
                     </div>
                     <div>
-                      When players reach this step, the wheel will automatically spin{' '}
-                      <span className="text-cyan-300 font-medium">
-                        {step.multiSpin?.fixedCount || 3} times
-                      </span>
-                      {' '}and all results will be woven into the story for complex, detailed narratives.
+                      {step.multiSpin?.mode === 'fixed' ? (
+                        <>
+                          When players reach this step, the wheel will automatically spin{' '}
+                          <span className="text-cyan-300 font-medium">
+                            {step.multiSpin?.fixedCount || 3} times
+                          </span>
+                          {' '}and all results will be woven into the story for complex, detailed narratives.
+                        </>
+                      ) : (
+                        <>
+                          When players reach the determiner step, they'll spin once to get a number (1-5). 
+                          Then this step will automatically spin{' '}
+                          <span className="text-purple-300 font-medium">that many times</span>
+                          {' '}for dynamic, unpredictable storytelling experiences.
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            )}
 
           </div>
         )}
 
         {activeTab === 'segments' && (
           <div className="h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
-              <button
-                onClick={() => addSegment(stepIndex)}
-                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Add Option</span>
-              </button>
-            </div>
+            {isProtectedStep ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center p-8 max-w-md">
+                  <span className="text-6xl mb-4 block text-orange-400">🔒</span>
+                  <h3 className="text-xl font-medium text-orange-200 mb-3">Protected System Segments</h3>
+                  <p className="text-orange-400/80 leading-relaxed">
+                    This determiner step contains fixed segments (1-5 spins) that cannot be modified.
+                    These are required for proper dynamic multi-spin functionality.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
+                  <button
+                    onClick={() => addSegment(stepIndex)}
+                    className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span>Add Option</span>
+                  </button>
+                </div>
 
-            <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
-              {step.wheelConfig.segments.map((segment) => (
-                <SegmentEditor
-                  key={segment.id}
-                  segment={segment}
-                  onUpdate={(field, value) => handleSegmentUpdate(segment.id, field, value)}
-                  onRemove={() => removeSegment(stepIndex, segment.id)}
-                  canRemove={step.wheelConfig.segments.length > 2}
-                />
-              ))}
-            </div>
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
+                  {step.wheelConfig.segments.map((segment) => (
+                    <SegmentEditor
+                      key={segment.id}
+                      segment={segment}
+                      onUpdate={(field, value) => handleSegmentUpdate(segment.id, field, value)}
+                      onRemove={() => removeSegment(stepIndex, segment.id)}
+                      canRemove={step.wheelConfig.segments.length > 2}
+                      isProtected={isProtectedStep}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {activeTab === 'connections' && (
           <div className="h-full overflow-y-auto pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
-            <BranchEditor
-              stepIndex={stepIndex}
-              branches={step.branches}
-              onUpdate={handleBranchesUpdate}
-            />
+            {isProtectedStep ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center p-8 max-w-md">
+                  <span className="text-6xl mb-4 block text-orange-400">🔒</span>
+                  <h3 className="text-xl font-medium text-orange-200 mb-3">Protected System Connections</h3>
+                  <p className="text-orange-400/80 leading-relaxed">
+                    This determiner step has automatic connections to its target multi-spin step.
+                    These connections are managed by the system and cannot be modified.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <BranchEditor
+                stepIndex={stepIndex}
+                branches={step.branches}
+                onUpdate={handleBranchesUpdate}
+              />
+            )}
           </div>
         )}
       </div>
@@ -259,13 +415,15 @@ interface SegmentEditorProps {
   onUpdate: (field: string, value: string | number) => void;
   onRemove: () => void;
   canRemove: boolean;
+  isProtected?: boolean;
 }
 
 const SegmentEditor: React.FC<SegmentEditorProps> = ({
   segment,
   onUpdate,
   onRemove,
-  canRemove
+  canRemove,
+  isProtected = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 

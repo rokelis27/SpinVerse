@@ -262,8 +262,16 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                   <h3 className="text-xl font-bold text-white">Steps</h3>
                   <button
                     onClick={() => addStep()}
-                    className="p-2 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300"
-                    title={`Add Step After "${currentSequence.steps[selectedStepIndex]?.title || 'Current Step'}"`}
+                    disabled={currentSequence.steps[selectedStepIndex]?.isDeterminer}
+                    className={`p-2 rounded-lg transition-all duration-300 ${
+                      currentSequence.steps[selectedStepIndex]?.isDeterminer
+                        ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                        : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600'
+                    }`}
+                    title={currentSequence.steps[selectedStepIndex]?.isDeterminer 
+                      ? 'Cannot add steps after determiner steps - they must flow directly to their target step'
+                      : `Add Step After "${currentSequence.steps[selectedStepIndex]?.title || 'Current Step'}"`
+                    }
                   >
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -276,21 +284,35 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                     <div key={step.id}>
                       <div
                         className={`p-4 rounded-xl cursor-pointer transition-all duration-300 ${
-                          index === selectedStepIndex
-                            ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30'
-                            : 'bg-white/5 hover:bg-white/10'
+                          step.isDeterminer
+                            ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30'
+                            : index === selectedStepIndex
+                              ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30'
+                              : 'bg-white/5 hover:bg-white/10'
                         }`}
                         onClick={() => setSelectedStep(index)}
                       >
                         <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h4 className="font-semibold text-white text-sm">{step.title}</h4>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {step.wheelConfig.segments.length} options
+                          <div className="flex items-center space-x-2">
+                            <h4 className="font-semibold text-white text-sm">{step.title}</h4>
+                            {step.isDeterminer && (
+                              <span className="text-orange-400 text-xs">🔒</span>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <p className="text-xs text-gray-400">
+                              {step.wheelConfig.segments.length} options
+                            </p>
+                            {step.isDeterminer && (
+                              <span className="text-xs text-orange-400 bg-orange-900/30 px-2 py-0.5 rounded border border-orange-500/30">
+                                SYSTEM
+                              </span>
+                            )}
                             {step.branches && step.branches.length > 0 && (
                               <span className="ml-2 text-emerald-400">• {step.branches.length} branch{step.branches.length !== 1 ? 'es' : ''}</span>
                             )}
-                          </p>
+                          </div>
                           
                           {/* Connection indicators */}
                           {step.branches && step.branches.length > 0 && (
@@ -325,7 +347,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                           )}
                         </div>
                         
-                        {currentSequence.steps.length > 1 && (
+                        {currentSequence.steps.length > 1 && !step.isDeterminer && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -339,17 +361,41 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                             </svg>
                           </button>
                         )}
+                        
+                        {/* Show protected step indicator instead of delete button */}
+                        {step.isDeterminer && (
+                          <div 
+                            className="p-1 text-orange-400 rounded ml-2" 
+                            title="Protected system step - disable dynamic mode on target step to remove"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                          </div>
+                        )}
                         </div>
                       </div>
                       
                       {/* Visual indicator showing where new step would be inserted */}
-                      {index === selectedStepIndex && (
+                      {index === selectedStepIndex && !step.isDeterminer && (
                         <div className="flex items-center justify-center py-2">
                           <div className="flex items-center text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-1">
                             <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
                             <span>New step will be added here</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Show protection message for determiner steps */}
+                      {index === selectedStepIndex && step.isDeterminer && (
+                        <div className="flex items-center justify-center py-2">
+                          <div className="flex items-center text-xs text-orange-400 bg-orange-500/10 border border-orange-500/30 rounded-lg px-3 py-1">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            <span>Protected step - flows directly to target multi-spin step</span>
                           </div>
                         </div>
                       )}
