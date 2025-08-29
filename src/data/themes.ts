@@ -1367,12 +1367,639 @@ const undergroundRacingTheme: SequenceTheme = {
   }
 };
 
+// World Cup Manager Theme - Complete Tournament Journey
+const worldCupManagerTheme: SequenceTheme = {
+  id: 'world-cup-manager',
+  name: 'World Cup Manager: Road to Glory',
+  description: 'From career backstory to tournament legend - manage your national team through the ultimate football tournament and write your legacy',
+  color: '#228B22',
+  startStepId: 'previous-stint',
+  steps: [
+    // Step 1: Previous Managerial Stint
+    {
+      id: 'previous-stint',
+      title: 'Your Previous Managerial Stint',
+      description: 'The phone call that changed everything came at 3 AM. But your path to this moment started years ago...',
+      wheelConfig: {
+        segments: [
+          { id: 'premier-champion', text: 'Premier League Champion', color: '#FFD700', rarity: 'legendary', weight: 10 },
+          { id: 'relegated-manager', text: 'Relegated Manager', color: '#8B0000', rarity: 'uncommon', weight: 18 },
+          { id: 'scandal-departure', text: 'Scandal-Hit Departure', color: '#2F4F4F', rarity: 'rare', weight: 12 },
+          { id: 'european-giant', text: 'European Giant Coach', color: '#4169E1', rarity: 'rare', weight: 15 },
+          { id: 'championship-hero', text: 'Championship Hero', color: '#32CD32', rarity: 'common', weight: 25 },
+          { id: 'youtube-analyst', text: 'Never Managed Professional', color: '#FF69B4', rarity: 'uncommon', weight: 20 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'country-selection',
+    },
+
+    // Step 2: Country Selection (32 Countries - Full World Cup Representation)
+    {
+      id: 'country-selection',
+      title: 'Country You\'re Managing',
+      description: 'The federation president slides the contract across the table. The badge on the folder shows...',
+      wheelConfig: {
+        segments: [
+          // Tier 1 - Tournament Favorites (25% chance)
+          { id: 'brazil', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 4 },
+          { id: 'argentina', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'legendary', weight: 4 },
+          { id: 'france', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 4 },
+          { id: 'germany', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'legendary', weight: 4 },
+          { id: 'spain', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'rare', weight: 4 },
+          { id: 'england', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'rare', weight: 4 },
+          { id: 'netherlands', text: 'Netherlands 🇳🇱', color: '#FF4500', rarity: 'rare', weight: 3 },
+          { id: 'italy', text: 'Italy 🇮🇹', color: '#228B22', rarity: 'rare', weight: 2 },
+          
+          // Tier 2 - Solid Contenders (40% chance)
+          { id: 'portugal', text: 'Portugal 🇵🇹', color: '#006400', rarity: 'uncommon', weight: 5 },
+          { id: 'croatia', text: 'Croatia 🇭🇷', color: '#DC143C', rarity: 'uncommon', weight: 5 },
+          { id: 'belgium', text: 'Belgium 🇧🇪', color: '#FFD700', rarity: 'uncommon', weight: 5 },
+          { id: 'uruguay', text: 'Uruguay 🇺🇾', color: '#87CEEB', rarity: 'uncommon', weight: 5 },
+          { id: 'mexico', text: 'Mexico 🇲🇽', color: '#228B22', rarity: 'uncommon', weight: 4 },
+          { id: 'colombia', text: 'Colombia 🇨🇴', color: '#FFD700', rarity: 'uncommon', weight: 4 },
+          { id: 'denmark', text: 'Denmark 🇩🇰', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'switzerland', text: 'Switzerland 🇨🇭', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'poland', text: 'Poland 🇵🇱', color: '#FFFFFF', rarity: 'common', weight: 4 },
+          
+          // Tier 3 - Underdogs with Dreams (35% chance)
+          { id: 'morocco', text: 'Morocco 🇲🇦', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'senegal', text: 'Senegal 🇸🇳', color: '#228B22', rarity: 'common', weight: 4 },
+          { id: 'japan', text: 'Japan 🇯🇵', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'south-korea', text: 'South Korea 🇰🇷', color: '#4169E1', rarity: 'common', weight: 4 },
+          { id: 'australia', text: 'Australia 🇦🇺', color: '#FFD700', rarity: 'common', weight: 4 },
+          { id: 'usa', text: 'USA 🇺🇸', color: '#4169E1', rarity: 'common', weight: 4 },
+          { id: 'canada', text: 'Canada 🇨🇦', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'wales', text: 'Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿', color: '#228B22', rarity: 'common', weight: 3 },
+          { id: 'ecuador', text: 'Ecuador 🇪🇨', color: '#FFD700', rarity: 'common', weight: 3 },
+          { id: 'iran', text: 'Iran 🇮🇷', color: '#228B22', rarity: 'common', weight: 3 },
+          { id: 'saudi-arabia', text: 'Saudi Arabia 🇸🇦', color: '#228B22', rarity: 'common', weight: 3 },
+          { id: 'tunisia', text: 'Tunisia 🇹🇳', color: '#DC143C', rarity: 'common', weight: 3 },
+          { id: 'costa-rica', text: 'Costa Rica 🇨🇷', color: '#4169E1', rarity: 'common', weight: 3 },
+          { id: 'ghana', text: 'Ghana 🇬🇭', color: '#FFD700', rarity: 'common', weight: 3 },
+          { id: 'cameroon', text: 'Cameroon 🇨🇲', color: '#228B22', rarity: 'common', weight: 3 },
+          { id: 'serbia', text: 'Serbia 🇷🇸', color: '#DC143C', rarity: 'common', weight: 3 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'coaching-philosophy',
+    },
+
+    // Step 3: Coaching Philosophy
+    {
+      id: 'coaching-philosophy',
+      title: 'Your Coaching Philosophy',
+      description: 'In the press conference, they ask about your tactical approach. You confidently explain...',
+      wheelConfig: {
+        segments: [
+          { id: 'tiki-taka', text: 'Tiki-Taka Possession', color: '#DC143C', rarity: 'uncommon', weight: 16 },
+          { id: 'gegenpressing', text: 'Gegenpressing Intensity', color: '#FFD700', rarity: 'uncommon', weight: 16 },
+          { id: 'defensive-masterclass', text: 'Defensive Masterclass', color: '#2F4F4F', rarity: 'uncommon', weight: 16 },
+          { id: 'counter-attacking', text: 'Counter-Attacking Precision', color: '#4169E1', rarity: 'common', weight: 20 },
+          { id: 'total-football', text: 'Total Football Evolution', color: '#FF4500', rarity: 'rare', weight: 12 },
+          { id: 'long-ball-chaos', text: 'Long Ball Chaos', color: '#32CD32', rarity: 'common', weight: 20 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'team-strength',
+    },
+
+    // Step 4: Team's Greatest Strength
+    {
+      id: 'team-strength',
+      title: 'Your Team\'s Greatest Strength',
+      description: 'In the dressing room, you look at your squad and smile. Your secret weapon is...',
+      wheelConfig: {
+        segments: [
+          { id: 'world-class-striker', text: 'World-Class Striker', color: '#FFD700', rarity: 'rare', weight: 12 },
+          { id: 'impenetrable-defense', text: 'Impenetrable Defense', color: '#2F4F4F', rarity: 'uncommon', weight: 12 },
+          { id: 'creative-midfield', text: 'Creative Midfield Genius', color: '#9370DB', rarity: 'uncommon', weight: 12 },
+          { id: 'team-spirit', text: 'Unbreakable Team Spirit', color: '#32CD32', rarity: 'common', weight: 15 },
+          { id: 'lightning-pace', text: 'Lightning Pace on Wings', color: '#FF69B4', rarity: 'common', weight: 12 },
+          { id: 'set-piece-specialists', text: 'Set Piece Specialists', color: '#4169E1', rarity: 'uncommon', weight: 10 },
+          { id: 'goalkeeping-excellence', text: 'World-Class Goalkeeper', color: '#228B22', rarity: 'rare', weight: 10 },
+          { id: 'tactical-discipline', text: 'Perfect Tactical Discipline', color: '#4B0082', rarity: 'uncommon', weight: 10 },
+          { id: 'physical-dominance', text: 'Superior Physical Strength', color: '#8B4513', rarity: 'common', weight: 12 },
+          { id: 'counter-attack-speed', text: 'Lightning Counter-Attacks', color: '#FF4500', rarity: 'uncommon', weight: 8 },
+          { id: 'veteran-leadership', text: 'Experienced Leadership', color: '#B8860B', rarity: 'common', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'weakness-count-determiner',
+    },
+
+    // Step 5A: Team Weakness Count Determiner (System-Generated)
+    {
+      id: 'weakness-count-determiner',
+      title: 'Squad Problems Determiner',
+      description: 'How many problems are haunting your squad before the tournament?',
+      isDeterminer: true,
+      targetStepId: 'team-weaknesses',
+      wheelConfig: {
+        segments: [
+          { id: '1-spin', text: '1', color: '#32CD32', weight: 30, rarity: 'common' },
+          { id: '2-spins', text: '2', color: '#FFD700', weight: 40, rarity: 'common' },
+          { id: '3-spins', text: '3', color: '#DC143C', weight: 30, rarity: 'uncommon' },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager'
+      },
+      defaultNextStep: 'team-weaknesses',
+    },
+
+    // Step 5B: Team Weaknesses (Multi-Spin Dynamic)
+    {
+      id: 'team-weaknesses',
+      title: 'Your Team\'s Biggest Weaknesses',
+      description: 'Even the best teams have problems. During the final squad meeting, the issues become clear...',
+      multiSpin: {
+        enabled: true,
+        mode: 'dynamic',
+        determinerStepId: 'weakness-count-determiner',
+        aggregateResults: true
+      },
+      wheelConfig: {
+        segments: [
+          { id: 'injury-prone-stars', text: 'Injury-Prone Star Players', color: '#8B0000', rarity: 'uncommon', weight: 10 },
+          { id: 'lack-squad-depth', text: 'Lack of Squad Depth', color: '#2F4F4F', rarity: 'common', weight: 12 },
+          { id: 'temperamental-players', text: 'Temperamental Personalities', color: '#DC143C', rarity: 'uncommon', weight: 10 },
+          { id: 'poor-set-pieces', text: 'Poor Set Piece Defense', color: '#4169E1', rarity: 'common', weight: 12 },
+          { id: 'inexperienced-keeper', text: 'Inexperienced Goalkeeper', color: '#FF69B4', rarity: 'uncommon', weight: 10 },
+          { id: 'aging-superstars', text: 'Aging Superstars', color: '#B8860B', rarity: 'common', weight: 12 },
+          { id: 'language-barriers', text: 'Language Barriers', color: '#9370DB', rarity: 'uncommon', weight: 8 },
+          { id: 'media-pressure', text: 'Excessive Media Pressure', color: '#FF4500', rarity: 'common', weight: 10 },
+          { id: 'fitness-issues', text: 'Poor Squad Fitness Levels', color: '#228B22', rarity: 'common', weight: 8 },
+          { id: 'tactical-inflexibility', text: 'Tactical Inflexibility', color: '#4B0082', rarity: 'uncommon', weight: 8 },
+          { id: 'penalty-weakness', text: 'Penalty Shootout Anxiety', color: '#800080', rarity: 'rare', weight: 6 },
+          { id: 'altitude-problems', text: 'Altitude Adaptation Issues', color: '#CD853F', rarity: 'uncommon', weight: 6 },
+          { id: 'dressing-room-cliques', text: 'Dressing Room Cliques', color: '#DC143C', rarity: 'rare', weight: 8 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'tournament-prediction',
+    },
+
+    // Step 6: Pre-Tournament Prediction
+    {
+      id: 'tournament-prediction',
+      title: 'Your Pre-Tournament Prediction',
+      description: 'In your final interview before the tournament, you boldly predict...',
+      wheelConfig: {
+        segments: [
+          { id: 'win-whole-thing', text: 'We\'ll Win the Whole Thing', color: '#FFD700', rarity: 'rare', weight: 12 },
+          { id: 'semi-finals-target', text: 'Semi-Finals is Our Target', color: '#32CD32', rarity: 'uncommon', weight: 16 },
+          { id: 'quarter-finals-success', text: 'Quarter-Finals Would Be Success', color: '#4169E1', rarity: 'common', weight: 20 },
+          { id: 'escape-group', text: 'Just Escape the Group', color: '#FF69B4', rarity: 'common', weight: 22 },
+          { id: 'here-to-learn', text: 'We\'re Here to Learn', color: '#9370DB', rarity: 'common', weight: 18 },
+          { id: 'one-game-time', text: 'One Game at a Time', color: '#2F4F4F', rarity: 'uncommon', weight: 12 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'group-opponents',
+    },
+
+    // Step 7: Group Stage Opponents (Multi-Spin Fixed)
+    {
+      id: 'group-opponents',
+      title: 'Group Stage Opponents',
+      description: 'The group stage draw is complete. You\'ll face these three nations in the opening round...',
+      multiSpin: {
+        enabled: true,
+        mode: 'fixed',
+        fixedCount: 3,
+        aggregateResults: true
+      },
+      wheelConfig: {
+        segments: [
+          // All World Cup nations as potential group opponents
+          { id: 'opp-brazil', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 3 },
+          { id: 'opp-argentina', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'legendary', weight: 3 },
+          { id: 'opp-france', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 3 },
+          { id: 'opp-germany', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'legendary', weight: 3 },
+          { id: 'opp-spain', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'rare', weight: 3 },
+          { id: 'opp-england', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'rare', weight: 3 },
+          { id: 'opp-netherlands', text: 'Netherlands 🇳🇱', color: '#FF4500', rarity: 'rare', weight: 3 },
+          { id: 'opp-italy', text: 'Italy 🇮🇹', color: '#228B22', rarity: 'rare', weight: 3 },
+          { id: 'opp-portugal', text: 'Portugal 🇵🇹', color: '#006400', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-croatia', text: 'Croatia 🇭🇷', color: '#DC143C', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-belgium', text: 'Belgium 🇧🇪', color: '#FFD700', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-uruguay', text: 'Uruguay 🇺🇾', color: '#87CEEB', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-mexico', text: 'Mexico 🇲🇽', color: '#228B22', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-colombia', text: 'Colombia 🇨🇴', color: '#FFD700', rarity: 'uncommon', weight: 4 },
+          { id: 'opp-denmark', text: 'Denmark 🇩🇰', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'opp-switzerland', text: 'Switzerland 🇨🇭', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'opp-poland', text: 'Poland 🇵🇱', color: '#FFFFFF', rarity: 'common', weight: 4 },
+          { id: 'opp-morocco', text: 'Morocco 🇲🇦', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'opp-senegal', text: 'Senegal 🇸🇳', color: '#228B22', rarity: 'common', weight: 4 },
+          { id: 'opp-japan', text: 'Japan 🇯🇵', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'opp-south-korea', text: 'South Korea 🇰🇷', color: '#4169E1', rarity: 'common', weight: 4 },
+          { id: 'opp-australia', text: 'Australia 🇦🇺', color: '#FFD700', rarity: 'common', weight: 4 },
+          { id: 'opp-usa', text: 'USA 🇺🇸', color: '#4169E1', rarity: 'common', weight: 4 },
+          { id: 'opp-canada', text: 'Canada 🇨🇦', color: '#DC143C', rarity: 'common', weight: 4 },
+          { id: 'opp-wales', text: 'Wales 🏴󠁧󠁢󠁷󠁬󠁳󠁿', color: '#228B22', rarity: 'common', weight: 4 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'group-performance',
+    },
+
+    // Step 8: Group Stage Performance
+    {
+      id: 'group-performance',
+      title: 'Group Stage Performance',
+      description: 'After 3 matches, the final group table shows...',
+      wheelConfig: {
+        segments: [
+          { id: 'first-nine-points', text: 'First Place + 9 Points', color: '#FFD700', rarity: 'legendary', weight: 8 },
+          { id: 'first-seven-points', text: 'First Place + 7 Points', color: '#32CD32', rarity: 'rare', weight: 12 },
+          { id: 'second-six-points', text: 'Second Place + 6 Points', color: '#4169E1', rarity: 'uncommon', weight: 18 },
+          { id: 'second-four-points', text: 'Second Place + 4 Points', color: '#FF69B4', rarity: 'common', weight: 22 },
+          { id: 'third-four-points', text: 'Third Place + 4 Points', color: '#8B0000', rarity: 'common', weight: 20 },
+          { id: 'fourth-one-point', text: 'Fourth Place + 1 Point', color: '#2F4F4F', rarity: 'uncommon', weight: 20 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      // Branching based on qualification
+      branches: [
+        createBranch('round-sixteen-opponent', [
+          BranchingConditions.oneOf('group-performance', ['first-nine-points', 'first-seven-points', 'second-six-points', 'second-four-points'])
+        ]),
+        createBranch('tournament-ending', [
+          BranchingConditions.oneOf('group-performance', ['third-four-points', 'fourth-one-point'])
+        ])
+      ],
+      defaultNextStep: 'tournament-ending',
+    },
+
+    // Step 9A: Round of 16 Opponent Draw (If Qualified)
+    {
+      id: 'round-sixteen-opponent',
+      title: 'Round of 16 Opponent',
+      description: 'The knockout stage draw is complete. In the Round of 16, you face...',
+      wheelConfig: {
+        segments: [
+          { id: 'brazil-ro16', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 6 },
+          { id: 'france-ro16', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 6 },
+          { id: 'spain-ro16', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'rare', weight: 8 },
+          { id: 'germany-ro16', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'rare', weight: 8 },
+          { id: 'argentina-ro16', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'rare', weight: 8 },
+          { id: 'england-ro16', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'rare', weight: 8 },
+          { id: 'netherlands-ro16', text: 'Netherlands 🇳🇱', color: '#FF4500', rarity: 'uncommon', weight: 10 },
+          { id: 'portugal-ro16', text: 'Portugal 🇵🇹', color: '#006400', rarity: 'uncommon', weight: 10 },
+          { id: 'croatia-ro16', text: 'Croatia 🇭🇷', color: '#DC143C', rarity: 'uncommon', weight: 10 },
+          { id: 'belgium-ro16', text: 'Belgium 🇧🇪', color: '#FFD700', rarity: 'uncommon', weight: 10 },
+          { id: 'mexico-ro16', text: 'Mexico 🇲🇽', color: '#228B22', rarity: 'common', weight: 16 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'round-sixteen-result',
+    },
+
+    // Step 9B: Round of 16 Result
+    {
+      id: 'round-sixteen-result',
+      title: 'Round of 16 Result',
+      description: 'The knockout stage is sudden death. 90 minutes to dreams or devastation...',
+      wheelConfig: {
+        segments: [
+          { id: 'dominant-4-0-win', text: 'Dominant 4-0 Demolition', color: '#32CD32', rarity: 'legendary', weight: 8 },
+          { id: 'comfortable-3-1', text: 'Comfortable 3-1 Victory', color: '#32CD32', rarity: 'uncommon', weight: 16 },
+          { id: 'professional-2-0', text: 'Professional 2-0 Win', color: '#228B22', rarity: 'common', weight: 18 },
+          { id: 'dramatic-extra-time', text: 'Dramatic 2-1 After Extra Time', color: '#FFD700', rarity: 'uncommon', weight: 15 },
+          { id: 'last-minute-winner', text: 'Last-Minute 1-0 Winner', color: '#4169E1', rarity: 'uncommon', weight: 12 },
+          { id: 'penalty-shootout-win', text: 'Penalty Shootout Heroes', color: '#9370DB', rarity: 'rare', weight: 10 },
+          { id: 'comeback-victory', text: '0-2 Down, Won 3-2', color: '#FFD700', rarity: 'legendary', weight: 6 },
+          { id: 'penalty-heartbreak', text: 'Penalty Shootout Heartbreak', color: '#8B0000', rarity: 'common', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      // Branching based on advancement
+      branches: [
+        createBranch('quarter-final-opponent', [
+          BranchingConditions.oneOf('round-sixteen-result', ['dominant-4-0-win', 'comfortable-3-1', 'professional-2-0', 'dramatic-extra-time', 'last-minute-winner', 'penalty-shootout-win', 'comeback-victory'])
+        ]),
+        createBranch('tournament-ending', [
+          BranchingConditions.oneOf('round-sixteen-result', ['penalty-heartbreak'])
+        ])
+      ],
+      defaultNextStep: 'tournament-ending',
+    },
+
+    // Step 10A: Quarter-Final Opponent Draw (If Advanced)
+    {
+      id: 'quarter-final-opponent',
+      title: 'Quarter-Final Opponent',
+      description: 'Only 8 teams remain. The quarter-final draw reveals your opponent...',
+      wheelConfig: {
+        segments: [
+          { id: 'brazil-qf', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 8 },
+          { id: 'france-qf', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 8 },
+          { id: 'spain-qf', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'legendary', weight: 8 },
+          { id: 'argentina-qf', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'rare', weight: 12 },
+          { id: 'germany-qf', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'rare', weight: 12 },
+          { id: 'england-qf', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'rare', weight: 12 },
+          { id: 'netherlands-qf', text: 'Netherlands 🇳🇱', color: '#FF4500', rarity: 'uncommon', weight: 15 },
+          { id: 'portugal-qf', text: 'Portugal 🇵🇹', color: '#006400', rarity: 'uncommon', weight: 15 },
+          { id: 'croatia-qf', text: 'Croatia 🇭🇷', color: '#DC143C', rarity: 'common', weight: 10 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'quarter-final-result',
+    },
+
+    // Step 10B: Quarter-Final Result
+    {
+      id: 'quarter-final-result',
+      title: 'Quarter-Final Result',
+      description: 'Only 8 teams remain. The dream is so close you can taste it...',
+      wheelConfig: {
+        segments: [
+          { id: 'clinical-3-0-win', text: 'Clinical 3-0 Masterclass', color: '#32CD32', rarity: 'legendary', weight: 10 },
+          { id: 'hard-fought-2-1', text: 'Hard-Fought 2-1 Victory', color: '#228B22', rarity: 'uncommon', weight: 18 },
+          { id: 'defensive-1-0', text: 'Defensive 1-0 Grind', color: '#2F4F4F', rarity: 'common', weight: 20 },
+          { id: 'extra-time-thriller', text: 'Extra-Time Thriller Win', color: '#FFD700', rarity: 'uncommon', weight: 15 },
+          { id: 'penalty-drama-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 12 },
+          { id: 'upset-victory', text: 'Massive Upset Victory', color: '#FF4500', rarity: 'legendary', weight: 8 },
+          { id: 'narrow-defeat', text: 'Heartbreaking 1-2 Loss', color: '#8B0000', rarity: 'common', weight: 17 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      // Branching based on advancement
+      branches: [
+        createBranch('semi-final-opponent', [
+          BranchingConditions.oneOf('quarter-final-result', ['clinical-3-0-win', 'hard-fought-2-1', 'defensive-1-0', 'extra-time-thriller', 'penalty-drama-win', 'upset-victory'])
+        ]),
+        createBranch('tournament-ending', [
+          BranchingConditions.oneOf('quarter-final-result', ['narrow-defeat'])
+        ])
+      ],
+      defaultNextStep: 'tournament-ending',
+    },
+
+    // Step 11A: Semi-Final Opponent Draw (If Advanced)
+    {
+      id: 'semi-final-opponent',
+      title: 'Semi-Final Opponent',
+      description: 'Only 4 teams left. The semi-final draw reveals your path to history...',
+      wheelConfig: {
+        segments: [
+          { id: 'brazil-sf', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 15 },
+          { id: 'france-sf', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 15 },
+          { id: 'spain-sf', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'legendary', weight: 15 },
+          { id: 'argentina-sf', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'rare', weight: 20 },
+          { id: 'germany-sf', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'rare', weight: 20 },
+          { id: 'england-sf', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'uncommon', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'semi-final-result',
+    },
+
+    // Step 11B: Semi-Final Result
+    {
+      id: 'semi-final-result',
+      title: 'Semi-Final Result',
+      description: 'Only 4 teams left. History beckons...',
+      wheelConfig: {
+        segments: [
+          { id: 'dominant-semi-win', text: 'Dominant 3-0 Victory', color: '#32CD32', rarity: 'legendary', weight: 12 },
+          { id: 'tactical-semi-win', text: 'Tactical 1-0 Masterpiece', color: '#2F4F4F', rarity: 'uncommon', weight: 18 },
+          { id: 'thriller-semi-win', text: 'Epic 4-3 Thriller Win', color: '#FFD700', rarity: 'rare', weight: 15 },
+          { id: 'comeback-semi-win', text: 'Incredible Comeback Win', color: '#FF4500', rarity: 'legendary', weight: 10 },
+          { id: 'penalty-semi-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 15 },
+          { id: 'crushing-semi-loss', text: 'Crushing 0-3 Defeat', color: '#8B0000', rarity: 'common', weight: 15 },
+          { id: 'narrow-semi-loss', text: 'Heartbreaking 1-2 Loss', color: '#DC143C', rarity: 'common', weight: 15 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      // Branching based on advancement
+      branches: [
+        createBranch('final-opponent', [
+          BranchingConditions.oneOf('semi-final-result', ['dominant-semi-win', 'tactical-semi-win', 'thriller-semi-win', 'comeback-semi-win', 'penalty-semi-win'])
+        ]),
+        createBranch('third-place-playoff', [
+          BranchingConditions.oneOf('semi-final-result', ['crushing-semi-loss', 'narrow-semi-loss'])
+        ])
+      ],
+      defaultNextStep: 'third-place-playoff',
+    },
+
+    // Step 12A: Third Place Playoff (If Lost Semi-Final)
+    {
+      id: 'third-place-playoff',
+      title: 'Third Place Playoff',
+      description: 'One final chance for glory. The bronze medal match awaits...',
+      wheelConfig: {
+        segments: [
+          { id: 'third-place-win', text: 'Third Place Victory 🥉', color: '#CD7F32', rarity: 'uncommon', weight: 50 },
+          { id: 'fourth-place-loss', text: 'Fourth Place Finish', color: '#8B4513', rarity: 'common', weight: 50 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'defining-moment',
+    },
+
+    // Step 12B: Final Opponent Draw (If Won Semi-Final)
+    {
+      id: 'final-opponent',
+      title: 'World Cup Final Opponent',
+      description: 'The ultimate stage. In the World Cup Final, you face...',
+      wheelConfig: {
+        segments: [
+          { id: 'brazil-final', text: 'Brazil 🇧🇷', color: '#228B22', rarity: 'legendary', weight: 20 },
+          { id: 'france-final', text: 'France 🇫🇷', color: '#4169E1', rarity: 'legendary', weight: 20 },
+          { id: 'spain-final', text: 'Spain 🇪🇸', color: '#DC143C', rarity: 'legendary', weight: 20 },
+          { id: 'argentina-final', text: 'Argentina 🇦🇷', color: '#87CEEB', rarity: 'rare', weight: 15 },
+          { id: 'germany-final', text: 'Germany 🇩🇪', color: '#FFD700', rarity: 'rare', weight: 15 },
+          { id: 'england-final', text: 'England 🏴󠁧󠁢󠁥󠁮󠁧󠁿', color: '#FFFFFF', rarity: 'uncommon', weight: 10 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'final-result',
+    },
+
+    // Step 12C: World Cup Final Result
+    {
+      id: 'final-result',
+      title: 'World Cup Final Result',
+      description: 'The ultimate stage. The final whistle blows and...',
+      wheelConfig: {
+        segments: [
+          { id: 'champions-dominant', text: 'Champions! 4-1 Victory 🏆', color: '#FFD700', rarity: 'legendary', weight: 15 },
+          { id: 'champions-tight', text: 'Champions! 2-1 Victory 🏆', color: '#DAA520', rarity: 'legendary', weight: 15 },
+          { id: 'champions-extra-time', text: 'Champions! Extra-Time Win 🏆', color: '#B8860B', rarity: 'rare', weight: 12 },
+          { id: 'champions-penalties', text: 'Champions! Penalty Victory 🏆', color: '#9370DB', rarity: 'rare', weight: 8 },
+          { id: 'runners-up-close', text: 'Runners-Up - Lost 1-2 🥈', color: '#C0C0C0', rarity: 'uncommon', weight: 20 },
+          { id: 'runners-up-penalties', text: 'Runners-Up - Lost Penalties 🥈', color: '#A9A9A9', rarity: 'common', weight: 18 },
+          { id: 'runners-up-dominated', text: 'Runners-Up - Lost 0-3 🥈', color: '#808080', rarity: 'common', weight: 12 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'defining-moment',
+    },
+
+    // Step 11: Tournament Defining Moment (If Still Alive in Knockouts)
+    {
+      id: 'defining-moment',
+      title: 'Your Tournament Defining Moment',
+      description: 'Every World Cup has moments that become football folklore. Yours was...',
+      wheelConfig: {
+        segments: [
+          { id: 'last-minute-winner', text: 'Last-Minute Winner vs Brazil', color: '#228B22', rarity: 'legendary', weight: 6 },
+          { id: 'controversial-var', text: 'Controversial VAR Decision', color: '#8B0000', rarity: 'rare', weight: 8 },
+          { id: 'star-injury-drama', text: 'Star Player Injury Drama', color: '#DC143C', rarity: 'uncommon', weight: 10 },
+          { id: 'keeper-miracle', text: 'Goalkeeper Miracle Save', color: '#4169E1', rarity: 'uncommon', weight: 10 },
+          { id: 'red-card-heroics', text: 'Red Card Controversy', color: '#FF0000', rarity: 'uncommon', weight: 10 },
+          { id: 'penalty-redemption', text: 'Penalty Miss Redemption', color: '#FFD700', rarity: 'common', weight: 12 },
+          { id: 'tactical-masterpiece', text: 'Tactical Masterpiece', color: '#9370DB', rarity: 'common', weight: 8 },
+          { id: 'crowd-incident', text: 'Stadium Crowd Incident', color: '#FF4500', rarity: 'uncommon', weight: 8 },
+          { id: 'weather-chaos', text: 'Extreme Weather Chaos', color: '#87CEEB', rarity: 'common', weight: 8 },
+          { id: 'referee-blunder', text: 'Referee Blunder', color: '#2F4F4F', rarity: 'common', weight: 10 },
+          { id: 'comeback-from-dead', text: '3-Goal Comeback', color: '#32CD32', rarity: 'legendary', weight: 4 },
+          { id: 'youth-sensation', text: 'Teenage Sensation Emerges', color: '#FFB6C1', rarity: 'rare', weight: 6 },
+          { id: 'captain-speech', text: 'Captain\'s Inspiring Speech', color: '#4169E1', rarity: 'uncommon', weight: 8 },
+          { id: 'social-media-storm', text: 'Social Media Storm', color: '#FF69B4', rarity: 'common', weight: 8 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'managerial-legacy',
+    },
+
+    // Step 12: Media Reaction (For Early Exits)
+    {
+      id: 'tournament-ending',
+      title: 'Media Reaction',
+      description: 'The final whistle has blown. The press conference is brutal, but the headlines tomorrow will be...',
+      wheelConfig: {
+        segments: [
+          { id: 'media-hero', text: '"Tactical Genius" - Praised Universally', color: '#FFD700', rarity: 'legendary', weight: 12 },
+          { id: 'moral-victory', text: '"Heroic Effort" - Respectful Coverage', color: '#32CD32', rarity: 'uncommon', weight: 18 },
+          { id: 'mixed-reviews', text: '"Could Go Either Way" - Divided Opinion', color: '#4169E1', rarity: 'common', weight: 25 },
+          { id: 'harsh-criticism', text: '"Disappointing" - Heavy Criticism', color: '#FF4500', rarity: 'common', weight: 20 },
+          { id: 'media-scapegoat', text: '"Sack Him Now!" - Torn to Pieces', color: '#8B0000', rarity: 'uncommon', weight: 15 },
+          { id: 'future-potential', text: '"Give Him Another Chance" - Cautious Support', color: '#9370DB', rarity: 'common', weight: 10 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      defaultNextStep: 'managerial-legacy',
+    },
+
+    // Step 13: Managerial Legacy (Final Step)
+    {
+      id: 'managerial-legacy',
+      title: 'Your Managerial Legacy',
+      description: 'Six months after the World Cup, when they write your story, they say...',
+      wheelConfig: {
+        segments: [
+          { id: 'hall-of-fame', text: 'Hall of Fame Legend', color: '#FFD700', rarity: 'legendary', weight: 6 },
+          { id: 'national-hero', text: 'National Hero Forever', color: '#32CD32', rarity: 'rare', weight: 10 },
+          { id: 'tactical-revolutionary', text: 'Tactical Revolutionary', color: '#9370DB', rarity: 'rare', weight: 8 },
+          { id: 'cult-hero', text: 'Cult Hero Status', color: '#FF69B4', rarity: 'uncommon', weight: 12 },
+          { id: 'respectful-departure', text: 'Respectful Departure', color: '#4169E1', rarity: 'common', weight: 15 },
+          { id: 'one-tournament-wonder', text: 'One Tournament Wonder', color: '#B8860B', rarity: 'common', weight: 16 },
+          { id: 'media-scapegoat', text: 'Media Scapegoat', color: '#8B0000', rarity: 'uncommon', weight: 10 },
+          { id: 'academy-founder', text: 'Coaching Academy Founder', color: '#228B22', rarity: 'uncommon', weight: 8 },
+          { id: 'pundit-career', text: 'Successful TV Pundit', color: '#FF4500', rarity: 'common', weight: 10 },
+          { id: 'club-comeback', text: 'Triumphant Club Return', color: '#4169E1', rarity: 'uncommon', weight: 8 },
+          { id: 'fifa-role', text: 'FIFA Technical Director', color: '#87CEEB', rarity: 'rare', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'world-cup-manager',
+      },
+      // Final step - no defaultNextStep
+    },
+  ],
+
+  narrativeTemplate: "From your {previous-stint} background, you took charge of {country-selection} with a {coaching-philosophy} approach. Your squad's {team-strength} was your foundation, though {team-weaknesses} created challenges. You boldly predicted {tournament-prediction} before facing {group-opponents} in the group stage. Your {group-performance} led to {final-result}, defined by {defining-moment}. The media reaction was {tournament-ending}, setting the stage for your legacy: {managerial-legacy}.",
+
+  narrativeTemplates: {
+    // Miracle Run: Underdog Glory
+    'miracle-run': "🌟 THE MIRACLE OF {country-selection} 🌟\n\nNobody gave you a chance. After your {previous-stint} career, taking {country-selection} with a {coaching-philosophy} approach seemed doomed. Your {team-weaknesses} were mocked by experts worldwide, despite your {team-strength}.\n\nBut football isn't played on paper. Through the group stage against {group-opponents}, you achieved {group-performance} when everyone predicted failure. Your {defining-moment} became the tournament's defining image.\n\nWhen you reached {final-result}, the impossible became inevitable. They called it the Miracle of {country-selection}. You called it believing in dreams. Your {managerial-legacy} proved that underdogs can soar.",
+
+    // Redemption Story: Scandal to Glory
+    'redemption-story': "⚡ THE REDEMPTION SONG ⚡\n\nThe {previous-stint} scandal nearly destroyed you. Critics said you'd never manage again, that {country-selection} taking a chance on you was desperate. Your {coaching-philosophy} was called outdated, your {team-weaknesses} seemed to mirror your damaged reputation.\n\nBut great stories aren't about perfection - they're about rising from ashes. Your {team-strength} became your foundation for rebuilding. Through {group-opponents} and beyond, every victory was proof that second chances can become first triumphs.\n\nYour {defining-moment} silenced the doubters. When you achieved {final-result}, you didn't just win for {country-selection} - you won for everyone who's been written off. Your {managerial-legacy} completed the redemption.",
+
+    // Tactical Masterclass: Philosophy Vindicated
+    'tactical-masterclass': "🧠 THE TACTICAL MASTERCLASS 🧠\n\nThey said your {coaching-philosophy} was outdated, that modern football had moved beyond such approaches. But with {country-selection}'s {team-strength}, you knew exactly how to weaponize your tactical beliefs.\n\nYour {team-weaknesses} only made the challenge more interesting - true masters adapt without compromising core principles. Against {group-opponents}, you showcased tactical evolution in real time.\n\nYour {defining-moment} became a coaching clinic watched by millions. Your {final-result} was validation of tactical courage over trendy conformity. Football schools will study your {country-selection} campaign for decades. Your {managerial-legacy} proved that principles, properly applied, never go out of style.",
+
+    // Heartbreak Hero: Glorious Failure  
+    'heartbreak-hero': "💔 THE HEARTBREAK HERO 💔\n\nSometimes the most beautiful stories don't have happy endings. Your {previous-stint} led you to {country-selection}, where your {coaching-philosophy} and {team-strength} created something magical despite {team-weaknesses}.\n\nThrough {group-opponents} and the knockout stages, you built dreams that captured the world's imagination. Your {defining-moment} will be replayed forever - not for victory, but for the pure poetry of effort.\n\nYour {final-result} broke hearts but built legends. True greatness isn't always measured in trophies - sometimes it's measured in how you make people believe in beauty again. Your {managerial-legacy} proves that some defeats are more glorious than victories.",
+
+    // Perfect Campaign: Everything Aligned
+    'perfect-campaign': "👑 THE PERFECT CAMPAIGN 👑\n\nStars aligned when your {previous-stint} experience met {country-selection}'s potential. Your {coaching-philosophy} perfectly matched the squad's {team-strength}, while your {team-weaknesses} became minor details in a masterpiece.\n\nFrom the opening match against {group-opponents} through {group-performance}, everything clicked. Your {defining-moment} wasn't dramatic because it didn't need to be - perfection speaks quietly.\n\nYour {final-result} was inevitable from day one, though only you truly believed it. Your {managerial-legacy} represents the ultimate synthesis of preparation, talent, and destiny. This is how football dreams are supposed to end.",
+
+    'default': "You managed {country-selection} in the World Cup, utilizing {coaching-philosophy} tactics. Despite {team-weaknesses}, your {team-strength} helped achieve {final-result}, creating {managerial-legacy}."
+  }
+};
+
 // Export all themes
 export const themes: SequenceTheme[] = [
   mysticalAcademyTheme,
   survivalTournamentTheme,
   detectiveMysteryTheme,
   undergroundRacingTheme,
+  worldCupManagerTheme,
 ];
 
 export const getThemeById = (id: string): SequenceTheme | undefined => {

@@ -10,6 +10,7 @@ import { useSequenceStore, useCurrentStep, useIsSequenceComplete } from '@/store
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SpinResult, WheelConfig } from '@/types/wheel';
 import { applyConditionalWeights } from '@/utils/probabilityUtils';
+import { applyCountryFiltering } from '@/utils/branchingUtils';
 
 interface SequenceControllerProps {
   onBackToHome?: () => void;
@@ -37,26 +38,31 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
   const currentStep = useCurrentStep();
   const isComplete = useIsSequenceComplete();
   
-  // Apply conditional weights to current step's wheel config
+  // Apply conditional weights and country filtering to current step's wheel config
   const getAdjustedWheelConfig = (): WheelConfig | null => {
     if (!currentStep || !currentTheme) return null;
     
-    // Get all previous results as a map
+    // Get all results (not just previous ones, to include current sequence state)
     const { results } = useSequenceStore.getState();
+    
+    // First apply country filtering to the step
+    const countryFilteredStep = applyCountryFiltering(currentStep, results);
+    
+    // Get previous results as a map for conditional weights
     const previousResults = results.reduce((acc, result) => {
       acc[result.stepId] = result.spinResult.segment.id;
       return acc;
     }, {} as Record<string, string>);
     
-    // Apply conditional weights to segments
+    // Apply conditional weights to segments (after country filtering)
     const adjustedSegments = applyConditionalWeights(
-      [...currentStep.wheelConfig.segments], // Create a copy
+      [...countryFilteredStep.wheelConfig.segments], // Create a copy of filtered segments
       previousResults
     );
     
-    // Return updated wheel config with adjusted segments
+    // Return updated wheel config with country filtering and adjusted segments
     return {
-      ...currentStep.wheelConfig,
+      ...countryFilteredStep.wheelConfig,
       segments: adjustedSegments
     };
   };

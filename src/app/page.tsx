@@ -379,7 +379,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-              {themes.map((theme, index) => (
+              {themes.filter(theme => theme.id !== 'underground-racing').map((theme, index) => (
                 <div
                   key={theme.id}
                   className="glass-panel hud-panel rounded-xl p-6 text-left hover:shadow-cosmic transition-all duration-500 hover:scale-105 micro-bounce neon-glow group cinematic-enter relative"
@@ -434,7 +434,10 @@ export default function Home() {
                         {theme.id === 'underground-racing' && (
                           <span className="text-2xl">🏁</span>
                         )}
-                        {!['mystical-academy', 'survival-tournament', 'detective-mystery', 'underground-racing'].includes(theme.id) && (
+                        {theme.id === 'world-cup-manager' && (
+                          <span className="text-2xl">⚽</span>
+                        )}
+                        {!['mystical-academy', 'survival-tournament', 'detective-mystery', 'underground-racing', 'world-cup-manager'].includes(theme.id) && (
                           <span className="text-2xl">🎯</span>
                         )}
                       </div>

@@ -33,6 +33,11 @@ function getThemeConfig(themeId: string): ThemeConfig {
       universe: 'Detective Mystery',
       worldDescription: 'the crime investigation world',
       specialInstructions: 'Focus on investigation techniques, evidence analysis, suspect interviews, and solving complex crimes. Reference detective work, clues, plot twists, and the pursuit of justice.'
+    },
+    'world-cup-manager': {
+      universe: 'World Cup Manager',
+      worldDescription: 'the international football management world',
+      specialInstructions: 'Focus on tactical decisions, team management, tournament pressure, and the drama of international football. Reference managerial experience, player dynamics, tactical philosophies, match results, and the emotional journey from appointment to legacy. Emphasize the pressure of managing a national team, tournament progression, and how results shape a manager\'s reputation.'
     }
   };
   

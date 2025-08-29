@@ -120,6 +120,68 @@ export function applyWeightOverrides(
 }
 
 /**
+ * Apply dynamic country filtering to remove your own country from opponent draws
+ */
+export function applyCountryFiltering(
+  step: SequenceStep,
+  results: SequenceResult[]
+): SequenceStep {
+  // Only apply filtering to opponent-related steps (knockout draws and group opponents)
+  const isOpponentDraw = step.id.includes('-opponent');
+  const isGroupOpponents = step.id === 'group-opponents';
+  
+  if (!isOpponentDraw && !isGroupOpponents) {
+    return step;
+  }
+
+  // Find your country from the country-selection step
+  const countryResult = results.find(r => r.stepId === 'country-selection');
+  if (!countryResult) {
+    return step; // No country selected yet, return unchanged
+  }
+
+  const yourCountry = countryResult.spinResult.segment.id;
+  
+  // Filter out your country from segments
+  const filteredSegments = step.wheelConfig.segments.filter(segment => {
+    let countryId: string;
+    
+    if (isGroupOpponents) {
+      // Group opponents use 'opp-{country}' format (e.g., 'opp-brazil')
+      countryId = segment.id.startsWith('opp-') ? segment.id.substring(4) : segment.id;
+    } else {
+      // Knockout opponents use '{country}-{round}' format (e.g., 'brazil-ro16')
+      countryId = segment.id.split('-')[0];
+    }
+    
+    return countryId !== yourCountry;
+  });
+
+  // If all segments were filtered out (shouldn't happen), return original
+  if (filteredSegments.length === 0) {
+    return step;
+  }
+
+  // Redistribute weights evenly among remaining segments
+  const totalWeight = 100;
+  const weightPerSegment = Math.floor(totalWeight / filteredSegments.length);
+  const remainder = totalWeight % filteredSegments.length;
+
+  const redistributedSegments = filteredSegments.map((segment, index) => ({
+    ...segment,
+    weight: weightPerSegment + (index < remainder ? 1 : 0)
+  }));
+
+  return {
+    ...step,
+    wheelConfig: {
+      ...step.wheelConfig,
+      segments: redistributedSegments
+    }
+  };
+}
+
+/**
  * Find a step by ID in a theme
  */
 export function findStepById(theme: SequenceTheme, stepId: string): SequenceStep | null {
