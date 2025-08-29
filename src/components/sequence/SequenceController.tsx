@@ -67,27 +67,31 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
   const handleSpinComplete = (result: SpinResult) => {
     if (!isActive || isTransitioning || showResultPopup) return;
     
-    // If we're in the middle of a multi-spin, let the store handle everything
+    // Show result popup immediately for ALL spins (including multi-spin)
+    setLastResult(result);
+    setShowResultPopup(true);
+    
+    // Add haptic feedback for mobile (if enabled)
+    if (wheelSettings.enableHapticFeedback && 'vibrate' in navigator) {
+      navigator.vibrate([50, 50, 100]); // Success vibration pattern
+    }
+    
+    // Complete step (let the store handle multi-spin logic)
+    completeStep(result);
+    
+    // If we're in the middle of a multi-spin, show popup and return
     if (multiSpinState.isActive) {
-      completeStep(result);
+      // Use settings for popup duration, then hide
+      const popupDuration = wheelSettings.resultPopupDuration * 1000; // Convert to ms
+      setTimeout(() => {
+        setShowResultPopup(false);
+      }, popupDuration);
       return;
     }
     
     // Check if this will trigger multi-spin (check step-level config, not segment-level)
     const currentStep = currentTheme?.steps.find(step => step.id === currentStepId);
     const hasMultiSpin = currentStep?.multiSpin?.enabled && !multiSpinState.isActive;
-    
-    // Show result popup immediately
-    setLastResult(result);
-    setShowResultPopup(true);
-    
-    // Complete step immediately (saves result but doesn't advance, or starts multi-spin)
-    completeStep(result);
-    
-    // Add haptic feedback for mobile (if enabled)
-    if (wheelSettings.enableHapticFeedback && 'vibrate' in navigator) {
-      navigator.vibrate([50, 50, 100]); // Success vibration pattern
-    }
 
     // If multi-spin was triggered, hide popup faster and show multi-spin UI
     if (hasMultiSpin) {

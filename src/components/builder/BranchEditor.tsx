@@ -21,7 +21,15 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
   if (!currentSequence) return null;
 
   const currentStep = currentSequence.steps[stepIndex];
-  const availableSteps = currentSequence.steps.filter(s => s.id !== currentStep.id);
+  const availableSteps = currentSequence.steps.filter(s => {
+    // Exclude current step
+    if (s.id === currentStep.id) return false;
+    
+    // Exclude steps with dynamic multi-spin (they should only be reached via their determiner step)
+    if (s.multiSpin?.enabled && s.multiSpin?.mode === 'dynamic') return false;
+    
+    return true;
+  });
   
   const addBranch = () => {
     const firstSegmentId = currentStep.wheelConfig.segments[0]?.id || '';

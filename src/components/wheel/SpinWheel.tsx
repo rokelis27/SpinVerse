@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import { WheelConfig, WheelSegment, SpinResult, WheelPhysics } from '@/types/wheel';
 import { useWheelSettings } from '@/stores/settingsStore';
 import { SPEED_PRESETS } from '@/types/settings';
-import { selectWeightedSegment, calculateTargetAngle, getRarityIndicator, calculateSegmentProbabilities, findSegmentByAngle } from '@/utils/probabilityUtils';
+import { selectWeightedSegment, calculateTargetAngle, calculateSegmentProbabilities, findSegmentByAngle } from '@/utils/probabilityUtils';
 
 interface SpinWheelProps {
   config: WheelConfig;
@@ -150,8 +150,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
-      const rarityIndicator = getRarityIndicator(segment.rarity);
-      const displayText = rarityIndicator ? `${rarityIndicator} ${segment.text}` : segment.text;
+      const displayText = segment.text;
       
       // Enhanced text with neon glow effect
       ctx.shadowColor = segmentColor;

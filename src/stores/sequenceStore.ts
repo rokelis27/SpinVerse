@@ -178,12 +178,44 @@ export const useSequenceStore = create<SequenceStore>()(
               }
             }, false, 'multiSpin/initialize');
             return; // Stay in multi-spin mode, don't complete step yet
+          } else if (spinCount === 1) {
+            // When determiner step results in 1 spin, complete step normally and advance
+            console.log('🎯 Determiner resulted in 1 spin, completing step and advancing');
+            
+            // Complete the step first
+            const sequenceResult: SequenceResult = {
+              stepId: currentStepId,
+              spinResult,
+              timestamp: Date.now(),
+            };
+
+            const newResults = [...results, sequenceResult];
+            const completed = newResults.length;
+            const expectedPath = getSequencePath(currentTheme, newResults);
+            const total = expectedPath.length;
+
+            set({
+              results: newResults,
+              progress: {
+                completed,
+                total,
+                percentage: Math.round((completed / total) * 100),
+              },
+            }, false, 'sequence/completeSingleSpinMultiStep');
+            
+            // Advance to next step after a short delay
+            setTimeout(() => {
+              get().nextStep();
+            }, 100);
+            
+            return; // Don't continue with normal completion flow
           }
         }
 
         // Check if this step is already completed to prevent duplicates
         const existingResult = results.find(r => r.stepId === currentStepId);
         if (existingResult && !multiSpinState.isActive) {
+          console.log('🚫 Step already completed, blocking duplicate spin:', currentStepId);
           return;
         }
 
@@ -194,6 +226,7 @@ export const useSequenceStore = create<SequenceStore>()(
         };
 
         const newResults = [...results, sequenceResult];
+        console.log('✅ Completing step normally:', currentStepId, 'Result:', spinResult.segment.text);
         const completed = newResults.length;
         const expectedPath = getSequencePath(currentTheme, newResults);
         const total = expectedPath.length;
