@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { SequenceStepBuilder } from '@/types/builder';
 import { StepEnhancementNotification } from './StepEnhancementNotification';
+import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface EnhanceStepButtonProps {
   step: SequenceStepBuilder;
@@ -12,11 +14,13 @@ interface EnhanceStepButtonProps {
 
 export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, stepIndex }) => {
   const { currentSequence, updateStep } = useBuilderStore();
+  const { checkStepsAiEnhancer } = useAnonymousFeatureGate();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [enhancementType, setEnhancementType] = useState<'options' | 'narrative' | 'mixed'>('mixed');
   const [showNotification, setShowNotification] = useState(false);
   const [notificationData, setNotificationData] = useState({ stepTitle: '', addedOptions: 0 });
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   
   if (!currentSequence) return null;
 
@@ -31,6 +35,13 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
 
   const handleEnhance = async () => {
     setShowOptions(false);
+    
+    // Check if user can use Steps AI Enhancer (PRO-only feature)
+    const enhancerCheck = checkStepsAiEnhancer();
+    if (!enhancerCheck.canUse) {
+      setShowUpgradeModal(true);
+      return;
+    }
     
     // Input validation before starting
     if (!step || !step.wheelConfig || !step.wheelConfig.segments || step.wheelConfig.segments.length === 0) {
@@ -264,6 +275,13 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
           </div>
         </div>
       )}
+      
+      {/* Upgrade Modal */}
+      <UpgradeFlow
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerFeature="steps"
+      />
       </div>
     </>
   );

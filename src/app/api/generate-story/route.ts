@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { SequenceResult } from '@/types/sequence';
+import { headers } from 'next/headers';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -44,12 +45,75 @@ function getThemeConfig(themeId: string): ThemeConfig {
   return configs[themeId] || configs['mystical-academy'];
 }
 
+// Rate limiting for anonymous users
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const ANONYMOUS_DAILY_LIMIT = 3; // 3 AI generations per day for anonymous users
+const PRO_DAILY_LIMIT = 50; // 50 AI generations per day for PRO users
+const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+
+function checkAnonymousRateLimit(identifier: string): { allowed: boolean; remaining: number; resetTime: number } {
+  const now = Date.now();
+  const record = rateLimitMap.get(identifier);
+  
+  if (!record || now > record.resetTime) {
+    // Reset or create new record
+    const newRecord = { count: 0, resetTime: now + RATE_LIMIT_WINDOW };
+    rateLimitMap.set(identifier, newRecord);
+    return { allowed: true, remaining: ANONYMOUS_DAILY_LIMIT - 1, resetTime: newRecord.resetTime };
+  }
+  
+  if (record.count >= ANONYMOUS_DAILY_LIMIT) {
+    return { allowed: false, remaining: 0, resetTime: record.resetTime };
+  }
+  
+  record.count++;
+  return { allowed: true, remaining: ANONYMOUS_DAILY_LIMIT - record.count, resetTime: record.resetTime };
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { results, themeName, themeId, isCustomSequence, sequenceDescription } = await req.json();
+    const { results, themeName, themeId, isCustomSequence, sequenceDescription, userMode = 'anonymous' } = await req.json();
 
     if (!results || !Array.isArray(results)) {
       return NextResponse.json({ error: 'Invalid results provided' }, { status: 400 });
+    }
+
+    // Rate limiting for anonymous users
+    if (userMode === 'anonymous') {
+      const headersList = headers();
+      const clientIP = headersList.get('x-forwarded-for') || 
+                      headersList.get('x-real-ip') || 
+                      'unknown';
+      
+      // Use IP + user agent for anonymous identification
+      const userAgent = headersList.get('user-agent') || 'unknown';
+      const anonymousIdentifier = `${clientIP}_${userAgent.slice(0, 50)}`; // Truncate user agent
+      
+      const rateLimit = checkAnonymousRateLimit(anonymousIdentifier);
+      
+      if (!rateLimit.allowed) {
+        const resetDate = new Date(rateLimit.resetTime);
+        return NextResponse.json({
+          error: 'ANONYMOUS_RATE_LIMIT_EXCEEDED',
+          message: `You've reached the daily limit of ${ANONYMOUS_DAILY_LIMIT} AI story generations. Upgrade to PRO for ${PRO_DAILY_LIMIT} daily generations!`,
+          dailyLimit: ANONYMOUS_DAILY_LIMIT,
+          remaining: rateLimit.remaining,
+          resetTime: resetDate.toISOString(),
+          upgradeMessage: 'Upgrade to PRO for 50 daily AI story generations!',
+          proLimit: PRO_DAILY_LIMIT
+        }, { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': ANONYMOUS_DAILY_LIMIT.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': rateLimit.resetTime.toString(),
+          }
+        });
+      }
+      
+      // Add rate limit headers to successful response (set later)
+      req.headers.set('x-anonymous-remaining', rateLimit.remaining.toString());
+      req.headers.set('x-anonymous-reset', rateLimit.resetTime.toString());
     }
 
     // Handle custom sequences differently
@@ -117,13 +181,37 @@ export async function POST(req: NextRequest) {
 
     const rarityData = getRarityPercentage(rarityScore);
     
+    // Prepare response with rate limit headers for anonymous users
+    const responseHeaders: Record<string, string> = {};
+    
+    if (userMode === 'anonymous') {
+      const remaining = req.headers.get('x-anonymous-remaining') || '0';
+      const resetTime = req.headers.get('x-anonymous-reset') || Date.now().toString();
+      
+      responseHeaders['X-RateLimit-Limit'] = ANONYMOUS_DAILY_LIMIT.toString();
+      responseHeaders['X-RateLimit-Remaining'] = remaining;
+      responseHeaders['X-RateLimit-Reset'] = resetTime;
+    }
+    
     return NextResponse.json({
+      success: true,
       story,
       rarityScore,
       rarityPercentage: rarityData.percentage,
       rarityTier: rarityData.tier,
       characterArchetype,
-    });
+      // Add usage info for client-side tracking
+      usageInfo: userMode === 'anonymous' ? {
+        dailyLimit: ANONYMOUS_DAILY_LIMIT,
+        remaining: parseInt(req.headers.get('x-anonymous-remaining') || '0'),
+        resetTime: new Date(parseInt(req.headers.get('x-anonymous-reset') || '0')).toISOString(),
+        upgradeMessage: `You have ${req.headers.get('x-anonymous-remaining')} AI generations left today. Upgrade to PRO for ${PRO_DAILY_LIMIT}/day!`
+      } : {
+        dailyLimit: PRO_DAILY_LIMIT,
+        remaining: PRO_DAILY_LIMIT, // PRO users don't have server-side limits (could track if needed)
+        isPro: true
+      }
+    }, { headers: responseHeaders });
 
   } catch (error) {
     console.error('Story generation error:', error);

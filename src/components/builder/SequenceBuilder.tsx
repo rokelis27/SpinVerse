@@ -6,6 +6,8 @@ import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
 import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
 import { UserSequence, SequenceStepBuilder } from '@/types/builder';
+import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface SequenceBuilderProps {
   onClose: () => void;
@@ -30,7 +32,9 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
     reset
   } = useBuilderStore();
 
+  const { checkSequenceSteps, checkSavedSequences } = useAnonymousFeatureGate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Initialize with new sequence only if none exists on mount
   useEffect(() => {
@@ -41,11 +45,30 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
 
   const handleSave = () => {
     const validation = validateSequence();
-    if (validation.isValid) {
-      saveSequence();
-      alert('Sequence saved successfully!');
-    } else {
+    if (!validation.isValid) {
       alert(`Please fix ${validation.errors.length} error(s) before saving.`);
+      return;
+    }
+
+    // Check if this is a new sequence (not an update)
+    const saved = JSON.parse(localStorage.getItem('spinverse-custom-sequences') || '[]');
+    const isNewSequence = !saved.find((s: UserSequence) => s.id === currentSequence?.id);
+    
+    if (isNewSequence) {
+      const sequenceCheck = checkSavedSequences();
+      if (!sequenceCheck.canUse) {
+        setShowUpgradeModal(true);
+        return;
+      }
+    }
+
+    const result = saveSequence();
+    if (result?.success) {
+      alert('Sequence saved successfully!');
+    } else if (result?.isLimitError) {
+      setShowUpgradeModal(true);
+    } else {
+      alert('Failed to save sequence. Please try again.');
     }
   };
 
@@ -55,12 +78,43 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
       if (shouldSave) {
         const validation = validateSequence();
         if (validation.isValid) {
-          saveSequence();
+          // Check if this is a new sequence (not an update)
+          const saved = JSON.parse(localStorage.getItem('spinverse-custom-sequences') || '[]');
+          const isNewSequence = !saved.find((s: UserSequence) => s.id === currentSequence?.id);
+          
+          if (isNewSequence) {
+            const sequenceCheck = checkSavedSequences();
+            if (!sequenceCheck.canUse) {
+              setShowUpgradeModal(true);
+              return; // Don't close yet, let user decide
+            }
+          }
+
+          const result = saveSequence();
+          if (result?.isLimitError) {
+            setShowUpgradeModal(true);
+            return; // Don't close yet, let user decide
+          }
         }
       }
     }
     reset(); // Reset the store when actually closing
     onClose();
+  };
+
+  const handleAddStep = () => {
+    if (!currentSequence) return;
+
+    // Check step limits for anonymous users (allow up to 10 steps, block at 11th)
+    const newStepCount = currentSequence.steps.length + 1;
+    const stepCheck = checkSequenceSteps(newStepCount);
+    
+    if (newStepCount > 10) { // Block only when trying to add 11th step
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    addStep();
   };
 
   const handleImportSequence = () => {
@@ -234,12 +288,28 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
               {isPreviewMode ? 'Exit Preview' : 'Preview'}
             </button>
             
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Save Sequence
-            </button>
+            <div className="flex items-center space-x-3">
+              {(() => {
+                const sequenceCheck = checkSavedSequences();
+                return sequenceCheck.usagePercentage >= 80 && (
+                  <div className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg">
+                    <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="text-xs text-purple-300 font-medium">
+                      {sequenceCheck.currentUsage}/{sequenceCheck.limit} saves used
+                    </span>
+                  </div>
+                );
+              })()}
+              
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Save Sequence
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -259,9 +329,19 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
             <div className="lg:col-span-3">
               <div className="glass-panel h-full rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-white">Steps</h3>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Steps</h3>
+                    {(() => {
+                      const stepCheck = checkSequenceSteps(currentSequence.steps.length);
+                      return stepCheck.usagePercentage > 70 && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          {stepCheck.currentUsage}/{stepCheck.limit} steps used
+                        </p>
+                      );
+                    })()}
+                  </div>
                   <button
-                    onClick={() => addStep()}
+                    onClick={handleAddStep}
                     disabled={currentSequence.steps[selectedStepIndex]?.isDeterminer}
                     className={`p-2 rounded-lg transition-all duration-300 ${
                       currentSequence.steps[selectedStepIndex]?.isDeterminer
@@ -278,6 +358,30 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                     </svg>
                   </button>
                 </div>
+
+                {/* Step limit warning */}
+                {(() => {
+                  const stepCheck = checkSequenceSteps(currentSequence.steps.length);
+                  return stepCheck.usagePercentage >= 80 && (
+                    <div className="mb-4 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <span className="text-sm font-medium text-purple-300">
+                          {stepCheck.currentUsage}/{stepCheck.limit} Steps Used
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mb-2">{stepCheck.upgradeMessage}</p>
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs rounded font-medium transition-all duration-200"
+                      >
+                        Upgrade to PRO
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-280px)]">
                   {currentSequence.steps.map((step, index) => (
@@ -417,6 +521,13 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
           </div>
         </div>
       )}
+
+      {/* Upgrade Modal */}
+      <UpgradeFlow
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerFeature="sequences"
+      />
     </div>
   );
 };

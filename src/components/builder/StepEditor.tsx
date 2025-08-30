@@ -5,6 +5,7 @@ import { useBuilderStore } from '@/stores/builderStore';
 import { SequenceStepBuilder, WheelSegmentBuilder } from '@/types/builder';
 import { BranchEditor } from './BranchEditor';
 import { EnhanceStepButton } from './EnhanceStepButton';
+import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface StepEditorProps {
   step: SequenceStepBuilder;
@@ -23,6 +24,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
   } = useBuilderStore();
   
   const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const handleStepUpdate = (field: string, value: any) => {
     updateStep(stepIndex, { [field]: value });
@@ -34,6 +36,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
 
   const handleBranchesUpdate = (branches: any[]) => {
     updateStep(stepIndex, { branches });
+  };
+
+  const handleAddSegment = () => {
+    const result = addSegment(stepIndex);
+    if (!result.success && result.isLimitError) {
+      setShowUpgradeModal(true);
+    }
   };
 
   // Enhanced mode change handler that manages determiner steps
@@ -354,9 +363,21 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
+                  <div>
+                    <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
+                    {(() => {
+                      const currentCount = step.wheelConfig.segments.length;
+                      const limit = 20; // Anonymous limit
+                      const percentage = (currentCount / limit) * 100;
+                      return percentage >= 80 && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          {currentCount}/{limit} options used
+                        </p>
+                      );
+                    })()}
+                  </div>
                   <button
-                    onClick={() => addSegment(stepIndex)}
+                    onClick={handleAddSegment}
                     className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -406,6 +427,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
           </div>
         )}
       </div>
+
+      {/* Upgrade Modal */}
+      <UpgradeFlow
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerFeature="options"
+      />
     </div>
   );
 };

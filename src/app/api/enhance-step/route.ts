@@ -39,8 +39,26 @@ export async function POST(request: NextRequest) {
       step, 
       sequenceContext, 
       enhancementType = 'mixed', 
-      preserveExisting = true 
-    }: EnhanceStepRequest = await request.json();
+      preserveExisting = true,
+      userMode = 'anonymous'
+    }: EnhanceStepRequest & { userMode?: 'anonymous' | 'account' } = await request.json();
+
+    // PRO-only feature check
+    if (userMode === 'anonymous') {
+      console.log('❌ Anonymous user trying to access PRO-only feature');
+      return NextResponse.json({
+        error: 'PRO_FEATURE_REQUIRED',
+        message: 'Steps AI Enhancer is a PRO-only feature. Upgrade to enhance your sequence steps!',
+        featureName: 'Steps AI Enhancer',
+        upgradeRequired: true,
+        proFeatures: [
+          'AI-powered step enhancement',
+          'Smart option generation', 
+          'Narrative consistency checks',
+          'Advanced story improvements'
+        ]
+      }, { status: 403 });
+    }
 
     console.log('✅ Request parsed:', { 
       stepTitle: step?.title,

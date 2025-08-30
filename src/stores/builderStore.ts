@@ -26,7 +26,7 @@ interface BuilderState {
   findDeterminerStep: (targetIndex: number) => number;
   
   // Segment management
-  addSegment: (stepIndex: number) => void;
+  addSegment: (stepIndex: number) => { success: boolean; error?: string; message?: string; isLimitError?: boolean };
   removeSegment: (stepIndex: number, segmentId: string) => void;
   updateSegment: (stepIndex: number, segmentId: string, updates: Partial<WheelSegmentBuilder>) => void;
   
@@ -37,7 +37,7 @@ interface BuilderState {
   validateSequence: () => ValidationResult;
   
   // Save/Load (localStorage for now)
-  saveSequence: () => void;
+  saveSequence: () => { success: boolean; error?: string; isLimitError?: boolean } | undefined;
   
   // Utility
   setDirty: (dirty: boolean) => void;
@@ -469,10 +469,23 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   // Segment management
   addSegment: (stepIndex) => {
     const state = get();
-    if (!state.currentSequence) return;
+    if (!state.currentSequence) return { success: false, error: 'No sequence loaded' };
 
     const updatedSteps = [...state.currentSequence.steps];
     const step = updatedSteps[stepIndex];
+    
+    // Check anonymous limits (20 wheel options for FREE users)
+    const ANONYMOUS_WHEEL_OPTIONS_LIMIT = 20;
+    const currentOptionsCount = step.wheelConfig.segments.length;
+    
+    if (currentOptionsCount >= ANONYMOUS_WHEEL_OPTIONS_LIMIT) {
+      return { 
+        success: false, 
+        error: 'WHEEL_OPTIONS_LIMIT_REACHED',
+        message: `You've reached the limit of ${ANONYMOUS_WHEEL_OPTIONS_LIMIT} wheel options. Upgrade to PRO for up to 100 options!`,
+        isLimitError: true 
+      };
+    }
     
     const colors = [
       '#4682B4', '#32CD32', '#FF6347', '#9370DB', '#FFD700',
@@ -505,6 +518,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       },
       isDirty: true
     });
+    
+    return { success: true };
   },
 
   removeSegment: (stepIndex, segmentId) => {
@@ -628,7 +643,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     };
   },
 
-  // Save to localStorage
+  // Save to localStorage with limits
   saveSequence: () => {
     const state = get();
     if (!state.currentSequence) return;
@@ -638,15 +653,31 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       const existingIndex = saved.findIndex((s: any) => s.id === state.currentSequence!.id);
       
       if (existingIndex >= 0) {
+        // Updating existing sequence - always allowed
         saved[existingIndex] = state.currentSequence;
       } else {
+        // Creating new sequence - check limits
+        const MAX_ANONYMOUS_SEQUENCES = 5;
+        if (saved.length >= MAX_ANONYMOUS_SEQUENCES) {
+          // Return limit error without throwing - UI will handle the upgrade prompt
+          return { 
+            success: false, 
+            error: `You've reached the limit of ${MAX_ANONYMOUS_SEQUENCES} saved sequences. Upgrade to PRO for up to 100 saved sequences!`,
+            isLimitError: true
+          };
+        }
         saved.push(state.currentSequence);
       }
       
       localStorage.setItem('spinverse-custom-sequences', JSON.stringify(saved));
       set({ isDirty: false });
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error('Failed to save sequence:', error);
+      return { 
+        success: false, 
+        error: error.message || 'Failed to save sequence'
+      };
     }
   },
 

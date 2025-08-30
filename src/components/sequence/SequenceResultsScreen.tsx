@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSequenceStore } from '@/stores/sequenceStore';
 import { SequenceResult } from '@/types/sequence';
+import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface SequenceResultsScreenProps {
   onRestart: () => void;
@@ -25,8 +26,10 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
   } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRateLimitError, setIsRateLimitError] = useState(false); // Track if it's a rate limit error
   const [hasGenerated, setHasGenerated] = useState(false); // Track if user already generated once
   const [isClient, setIsClient] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Generate stable particle positions
   const celebrationParticles = useMemo(() => 
@@ -85,6 +88,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
     
     setIsGenerating(true);
     setError(null);
+    setIsRateLimitError(false); // Reset rate limit error flag
     
     try {
       const response = await fetch('/api/generate-story', {
@@ -100,7 +104,21 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       });
       
       if (!response.ok) {
-        throw new Error('Failed to generate story');
+        const errorData = await response.json().catch(() => ({}));
+        
+        // Handle specific error cases
+        if (response.status === 429) {
+          // Rate limit exceeded - use graceful logging and show upgrade modal
+          console.log('ℹ️ Daily AI generation limit reached - showing upgrade prompt');
+          setIsRateLimitError(true); // Mark as rate limit error
+          setShowUpgradeModal(true); // Show upgrade modal
+          // Don't set error message - let the modal handle it
+          return; // Exit early, don't throw generic error
+        } else {
+          // Log actual errors that need debugging
+          console.error('AI Generation failed:', response.status, errorData);
+          throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
       }
       
       const data = await response.json();
@@ -108,6 +126,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       setHasGenerated(true); // Mark as generated
     } catch (err) {
       setError('Failed to generate your magical story. Please try again!');
+      setIsRateLimitError(false); // Not a rate limit error
       console.error('Story generation error:', err);
     } finally {
       setIsGenerating(false);
@@ -263,8 +282,12 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
               </span>
             </button>
             
-            {error && (
-              <p className="text-red-400 text-sm mt-4 glass-panel rounded-lg p-3 border border-red-400/30">{error}</p>
+            {error && !isRateLimitError && (
+              <div className="text-sm mt-4 glass-panel rounded-lg p-4 border border-red-400/30 bg-red-500/10">
+                <p className="text-red-400">
+                  {error}
+                </p>
+              </div>
             )}
             
             <p className="text-gray-300 text-sm mt-4">
@@ -277,7 +300,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       {/* Enhanced Results Showcase */}
       <div className="glass-panel hud-panel rounded-2xl p-8 cinematic-enter" style={{animationDelay: '0.4s'}}>
         <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-8">
-          🎯 Your Epic Choices
+          🎯 The Wheel has decided...
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {results.map((result, index) => {
@@ -385,6 +408,13 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Upgrade Modal for Rate Limiting */}
+      <UpgradeFlow
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        triggerFeature="ai"
+      />
     </div>
   );
 };
