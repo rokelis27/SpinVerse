@@ -32,8 +32,10 @@ SpinVerse revolutionizes interactive storytelling by combining spinning wheels w
 - **Conditional branching** based on previous choices
 - **Weighted probability system** for balanced gameplay
 - **Step reordering** in sequence builder
+- **Multi-spin system** with dynamic and fixed count modes
+- **Dynamic content filtering** (prevents self-matches in World Cup)
 
-### ✅ **Four Complete Story Templates**
+### ✅ **Five Complete Story Templates**
 
 #### 🧙‍♂️ **Mystical Academy** (9 steps)
 Complete magical journey from origin to career:
@@ -55,6 +57,14 @@ Crime investigation from discovery to trial:
 - Suspect analysis and evidence gathering
 - Dramatic revelations and trial outcomes
 - Justice served or escaped
+
+#### ⚽ **World Cup Manager** (13 steps) - **NEW!**
+Manage your national team through the ultimate tournament:
+- Career background and country selection
+- Team strengths, weaknesses, and tactical philosophy
+- Group stage opponents and performance
+- Detailed knockout rounds with opponent draws
+- Media reaction and managerial legacy
 
 #### 🏁 **Underground Racing** (9 steps)
 High-stakes racing career progression:
@@ -236,10 +246,11 @@ SpinVerse automatically detects the language of your content and responds accord
 
 ## 📊 Current Statistics
 
-- **4 Complete Templates** with 39+ total story steps
-- **100+ Unique Wheel Options** across all templates  
+- **5 Complete Templates** with 54+ total story steps
+- **200+ Unique Wheel Options** across all templates  
 - **AI-Enhanced Storytelling** with GPT-4 integration
 - **Conditional Branching Logic** for dynamic narratives
+- **Multi-Spin Mechanics** with dynamic opponent filtering
 - **Mobile-Optimized Experience** for all devices
 - **Professional Builder Tools** for content creators
 
