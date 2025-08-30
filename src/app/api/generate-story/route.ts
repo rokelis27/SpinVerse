@@ -56,17 +56,19 @@ function checkAnonymousRateLimit(identifier: string): { allowed: boolean; remain
   const record = rateLimitMap.get(identifier);
   
   if (!record || now > record.resetTime) {
-    // Reset or create new record
-    const newRecord = { count: 0, resetTime: now + RATE_LIMIT_WINDOW };
+    // Reset or create new record - start with count 1 for this request
+    const newRecord = { count: 1, resetTime: now + RATE_LIMIT_WINDOW };
     rateLimitMap.set(identifier, newRecord);
     return { allowed: true, remaining: ANONYMOUS_DAILY_LIMIT - 1, resetTime: newRecord.resetTime };
   }
   
-  if (record.count >= ANONYMOUS_DAILY_LIMIT) {
+  // Increment count first, then check limit
+  record.count++;
+  
+  if (record.count > ANONYMOUS_DAILY_LIMIT) {
     return { allowed: false, remaining: 0, resetTime: record.resetTime };
   }
   
-  record.count++;
   return { allowed: true, remaining: ANONYMOUS_DAILY_LIMIT - record.count, resetTime: record.resetTime };
 }
 
@@ -80,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     // Rate limiting for anonymous users
     if (userMode === 'anonymous') {
-      const headersList = headers();
+      const headersList = await headers();
       const clientIP = headersList.get('x-forwarded-for') || 
                       headersList.get('x-real-ip') || 
                       'unknown';

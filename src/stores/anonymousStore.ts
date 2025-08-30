@@ -76,7 +76,7 @@ export interface AnonymousState extends AnonymousData {
 // Constants
 const ANONYMOUS_STORAGE_KEY = 'spinverse-anonymous';
 const BACKUP_STORAGE_KEY = 'spinverse-anonymous-backup';
-const MAX_SEQUENCES = 5;
+const MAX_SEQUENCES = 3;
 const MAX_DAILY_AI_GENERATIONS = 3; // 3/day for anonymous, 50/day for PRO
 const CURRENT_DATA_VERSION = 1;
 const MAX_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB limit

@@ -270,12 +270,11 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
                 {isGenerating ? (
                   <>
                     <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>🤖 AI Crafting Your Legend...</span>
+                    <span>SpinVerse Crafting Your Legend...</span>
                   </>
                 ) : (
                   <>
-                    <span className="text-2xl">🚀</span>
-                    <span>Generate Epic AI Story</span>
+                    <span>Generate Epic SpinVerse Story</span>
                     <span className="text-2xl">✨</span>
                   </>
                 )}
@@ -291,7 +290,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
             )}
             
             <p className="text-gray-300 text-sm mt-4">
-              🎭 Get AI-powered narrative with rarity analysis & character matches!
+              🎭 Get generated narrative with rarity analysis & character matches!
             </p>
           </div>
         )}

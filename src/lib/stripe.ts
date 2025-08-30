@@ -39,7 +39,7 @@ export const STRIPE_PRODUCTS = {
     currency: 'usd',
     interval: 'month' as const,
     features: [
-      '100 saved sequences (vs 5 free)',
+      '100 saved sequences (vs 3 free)',
       '50 steps per sequence (vs 10 free)',
       '100 wheel options (vs 20 free)',
       '50 daily stories (vs 3 free daily)',

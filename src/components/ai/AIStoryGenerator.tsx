@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react';
 import { useAnonymousStore } from '@/stores/anonymousStore';
-import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { useUserStore } from '@/stores/userStore';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 import { FeatureErrorBoundary } from '@/components/ErrorBoundary';
 import { SequenceResult } from '@/types/sequence';
@@ -37,7 +38,8 @@ export function AIStoryGenerator({
   className = ''
 }: AIStoryGeneratorProps) {
   const anonymousStore = useAnonymousStore();
-  const { checkAiGeneration } = useAnonymousFeatureGate();
+  const userStore = useUserStore();
+  const { checkAiGeneration, isPro } = useFeatureGate();
   
   const [generationState, setGenerationState] = useState<GenerationState>({
     isGenerating: false,
@@ -54,8 +56,13 @@ export function AIStoryGenerator({
   const generateStory = useCallback(async () => {
     // Check if user can generate AI story
     if (!aiGenerationCheck.canUse) {
-      setShowUpgradeModal(true);
-      return;
+      if (aiGenerationCheck.isPro) {
+        // PRO user at limit - do nothing, button should be disabled
+        return;
+      } else {
+        setShowUpgradeModal(true);
+        return;
+      }
     }
 
     setGenerationState(prev => ({
@@ -65,8 +72,16 @@ export function AIStoryGenerator({
     }));
 
     try {
-      // Try to increment AI generation count in store first
-      const canGenerate = anonymousStore.tryIncrementAiGeneration();
+      // Try to increment AI generation count in the appropriate store
+      let canGenerate = false;
+      if (isPro) {
+        // PRO users: increment userStore
+        canGenerate = userStore.incrementAiGeneration();
+      } else {
+        // FREE users: increment anonymousStore
+        canGenerate = anonymousStore.tryIncrementAiGeneration();
+      }
+      
       if (!canGenerate) {
         throw new Error('Daily AI generation limit reached');
       }
@@ -82,7 +97,7 @@ export function AIStoryGenerator({
           themeId,
           isCustomSequence,
           sequenceDescription,
-          userMode: 'anonymous' // This will be dynamic based on account state later
+          userMode: isPro ? 'pro' : 'anonymous'
         }),
       });
 
@@ -123,9 +138,11 @@ export function AIStoryGenerator({
         error: error.message || 'Failed to generate story'
       }));
 
-      // If it's a limit error, show upgrade modal
+      // If it's a limit error, show upgrade modal only for non-PRO users
       if (error.message.includes('limit') || error.message.includes('Upgrade')) {
-        setShowUpgradeModal(true);
+        if (!aiGenerationCheck.isPro) {
+          setShowUpgradeModal(true);
+        }
       }
     }
   }, [results, themeName, themeId, isCustomSequence, sequenceDescription, aiGenerationCheck.canUse, anonymousStore, onStoryGenerated]);
@@ -214,12 +231,14 @@ export function AIStoryGenerator({
             {!aiGenerationCheck.canUse && (
               <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-lg">
                 <p className="text-sm text-gray-300 mb-2">{aiGenerationCheck.upgradeMessage}</p>
-                <button
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-sm rounded-lg font-medium transition-all duration-200"
-                >
-                  Upgrade to PRO
-                </button>
+                {!aiGenerationCheck.isPro && (
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-sm rounded-lg font-medium transition-all duration-200"
+                  >
+                    Upgrade to PRO
+                  </button>
+                )}
               </div>
             )}
           </div>

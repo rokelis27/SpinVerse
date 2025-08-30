@@ -6,7 +6,7 @@ import { useWheelSettings } from '@/stores/settingsStore';
 import { SPEED_PRESETS } from '@/types/settings';
 import { selectWeightedSegment, calculateTargetAngle, calculateSegmentProbabilities, findSegmentByAngle } from '@/utils/probabilityUtils';
 import { useAnonymousStore } from '@/stores/anonymousStore';
-import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface SpinWheelProps {
@@ -22,7 +22,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
 }) => {
   const wheelSettings = useWheelSettings();
   const anonymousStore = useAnonymousStore();
-  const { checkWheelOptions } = useAnonymousFeatureGate();
+  const { checkWheelOptions } = useFeatureGate();
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>(0);

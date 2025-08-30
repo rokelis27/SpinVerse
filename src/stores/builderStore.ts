@@ -474,18 +474,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const updatedSteps = [...state.currentSequence.steps];
     const step = updatedSteps[stepIndex];
     
-    // Check anonymous limits (20 wheel options for FREE users)
-    const ANONYMOUS_WHEEL_OPTIONS_LIMIT = 20;
-    const currentOptionsCount = step.wheelConfig.segments.length;
-    
-    if (currentOptionsCount >= ANONYMOUS_WHEEL_OPTIONS_LIMIT) {
-      return { 
-        success: false, 
-        error: 'WHEEL_OPTIONS_LIMIT_REACHED',
-        message: `You've reached the limit of ${ANONYMOUS_WHEEL_OPTIONS_LIMIT} wheel options. Upgrade to PRO for up to 100 options!`,
-        isLimitError: true 
-      };
-    }
+    // Note: Feature gate checking is now handled at the component level
     
     const colors = [
       '#4682B4', '#32CD32', '#FF6347', '#9370DB', '#FFD700',
@@ -656,16 +645,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         // Updating existing sequence - always allowed
         saved[existingIndex] = state.currentSequence;
       } else {
-        // Creating new sequence - check limits
-        const MAX_ANONYMOUS_SEQUENCES = 5;
-        if (saved.length >= MAX_ANONYMOUS_SEQUENCES) {
-          // Return limit error without throwing - UI will handle the upgrade prompt
-          return { 
-            success: false, 
-            error: `You've reached the limit of ${MAX_ANONYMOUS_SEQUENCES} saved sequences. Upgrade to PRO for up to 100 saved sequences!`,
-            isLimitError: true
-          };
-        }
+        // Creating new sequence - feature gate checking is handled at component level
         saved.push(state.currentSequence);
       }
       

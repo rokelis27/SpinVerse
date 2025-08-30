@@ -6,6 +6,7 @@ import { SequenceStepBuilder, WheelSegmentBuilder } from '@/types/builder';
 import { BranchEditor } from './BranchEditor';
 import { EnhanceStepButton } from './EnhanceStepButton';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 
 interface StepEditorProps {
   step: SequenceStepBuilder;
@@ -23,6 +24,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
     findDeterminerStep
   } = useBuilderStore();
   
+  const { checkWheelOptions } = useFeatureGate();
   const [activeTab, setActiveTab] = useState<'basic' | 'segments' | 'connections'>('basic');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -39,6 +41,20 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
   };
 
   const handleAddSegment = () => {
+    // Check wheel options limit using feature gate (works for both FREE and PRO)
+    const currentOptions = step.wheelConfig.segments.length;
+    const optionsCheck = checkWheelOptions(currentOptions);
+    
+    if (!optionsCheck.canUse) {
+      if (optionsCheck.isPro) {
+        // PRO user at limit - do nothing, button should be disabled
+        return;
+      } else {
+        setShowUpgradeModal(true);
+        return;
+      }
+    }
+
     const result = addSegment(stepIndex);
     if (!result.success && result.isLimitError) {
       setShowUpgradeModal(true);
@@ -367,18 +383,38 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
                     <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
                     {(() => {
                       const currentCount = step.wheelConfig.segments.length;
-                      const limit = 20; // Anonymous limit
-                      const percentage = (currentCount / limit) * 100;
+                      const optionsCheck = checkWheelOptions(currentCount);
+                      const percentage = optionsCheck.usagePercentage;
                       return percentage >= 80 && (
                         <p className="text-xs text-gray-400 mt-1">
-                          {currentCount}/{limit} options used
+                          {currentCount}/{optionsCheck.limit} options used
                         </p>
                       );
                     })()}
                   </div>
                   <button
                     onClick={handleAddSegment}
-                    className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2"
+                    disabled={(() => {
+                      const optionsCheck = checkWheelOptions(step.wheelConfig.segments.length);
+                      return !optionsCheck.canUse;
+                    })()}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                      (() => {
+                        const optionsCheck = checkWheelOptions(step.wheelConfig.segments.length);
+                        return !optionsCheck.canUse
+                          ? 'bg-gray-600 cursor-not-allowed opacity-50 text-gray-400'
+                          : 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-600 hover:to-cyan-600';
+                      })()
+                    }`}
+                    title={(() => {
+                      const optionsCheck = checkWheelOptions(step.wheelConfig.segments.length);
+                      if (!optionsCheck.canUse) {
+                        return optionsCheck.isPro 
+                          ? `PRO limit reached: ${optionsCheck.currentUsage}/${optionsCheck.limit} wheel options used`
+                          : 'Upgrade to PRO to add more options';
+                      }
+                      return 'Add a new wheel option';
+                    })()}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

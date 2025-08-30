@@ -175,7 +175,7 @@ export interface LogFeatureUsageRequest {
 export const FEATURE_LIMITS = {
   FREE: {
     max_sequence_steps: 10,
-    max_saved_sequences: 5,
+    max_saved_sequences: 3,
     max_wheel_options: 20,
     daily_ai_generations: 3,
     export_formats: 1,

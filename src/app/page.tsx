@@ -193,6 +193,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header with Settings Button */}
         <div className="flex justify-between items-start mb-8">
+          <div className="w-24"></div> {/* Spacer to balance the right side */}
           <div className="text-center flex-1 cinematic-enter">
             <div className="relative inline-block">
               <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">

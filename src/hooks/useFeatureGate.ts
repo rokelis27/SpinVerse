@@ -1,5 +1,7 @@
 'use client';
 
+import { useUser } from '@clerk/nextjs';
+import { useUserStore } from '@/stores/userStore';
 import { useAnonymousStore, ANONYMOUS_LIMITS, PRO_LIMITS } from '@/stores/anonymousStore';
 import { useCallback, useMemo } from 'react';
 
@@ -11,6 +13,7 @@ export interface FeatureGateResult {
   remainingUses: number;
   upgradeMessage: string;
   urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+  isPro?: boolean; // Added to track PRO status
 }
 
 export interface UpgradePromptConfig {
@@ -23,10 +26,12 @@ export interface UpgradePromptConfig {
 }
 
 /**
- * Production-ready hook for anonymous user feature gating
+ * Unified feature gating hook for both anonymous and authenticated PRO users
  * Handles all edge cases and provides comprehensive validation
  */
-export function useAnonymousFeatureGate() {
+export function useFeatureGate() {
+  const { user, isLoaded } = useUser();
+  const userStore = useUserStore();
   const {
     sequences,
     usage,
@@ -35,6 +40,12 @@ export function useAnonymousFeatureGate() {
     validateAndRepairData,
     getStorageSize,
   } = useAnonymousStore();
+
+  // Determine if user is PRO
+  const isPro = useMemo(() => {
+    if (!isLoaded || !user) return false;
+    return userStore.subscription.tier === 'PRO' && userStore.subscription.status === 'active';
+  }, [user, isLoaded, userStore.subscription]);
 
   // Validate data integrity on each use
   const ensureDataIntegrity = useCallback(() => {
@@ -62,6 +73,32 @@ export function useAnonymousFeatureGate() {
       currentSteps = 0;
     }
 
+    // PRO users get higher limits
+    if (isPro) {
+      const limit = PRO_LIMITS.MAX_SEQUENCE_STEPS;
+      const canUse = currentSteps < limit;
+      const usagePercentage = Math.min(100, (currentSteps / limit) * 100);
+      const remainingUses = Math.max(0, limit - currentSteps);
+      const urgencyLevel = calculateUrgencyLevel(usagePercentage);
+
+      let upgradeMessage = `PRO: You can add ${remainingUses} more steps (${limit} max).`;
+      if (urgencyLevel === 'critical') {
+        upgradeMessage = `You've reached the PRO limit of ${limit} steps per sequence.`;
+      }
+
+      return {
+        canUse,
+        usagePercentage,
+        currentUsage: currentSteps,
+        limit,
+        remainingUses,
+        upgradeMessage,
+        urgencyLevel,
+        isPro: true,
+      };
+    }
+
+    // Anonymous/FREE users get standard limits
     const limit = ANONYMOUS_LIMITS.MAX_SEQUENCE_STEPS;
     const canUse = currentSteps < limit;
     const usagePercentage = Math.min(100, (currentSteps / limit) * 100);
@@ -83,14 +120,42 @@ export function useAnonymousFeatureGate() {
       remainingUses,
       upgradeMessage,
       urgencyLevel,
+      isPro: false,
     };
-  }, []);
+  }, [isPro]);
 
   // Saved sequences feature gate
   const checkSavedSequences = useCallback((): FeatureGateResult => {
     ensureDataIntegrity();
-    
-    const currentUsage = sequences.length;
+
+    // PRO users get much higher limits
+    if (isPro) {
+      // For PRO users, we'd normally get sequences from server
+      // For now, we'll use a generous limit for testing
+      const currentUsage = 0; // Would be from server in production
+      const limit = PRO_LIMITS.MAX_SEQUENCES;
+      const canUse = true; // PRO users can always save more (up to 100)
+      const usagePercentage = Math.min(100, (currentUsage / limit) * 100);
+      const remainingUses = Math.max(0, limit - currentUsage);
+
+      return {
+        canUse,
+        usagePercentage,
+        currentUsage,
+        limit,
+        remainingUses,
+        upgradeMessage: `PRO: You can save up to ${limit} sequences with cloud sync.`,
+        urgencyLevel: 'low',
+        isPro: true,
+      };
+    }
+
+    // Anonymous/FREE users get standard limits
+    // Count sequences from the same place builderStore saves them
+    const savedSequences = typeof window !== 'undefined' 
+      ? JSON.parse(localStorage.getItem('spinverse-custom-sequences') || '[]')
+      : [];
+    const currentUsage = savedSequences.length;
     const limit = ANONYMOUS_LIMITS.MAX_SEQUENCES;
     const canUse = currentUsage < limit;
     const usagePercentage = Math.min(100, (currentUsage / limit) * 100);
@@ -99,7 +164,7 @@ export function useAnonymousFeatureGate() {
 
     let upgradeMessage = 'Upgrade to PRO to save up to 100 sequences!';
     if (urgencyLevel === 'critical') {
-      upgradeMessage = 'You\'ve saved 5 sequences. Upgrade to PRO for 20x more storage!';
+      upgradeMessage = 'You\'ve saved 3 sequences. Upgrade to PRO for 33x more storage!';
     } else if (urgencyLevel === 'high') {
       upgradeMessage = `Only ${remainingUses} save slots remaining. Upgrade for unlimited saves!`;
     }
@@ -112,8 +177,9 @@ export function useAnonymousFeatureGate() {
       remainingUses,
       upgradeMessage,
       urgencyLevel,
+      isPro: false,
     };
-  }, [sequences.length, ensureDataIntegrity]);
+  }, [isPro, ensureDataIntegrity]);
 
   // Wheel options feature gate
   const checkWheelOptions = useCallback((currentOptions: number): FeatureGateResult => {
@@ -123,6 +189,32 @@ export function useAnonymousFeatureGate() {
       currentOptions = 0;
     }
 
+    // PRO users get higher limits
+    if (isPro) {
+      const limit = PRO_LIMITS.MAX_WHEEL_OPTIONS;
+      const canUse = currentOptions < limit;
+      const usagePercentage = Math.min(100, (currentOptions / limit) * 100);
+      const remainingUses = Math.max(0, limit - currentOptions);
+      const urgencyLevel = calculateUrgencyLevel(usagePercentage);
+
+      let upgradeMessage = `PRO: You can add ${remainingUses} more options (${limit} max).`;
+      if (urgencyLevel === 'critical') {
+        upgradeMessage = `You've reached the PRO limit of ${limit} wheel options.`;
+      }
+
+      return {
+        canUse,
+        usagePercentage,
+        currentUsage: currentOptions,
+        limit,
+        remainingUses,
+        upgradeMessage,
+        urgencyLevel,
+        isPro: true,
+      };
+    }
+
+    // Anonymous/FREE users get standard limits
     const limit = ANONYMOUS_LIMITS.MAX_WHEEL_OPTIONS;
     const canUse = currentOptions < limit;
     const usagePercentage = Math.min(100, (currentOptions / limit) * 100);
@@ -144,13 +236,43 @@ export function useAnonymousFeatureGate() {
       remainingUses,
       upgradeMessage,
       urgencyLevel,
+      isPro: false,
     };
-  }, []);
+  }, [isPro]);
 
   // AI generation feature gate
   const checkAiGeneration = useCallback((): FeatureGateResult => {
     ensureDataIntegrity();
-    
+
+    // PRO users get higher daily limits
+    if (isPro) {
+      const currentUsage = userStore.usage.dailyAiGenerations;
+      const limit = PRO_LIMITS.MAX_DAILY_AI_GENERATIONS;
+      const canUse = currentUsage < limit;
+      const usagePercentage = Math.min(100, (currentUsage / limit) * 100);
+      const remainingUses = Math.max(0, limit - currentUsage);
+      const urgencyLevel = calculateUrgencyLevel(usagePercentage);
+
+      let upgradeMessage = `PRO: ${remainingUses} AI stories remaining today.`;
+      if (urgencyLevel === 'critical') {
+        upgradeMessage = `You've used all ${limit} daily PRO AI stories. Limit resets tomorrow.`;
+      } else if (urgencyLevel === 'high') {
+        upgradeMessage = `Only ${remainingUses} AI stories left today (PRO: ${limit}/day).`;
+      }
+
+      return {
+        canUse,
+        usagePercentage,
+        currentUsage,
+        limit,
+        remainingUses,
+        upgradeMessage,
+        urgencyLevel,
+        isPro: true,
+      };
+    }
+
+    // Anonymous/FREE users get standard limits
     const currentUsage = usage.dailyAiGenerations;
     const limit = ANONYMOUS_LIMITS.MAX_DAILY_AI_GENERATIONS;
     const canUse = !isAtAiLimit && currentUsage < limit;
@@ -173,8 +295,9 @@ export function useAnonymousFeatureGate() {
       remainingUses,
       upgradeMessage,
       urgencyLevel,
+      isPro: false,
     };
-  }, [usage.dailyAiGenerations, isAtAiLimit, ensureDataIntegrity]);
+  }, [isPro, userStore.usage.dailyAiGenerations, usage.dailyAiGenerations, isAtAiLimit, ensureDataIntegrity]);
 
   // Storage usage check
   const checkStorageUsage = useCallback((): FeatureGateResult => {
@@ -208,7 +331,21 @@ export function useAnonymousFeatureGate() {
 
   // Steps AI Enhancer feature gate (PRO-only)
   const checkStepsAiEnhancer = useCallback((): FeatureGateResult => {
-    // Anonymous users cannot use this feature at all
+    // PRO users can use this feature
+    if (isPro) {
+      return {
+        canUse: true,
+        usagePercentage: 0,
+        currentUsage: 0,
+        limit: 0, // No limit for PRO users
+        remainingUses: 999, // Unlimited
+        upgradeMessage: 'PRO feature: AI Step Enhancer is available!',
+        urgencyLevel: 'low' as const,
+        isPro: true,
+      };
+    }
+
+    // Anonymous/FREE users cannot use this feature at all
     return {
       canUse: false,
       usagePercentage: 100, // Always at limit for anonymous
@@ -217,8 +354,9 @@ export function useAnonymousFeatureGate() {
       remainingUses: 0,
       upgradeMessage: 'Steps AI Enhancer is a PRO-only feature. Upgrade to enhance your sequence steps!',
       urgencyLevel: 'high' as const,
+      isPro: false,
     };
-  }, []);
+  }, [isPro]);
 
   // Comprehensive upgrade prompt configuration
   const getUpgradePromptConfig = useCallback((
@@ -237,7 +375,7 @@ export function useAnonymousFeatureGate() {
         title: 'Need More Sequence Storage?',
         description: 'Save up to 100 sequences with cloud sync across all your devices.',
         features: [
-          '100 saved sequences (vs 5 free)',
+          '100 saved sequences (vs 3 free)',
           'Cloud sync across devices',
           'Automatic backups',
           'Export to multiple formats',
@@ -324,7 +462,7 @@ export function useAnonymousFeatureGate() {
       }
     });
     
-    if (mostUrgent) {
+    if (mostUrgent !== null) {
       return getUpgradePromptConfig(
         mostUrgent.feature as Parameters<typeof getUpgradePromptConfig>[0],
         mostUrgent.result
@@ -349,6 +487,10 @@ export function useAnonymousFeatureGate() {
 
   // Memoized return value for performance
   return useMemo(() => ({
+    // PRO status
+    isPro,
+    isLoaded,
+
     // Feature checks
     checkSequenceSteps,
     checkSavedSequences,
@@ -367,32 +509,35 @@ export function useAnonymousFeatureGate() {
     // Analytics
     getAnalyticsData,
     
-    // Current state
-    limits: ANONYMOUS_LIMITS,
-    usage,
+    // Current state (use appropriate limits based on PRO status)
+    limits: isPro ? PRO_LIMITS : ANONYMOUS_LIMITS,
+    usage: isPro ? userStore.usage : usage,
     sequences: sequences.map(s => ({ id: s.id, name: s.name, updatedAt: s.updatedAt })), // Minimal data for performance
     
-    // Quick access to critical states
-    isAtLimit: isAtSequenceLimit || isAtAiLimit,
-    hasHighUsage: getAllFeatureStates().sequences.usagePercentage >= 80 || getAllFeatureStates().ai.usagePercentage >= 80,
-    needsUpgrade: getPriorityUpgradePrompt() !== null,
+    // Quick access to critical states (only for non-PRO users)
+    isAtLimit: isPro ? false : (isAtSequenceLimit || isAtAiLimit),
+    hasHighUsage: isPro ? false : (getAllFeatureStates().sequences.usagePercentage >= 80 || getAllFeatureStates().ai.usagePercentage >= 80),
+    needsUpgrade: isPro ? false : (getPriorityUpgradePrompt() !== null),
   }), [
+    isPro,
+    isLoaded,
     checkSequenceSteps,
     checkSavedSequences,
     checkWheelOptions,
     checkAiGeneration,
     checkStorageUsage,
+    checkStepsAiEnhancer,
     getAllFeatureStates,
     getUpgradePromptConfig,
     getPriorityUpgradePrompt,
     getAnalyticsData,
     usage,
+    userStore.usage,
     sequences,
     isAtSequenceLimit,
     isAtAiLimit,
   ]);
 }
 
-// Export types and constants for component usage
-export type { FeatureGateResult, UpgradePromptConfig };
+// Export constants for component usage
 export { ANONYMOUS_LIMITS };

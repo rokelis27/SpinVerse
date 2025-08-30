@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useBuilderStore } from '@/stores/builderStore';
 import { SequenceStepBuilder } from '@/types/builder';
 import { StepEnhancementNotification } from './StepEnhancementNotification';
-import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface EnhanceStepButtonProps {
@@ -14,7 +14,7 @@ interface EnhanceStepButtonProps {
 
 export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, stepIndex }) => {
   const { currentSequence, updateStep } = useBuilderStore();
-  const { checkStepsAiEnhancer } = useAnonymousFeatureGate();
+  const { checkStepsAiEnhancer, checkWheelOptions, isPro } = useFeatureGate();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [enhancementType, setEnhancementType] = useState<'options' | 'narrative' | 'mixed'>('mixed');
@@ -25,11 +25,12 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
   if (!currentSequence) return null;
 
   // Check if enhancement is possible
+  const wheelOptionsCheck = checkWheelOptions(step?.wheelConfig?.segments?.length || 0);
   const canEnhance = step && 
     step.wheelConfig && 
     step.wheelConfig.segments && 
     step.wheelConfig.segments.length > 0 && 
-    step.wheelConfig.segments.length <= 20 && 
+    step.wheelConfig.segments.length <= wheelOptionsCheck.limit && 
     step.title && 
     step.title.trim().length > 0;
 
@@ -49,8 +50,9 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
       return;
     }
     
-    if (step.wheelConfig.segments.length > 20) {
-      alert('Cannot enhance: Step has too many options (maximum 20 supported).');
+    const optionsCheck = checkWheelOptions(step.wheelConfig.segments.length);
+    if (step.wheelConfig.segments.length > optionsCheck.limit) {
+      alert(`Cannot enhance: Step has too many options (maximum ${optionsCheck.limit} supported).`);
       return;
     }
     
@@ -90,7 +92,8 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
           step,
           sequenceContext,
           enhancementType,
-          preserveExisting: true
+          preserveExisting: true,
+          userMode: isPro ? 'account' : 'anonymous'
         }),
       });
 

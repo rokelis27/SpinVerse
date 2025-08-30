@@ -65,7 +65,7 @@ const getFeatureLimits = (tier: 'FREE' | 'PRO'): FeatureLimits => {
       }
     : {
         maxSequenceSteps: 10,
-        maxSavedSequences: 5,
+        maxSavedSequences: 3,
         maxWheelOptions: 20,
         dailyAiGenerations: 3,
       };

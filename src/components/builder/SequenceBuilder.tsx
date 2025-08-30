@@ -6,7 +6,7 @@ import { StepEditor } from './StepEditor';
 import { SequencePreview } from './SequencePreview';
 import { NarrativeTemplateEditor } from './NarrativeTemplateEditor';
 import { UserSequence, SequenceStepBuilder } from '@/types/builder';
-import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface SequenceBuilderProps {
@@ -32,7 +32,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
     reset
   } = useBuilderStore();
 
-  const { checkSequenceSteps, checkSavedSequences } = useAnonymousFeatureGate();
+  const { checkSequenceSteps, checkSavedSequences } = useFeatureGate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
@@ -50,14 +50,19 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
       return;
     }
 
-    // Check if this is a new sequence (not an update)
+    // Check if this is a new sequence (not an update) 
+    // Use the same localStorage key that builderStore uses
     const saved = JSON.parse(localStorage.getItem('spinverse-custom-sequences') || '[]');
     const isNewSequence = !saved.find((s: UserSequence) => s.id === currentSequence?.id);
     
     if (isNewSequence) {
       const sequenceCheck = checkSavedSequences();
       if (!sequenceCheck.canUse) {
-        setShowUpgradeModal(true);
+        if (sequenceCheck.isPro) {
+          alert(sequenceCheck.upgradeMessage);
+        } else {
+          setShowUpgradeModal(true);
+        }
         return;
       }
     }
@@ -85,7 +90,11 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
           if (isNewSequence) {
             const sequenceCheck = checkSavedSequences();
             if (!sequenceCheck.canUse) {
-              setShowUpgradeModal(true);
+              if (sequenceCheck.isPro) {
+                alert(sequenceCheck.upgradeMessage);
+              } else {
+                setShowUpgradeModal(true);
+              }
               return; // Don't close yet, let user decide
             }
           }
@@ -105,13 +114,18 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
   const handleAddStep = () => {
     if (!currentSequence) return;
 
-    // Check step limits for anonymous users (allow up to 10 steps, block at 11th)
-    const newStepCount = currentSequence.steps.length + 1;
-    const stepCheck = checkSequenceSteps(newStepCount);
+    // Check step limits using the feature gate (works for both FREE and PRO users)
+    const currentStepCount = currentSequence.steps.length;
+    const stepCheck = checkSequenceSteps(currentStepCount);
     
-    if (newStepCount > 10) { // Block only when trying to add 11th step
-      setShowUpgradeModal(true);
-      return;
+    if (!stepCheck.canUse) {
+      if (stepCheck.isPro) {
+        // PRO user at limit - do nothing, button should be disabled
+        return;
+      } else {
+        setShowUpgradeModal(true);
+        return;
+      }
     }
 
     addStep();
@@ -342,16 +356,31 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                   </div>
                   <button
                     onClick={handleAddStep}
-                    disabled={currentSequence.steps[selectedStepIndex]?.isDeterminer}
+                    disabled={(() => {
+                      const stepCheck = checkSequenceSteps(currentSequence.steps.length);
+                      return currentSequence.steps[selectedStepIndex]?.isDeterminer || !stepCheck.canUse;
+                    })()}
                     className={`p-2 rounded-lg transition-all duration-300 ${
-                      currentSequence.steps[selectedStepIndex]?.isDeterminer
-                        ? 'bg-gray-600 cursor-not-allowed opacity-50'
-                        : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600'
+                      (() => {
+                        const stepCheck = checkSequenceSteps(currentSequence.steps.length);
+                        const isDisabled = currentSequence.steps[selectedStepIndex]?.isDeterminer || !stepCheck.canUse;
+                        return isDisabled
+                          ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                          : 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600';
+                      })()
                     }`}
-                    title={currentSequence.steps[selectedStepIndex]?.isDeterminer 
-                      ? 'Cannot add steps after determiner steps - they must flow directly to their target step'
-                      : `Add Step After "${currentSequence.steps[selectedStepIndex]?.title || 'Current Step'}"`
-                    }
+                    title={(() => {
+                      const stepCheck = checkSequenceSteps(currentSequence.steps.length);
+                      if (currentSequence.steps[selectedStepIndex]?.isDeterminer) {
+                        return 'Cannot add steps after determiner steps - they must flow directly to their target step';
+                      }
+                      if (!stepCheck.canUse) {
+                        return stepCheck.isPro 
+                          ? `PRO limit reached: ${stepCheck.currentUsage}/${stepCheck.limit} steps used`
+                          : 'Upgrade to PRO to add more steps';
+                      }
+                      return `Add Step After "${currentSequence.steps[selectedStepIndex]?.title || 'Current Step'}"`;
+                    })()}
                   >
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -373,12 +402,14 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                         </span>
                       </div>
                       <p className="text-xs text-gray-400 mb-2">{stepCheck.upgradeMessage}</p>
-                      <button
-                        onClick={() => setShowUpgradeModal(true)}
-                        className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs rounded font-medium transition-all duration-200"
-                      >
-                        Upgrade to PRO
-                      </button>
+                      {!stepCheck.isPro && (
+                        <button
+                          onClick={() => setShowUpgradeModal(true)}
+                          className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs rounded font-medium transition-all duration-200"
+                        >
+                          Upgrade to PRO
+                        </button>
+                      )}
                     </div>
                   );
                 })()}

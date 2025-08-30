@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAnonymousStore } from '@/stores/anonymousStore';
 import { useAccountStore } from '@/stores/hybridStore';
-import { useAnonymousFeatureGate } from '@/hooks/useAnonymousFeatureGate';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 import { 
   getStripe, 
   STRIPE_PRODUCTS, 
@@ -58,7 +58,7 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
 
   const anonymousStore = useAnonymousStore();
   const accountStore = useAccountStore();
-  const { getAnalyticsData } = useAnonymousFeatureGate();
+  const { getAnalyticsData } = useFeatureGate();
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -114,17 +114,14 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
 
       console.log('Creating subscription for email:', email);
 
-      // Call API to create subscription
-      const response = await fetch('/api/stripe/create-subscription', {
+      // Call API to create checkout session
+      const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email.trim(),
-          name: name.trim() || undefined,
           priceId: STRIPE_PRODUCTS.PRO_MONTHLY.priceId,
-          anonymousData,
           metadata: {
             trigger_feature: triggerFeature || 'direct',
             anonymous_sequences: anonymousData.sequences.length.toString(),
@@ -141,18 +138,14 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
         throw new Error(result.message || 'Failed to create subscription');
       }
 
-      console.log('Subscription created:', result.subscription.id);
+      console.log('Checkout session created:', result.sessionId);
 
-      // Update payment state with client secret
-      setPaymentState(prev => ({
-        ...prev,
-        isProcessing: false,
-        clientSecret: result.payment.client_secret,
-        customerId: result.customer.id,
-        subscriptionId: result.subscription.id,
-      }));
-
-      setCurrentStep('payment');
+      // Redirect to Stripe Checkout
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
 
     } catch (error: any) {
       console.error('Email submission failed:', error);
