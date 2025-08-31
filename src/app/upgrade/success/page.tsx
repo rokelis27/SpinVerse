@@ -11,31 +11,72 @@ export default function UpgradeSuccessPage() {
   const { user } = useUser();
   const userStore = useUserStore();
   const [isProcessing, setIsProcessing] = useState(true);
+  const [processingMessage, setProcessingMessage] = useState('Setting up your PRO account...');
 
   const sessionId = searchParams.get('session_id');
+  const flow = searchParams.get('flow'); // 'anonymous' or undefined
 
   useEffect(() => {
-    // Auto-set the user to PRO status for testing
-    if (user && sessionId) {
-      setTimeout(() => {
-        userStore.updateSubscription({
-          tier: 'PRO',
-          status: 'active',
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        });
+    const handleUpgradeSuccess = async () => {
+      if (!sessionId) {
+        setProcessingMessage('No session found. Redirecting...');
+        setTimeout(() => router.push('/'), 2000);
+        return;
+      }
 
-        userStore.setUser({
-          clerkUserId: user.id,
-          email: user.primaryEmailAddress?.emailAddress || '',
-          name: user.fullName || '',
-          avatarUrl: user.imageUrl || '',
-        });
+      // Handle anonymous flow (payment-first registration)
+      if (flow === 'anonymous') {
+        setProcessingMessage('Payment successful! Creating your account...');
+        
+        // Get stored checkout info
+        const checkoutInfo = sessionStorage.getItem('spinverse_checkout_info');
+        if (checkoutInfo) {
+          const info = JSON.parse(checkoutInfo);
+          console.log('Anonymous checkout completed:', info);
+        }
 
-        setIsProcessing(false);
-      }, 2000); // 2 second delay for effect
-    }
-  }, [user, sessionId, userStore]);
+        setTimeout(() => {
+          setProcessingMessage('Account creation in progress. Check your email for login details.');
+          setTimeout(() => {
+            setIsProcessing(false);
+          }, 2000);
+        }, 2000);
+        
+        return;
+      }
+
+      // Handle authenticated user flow (existing Clerk user upgrading)
+      if (user && sessionId) {
+        setProcessingMessage('Upgrading your account to PRO...');
+        
+        setTimeout(() => {
+          userStore.updateSubscription({
+            tier: 'PRO',
+            status: 'active',
+            startDate: new Date().toISOString(),
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          });
+
+          userStore.setUser({
+            clerkUserId: user.id,
+            email: user.primaryEmailAddress?.emailAddress || '',
+            name: user.fullName || '',
+            avatarUrl: user.imageUrl || '',
+          });
+
+          setIsProcessing(false);
+        }, 2000);
+      } else {
+        // User not authenticated, might be anonymous flow without proper flow param
+        setProcessingMessage('Processing your upgrade...');
+        setTimeout(() => {
+          setIsProcessing(false);
+        }, 3000);
+      }
+    };
+
+    handleUpgradeSuccess();
+  }, [user, sessionId, flow, userStore, router]);
 
   const handleContinue = () => {
     router.push('/');
@@ -51,7 +92,7 @@ export default function UpgradeSuccessPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white mb-2">Processing Your Upgrade</h1>
-              <p className="text-white/70">Setting up your PRO account...</p>
+              <p className="text-white/70">{processingMessage}</p>
             </div>
           </div>
         ) : (
@@ -63,9 +104,14 @@ export default function UpgradeSuccessPage() {
             </div>
             
             <div>
-              <h1 className="text-3xl font-bold text-white mb-4">Welcome to SpinVerse PRO! 🎉</h1>
+              <h1 className="text-3xl font-bold text-white mb-4">
+                {flow === 'anonymous' ? 'Payment Successful! 🎉' : 'Welcome to SpinVerse PRO! 🎉'}
+              </h1>
               <p className="text-white/70 mb-6">
-                Your upgrade was successful! You now have access to all PRO features.
+                {flow === 'anonymous' 
+                  ? 'Your payment was processed successfully! Check your email for account setup instructions.'
+                  : 'Your upgrade was successful! You now have access to all PRO features.'
+                }
               </p>
             </div>
 

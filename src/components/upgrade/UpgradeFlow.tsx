@@ -108,26 +108,31 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
     setPaymentState(prev => ({ ...prev, isProcessing: true, error: null }));
 
     try {
-      // Get anonymous data for migration
+      // Get anonymous data for migration metadata
       const anonymousData = anonymousStore.migrateToAccount();
       const analyticsData = getAnalyticsData();
 
-      console.log('Creating subscription for email:', email);
+      console.log('Creating anonymous checkout session for email:', email);
 
-      // Call API to create checkout session
-      const response = await fetch('/api/stripe/create-checkout-session', {
+      // Use anonymous checkout API for non-authenticated users
+      const response = await fetch('/api/stripe/create-anonymous-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name: name?.trim() || undefined,
           priceId: STRIPE_PRODUCTS.PRO_MONTHLY.priceId,
           metadata: {
             trigger_feature: triggerFeature || 'direct',
             anonymous_sequences: anonymousData.sequences.length.toString(),
             total_spins: anonymousData.usage.totalSpins.toString(),
+            sequences_created: anonymousData.usage.sequencesCreated.toString(),
             engagement_score: analyticsData.engagementScore.toString(),
-            upgrade_source: 'upgrade_flow',
+            upgrade_source: 'anonymous_upgrade_flow',
+            device_id: anonymousData.metadata.deviceId,
+            first_visit: anonymousData.metadata.firstVisit,
           },
         }),
       });
@@ -135,24 +140,36 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Failed to create subscription');
+        throw new Error(result.error || result.details || 'Failed to create checkout session');
       }
 
-      console.log('Checkout session created:', result.sessionId);
+      console.log('Anonymous checkout session created:', result.sessionId);
+
+      // Store checkout info for post-payment processing
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('spinverse_checkout_info', JSON.stringify({
+          sessionId: result.sessionId,
+          customerId: result.customerId,
+          email: email.trim().toLowerCase(),
+          name: name?.trim(),
+          anonymousDataBackup: JSON.stringify(anonymousData),
+          timestamp: new Date().toISOString(),
+        }));
+      }
 
       // Redirect to Stripe Checkout
       if (result.url) {
         window.location.href = result.url;
       } else {
-        throw new Error('No checkout URL received');
+        throw new Error('No checkout URL received from Stripe');
       }
 
     } catch (error: any) {
-      console.error('Email submission failed:', error);
+      console.error('Anonymous checkout creation failed:', error);
       setPaymentState(prev => ({
         ...prev,
         isProcessing: false,
-        error: error.message || 'Failed to process email. Please try again.',
+        error: error.message || 'Failed to create checkout session. Please try again.',
       }));
     }
   }, [email, name, triggerFeature, anonymousStore, getAnalyticsData]);
@@ -318,7 +335,7 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
                   Unlock Unlimited Creativity
                 </h3>
                 <p className="text-gray-400 mb-6">
-                  Get access to all premium features with cloud sync across devices.
+                  Get access to all premium features with cloud sync across devices. Your account will be created after successful payment.
                 </p>
               </div>
 
@@ -357,7 +374,7 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
             <div className="space-y-6">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white mb-2">Create Your Account</h3>
-                <p className="text-gray-400">Enter your details to continue with PRO upgrade.</p>
+                <p className="text-gray-400">Enter your details to complete payment. Your PRO account will be created after successful checkout.</p>
               </div>
 
               <div className="space-y-4">
