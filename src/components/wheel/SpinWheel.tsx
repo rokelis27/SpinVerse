@@ -66,11 +66,11 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   
   // Adjust suspense thresholds based on speed - turbo should skip most suspense
   const SUSPENSE_THRESHOLD = wheelSettings.spinSpeed === 'turbo' ? 0.01 : 
-                            wheelSettings.spinSpeed === 'fast' ? 0.05 :
-                            wheelSettings.spinSpeed === 'normal' ? 0.2 : 0.3;
+                            wheelSettings.spinSpeed === 'fast' ? 0.01 :
+                            wheelSettings.spinSpeed === 'normal' ? 0.01 : 0.01;
   const FINAL_THRESHOLD = wheelSettings.spinSpeed === 'turbo' ? 0.005 : 
-                         wheelSettings.spinSpeed === 'fast' ? 0.02 :
-                         wheelSettings.spinSpeed === 'normal' ? 0.15 : 0.2;
+                         wheelSettings.spinSpeed === 'fast' ? 0.005 :
+                         wheelSettings.spinSpeed === 'normal' ? 0.005 : 0.005;
   
   // Idle rotation constants
   const IDLE_SPEED = 0.005; // Very slow idle rotation speed 
