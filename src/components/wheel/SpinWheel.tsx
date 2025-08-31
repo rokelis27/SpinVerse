@@ -15,7 +15,7 @@ interface SpinWheelProps {
   disabled?: boolean;
 }
 
-export const SpinWheel: React.FC<SpinWheelProps> = ({
+const SpinWheelComponent: React.FC<SpinWheelProps> = ({
   config,
   onSpinComplete,
   disabled = false
@@ -26,6 +26,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>(0);
+  const lastFrameTimeRef = useRef<number>(0);
+  const pulsePhaseRef = useRef<number>(0);
+  const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [physics, setPhysics] = useState<WheelPhysics>({
     currentAngle: 0,
     velocity: 0,
@@ -75,123 +78,40 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   // Idle rotation constants
   const IDLE_SPEED = 0.005; // Very slow idle rotation speed 
 
-  // Calculate proportional segment angles based on weights
-  const segmentProbabilities = calculateSegmentProbabilities(config.segments);
-  const segmentAngles = segmentProbabilities.map(prob => prob * 2 * Math.PI);
+  // Calculate proportional segment angles based on weights - memoized for performance
+  const segmentProbabilities = useMemo(() => 
+    calculateSegmentProbabilities(config.segments), 
+    [config.segments]
+  );
+  const segmentAngles = useMemo(() => 
+    segmentProbabilities.map(prob => prob * 2 * Math.PI), 
+    [segmentProbabilities]
+  );
 
-  // 2025 Gaming-inspired colors with neon aesthetics
-  const getSegmentColor = (segment: WheelSegment, index: number): string => {
-    if (segment.color) return segment.color;
-    
-    // Neon cyberpunk color palette
+  // Memoized color calculations for performance
+  const segmentColors = useMemo(() => {
     const colors = [
       '#FF0080', '#00FF80', '#8000FF', '#FF8000', '#0080FF',
       '#FF4080', '#40FF80', '#8040FF', '#FF4000', '#0040FF',
       '#FF0040', '#00FF40', '#4000FF', '#FF8040', '#4080FF'
     ];
-    return colors[index % colors.length];
-  };
-
-  // Get text color with good contrast
-  const getTextColor = (bgColor: string): string => {
-    // Simple contrast calculation
-    const hex = bgColor.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return brightness > 128 ? '#000000' : '#FFFFFF';
-  };
-
-  // Draw the wheel with enhanced visuals
-  const drawWheel = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 20;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Save context for rotation
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(physics.currentAngle);
-
-    // Enhanced gaming-style shadow with neon glow
-    ctx.shadowColor = 'rgba(99, 102, 241, 0.6)';
-    ctx.shadowBlur = 25;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 8;
-
-    // Draw segments with proportional angles
-    let cumulativeAngle = 0;
-    config.segments.forEach((segment, index) => {
-      const startAngle = cumulativeAngle;
-      const endAngle = startAngle + segmentAngles[index];
-      cumulativeAngle = endAngle;
+    
+    return config.segments.map((segment, index) => {
+      const bgColor = segment.color || colors[index % colors.length];
+      // Precompute text color for contrast
+      const hex = bgColor.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+      const textColor = segment.textColor || (brightness > 128 ? '#000000' : '#FFFFFF');
       
-      const segmentColor = getSegmentColor(segment, index);
-      const textColor = segment.textColor || getTextColor(segmentColor);
-
-      // Create enhanced cyberpunk gradient
-      const gradient = ctx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
-      gradient.addColorStop(0, `${segmentColor}ff`);
-      gradient.addColorStop(0.4, segmentColor);
-      gradient.addColorStop(0.8, `${segmentColor}cc`);
-      gradient.addColorStop(1, `${segmentColor}66`); // Fade to translucent edge
-
-      // Draw segment
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, startAngle, endAngle);
-      ctx.lineTo(0, 0);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-
-      // Enhanced neon border effect
-      ctx.strokeStyle = `${segmentColor}aa`;
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      
-      // Add inner glow border
-      ctx.beginPath();
-      ctx.arc(0, 0, radius - 5, startAngle, endAngle);
-      ctx.lineTo(0, 0);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Draw text with rarity and multi-spin indicators
-      ctx.save();
-      const textAngle = startAngle + segmentAngles[index] / 2;
-      ctx.rotate(textAngle);
-      ctx.fillStyle = textColor;
-      ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      
-      const displayText = segment.text;
-      
-      // Enhanced text with neon glow effect
-      ctx.shadowColor = segmentColor;
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      
-      // Draw text multiple times for stronger glow
-      ctx.fillText(displayText, radius * 0.7, 0);
-      ctx.shadowBlur = 4;
-      ctx.fillText(displayText, radius * 0.7, 0);
-      ctx.shadowBlur = 0;
-      
-      
-      ctx.restore();
+      return { bgColor, textColor };
     });
+  }, [config.segments]);
 
-    // Reset shadow for pointer
-    ctx.shadowColor = 'transparent';
-    ctx.restore();
-
-    // Enhanced cyberpunk pointer with glow
+  // Helper functions for drawing wheel parts
+  const drawPointer = useCallback((ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number) => {
     const pointerSize = 25;
     
     // Outer glow
@@ -217,12 +137,15 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+  }, []);
 
-    // Enhanced cyberpunk center circle with pulsing glow
+  const drawWheelCenter = useCallback((ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, currentTime?: number) => {
     const centerRadius = 35;
     
-    // Outer pulsing glow
-    const pulseIntensity = 0.5 + Math.sin(Date.now() * 0.005) * 0.3;
+    // Optimized pulse calculation using time-based approach
+    const time = currentTime || performance.now();
+    const pulseIntensity = 0.5 + Math.sin(time * 0.005) * 0.3;
+    
     ctx.shadowColor = '#FF0080';
     ctx.shadowBlur = 20 * pulseIntensity;
     
@@ -263,11 +186,99 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     ctx.shadowBlur = 5;
     ctx.fillText('SPIN', centerX, centerY);
     ctx.shadowBlur = 0;
-  }, [physics.currentAngle, config.segments, segmentAngles]);
+  }, []);
 
-  // Animation loop with dramatic, suspenseful physics
+  // Optimized wheel drawing function
+  const drawWheel = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 20;
+    const currentTime = performance.now();
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Save context for rotation
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(physics.currentAngle);
+
+    // Enhanced gaming-style shadow with neon glow
+    ctx.shadowColor = 'rgba(99, 102, 241, 0.6)';
+    ctx.shadowBlur = 25;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 8;
+
+    // Draw segments with proportional angles - optimized with pre-computed colors
+    let cumulativeAngle = 0;
+    config.segments.forEach((segment, index) => {
+      const startAngle = cumulativeAngle;
+      const endAngle = startAngle + segmentAngles[index];
+      cumulativeAngle = endAngle;
+      
+      const colors = segmentColors[index];
+
+      // Create enhanced cyberpunk gradient - simplified for performance
+      const gradient = ctx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
+      gradient.addColorStop(0, `${colors.bgColor}ff`);
+      gradient.addColorStop(0.4, colors.bgColor);
+      gradient.addColorStop(0.8, `${colors.bgColor}cc`);
+      gradient.addColorStop(1, `${colors.bgColor}66`);
+
+      // Draw segment
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, startAngle, endAngle);
+      ctx.lineTo(0, 0);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Enhanced neon border effect - simplified for performance
+      ctx.strokeStyle = `${colors.bgColor}aa`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Add inner glow border
+      ctx.beginPath();
+      ctx.arc(0, 0, radius - 5, startAngle, endAngle);
+      ctx.lineTo(0, 0);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Optimized text rendering
+      ctx.save();
+      const textAngle = startAngle + segmentAngles[index] / 2;
+      ctx.rotate(textAngle);
+      ctx.fillStyle = colors.textColor;
+      ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Simplified text glow - only one pass for performance
+      ctx.shadowColor = colors.bgColor;
+      ctx.shadowBlur = 6;
+      ctx.fillText(segment.text, radius * 0.7, 0);
+      ctx.shadowBlur = 0;
+      
+      ctx.restore();
+    });
+
+    // Reset shadow for other elements
+    ctx.shadowColor = 'transparent';
+    ctx.restore();
+
+    // Draw static elements using helper functions
+    drawPointer(ctx, centerX, centerY, radius);
+    drawWheelCenter(ctx, centerX, centerY, radius, currentTime);
+  }, [physics.currentAngle, config.segments, segmentAngles, segmentColors, drawPointer, drawWheelCenter]);
+
+  // Optimized animation loop - eliminated Date.now() calls
   const animate = useCallback(() => {
     if (!physics.isSpinning && !isIdleRotating) return;
+
+    const currentTime = performance.now();
+    const deltaTime = currentTime - lastFrameTimeRef.current;
+    lastFrameTimeRef.current = currentTime;
 
     setPhysics(prev => {
       let newVelocity = prev.velocity;
@@ -294,10 +305,12 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         // Normal spinning phase - consistent friction
         newVelocity *= FRICTION;
       } else if (newVelocity > FINAL_THRESHOLD) {
-        // Suspense phase - gradual slowdown with micro-variations (skip for fast/turbo)
+        // Suspense phase - optimized with frame-based phase instead of Date.now()
         const suspenseIntensity = wheelSettings.spinSpeed === 'slow' ? 0.003 : 
                                  wheelSettings.spinSpeed === 'normal' ? 0.002 : 0.001;
-        const suspenseMultiplier = 0.985 + Math.sin(Date.now() * 0.008) * suspenseIntensity;
+        // Use accumulated phase instead of Date.now()
+        pulsePhaseRef.current += deltaTime * 0.008;
+        const suspenseMultiplier = 0.985 + Math.sin(pulsePhaseRef.current) * suspenseIntensity;
         newVelocity *= suspenseMultiplier;
         
         // Add tiny random hesitations for drama (less for faster speeds)
@@ -307,10 +320,12 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           newVelocity *= 0.995;
         }
       } else {
-        // Final crawl phase - skip for turbo
+        // Final crawl phase - optimized phase calculation
         const finalIntensity = wheelSettings.spinSpeed === 'slow' ? 0.004 : 
                               wheelSettings.spinSpeed === 'normal' ? 0.002 : 0.001;
-        const finalMultiplier = 0.992 + Math.sin(Date.now() * 0.003) * finalIntensity;
+        // Use accumulated phase instead of Date.now()
+        pulsePhaseRef.current += deltaTime * 0.003;
+        const finalMultiplier = 0.992 + Math.sin(pulsePhaseRef.current) * finalIntensity;
         newVelocity *= finalMultiplier;
         
         // Add suspenseful micro-pauses (much less for faster speeds)
@@ -354,7 +369,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
               segment: selectedSegment,
               index: winnerIndex,
               angle: finalAngle,
-              timestamp: Date.now()
+              timestamp: performance.now()
             });
             // Restart idle rotation after spin completes
             setTimeout(() => setIsIdleRotating(true), 1000);
@@ -567,3 +582,20 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     </div>
   );
 };
+
+// Export with React.memo for performance optimization
+export const SpinWheel = React.memo(SpinWheelComponent, (prevProps, nextProps) => {
+  // Custom comparison function - only re-render if segments actually changed
+  return (
+    prevProps.disabled === nextProps.disabled &&
+    prevProps.onSpinComplete === nextProps.onSpinComplete &&
+    prevProps.config.size === nextProps.config.size &&
+    prevProps.config.segments.length === nextProps.config.segments.length &&
+    prevProps.config.segments.every((segment, index) => {
+      const nextSegment = nextProps.config.segments[index];
+      return segment.text === nextSegment?.text &&
+             segment.color === nextSegment?.color &&
+             segment.weight === nextSegment?.weight;
+    })
+  );
+});
