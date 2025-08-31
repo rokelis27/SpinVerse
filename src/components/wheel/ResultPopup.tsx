@@ -35,31 +35,6 @@ export const ResultPopup: React.FC<ResultPopupProps> = ({
 
   if (!isVisible || !result) return null;
 
-  const getSegmentEmoji = (text: string) => {
-    const lower = text.toLowerCase();
-    if (lower.includes('gryffindor')) return '🦁';
-    if (lower.includes('slytherin')) return '🐍';
-    if (lower.includes('hufflepuff')) return '🦡';
-    if (lower.includes('ravenclaw')) return '🦅';
-    if (lower.includes('strength')) return '💪';
-    if (lower.includes('speed')) return '⚡';
-    if (lower.includes('flight')) return '🦸';
-    if (lower.includes('telepathy')) return '🧠';
-    if (lower.includes('invisibility')) return '👻';
-    if (lower.includes('laser')) return '👁️';
-    if (lower.includes('healing')) return '❤️';
-    if (lower.includes('tech')) return '🤖';
-    if (lower.includes('mvp') || lower.includes('build')) return '🚀';
-    if (lower.includes('funding')) return '💰';
-    if (lower.includes('team') || lower.includes('hire')) return '👥';
-    if (lower.includes('launch')) return '📱';
-    if (lower.includes('scale')) return '📈';
-    if (lower.includes('acquired')) return '🤝';
-    if (lower.includes('public')) return '📊';
-    if (lower.includes('pivot')) return '🔄';
-    return '🎯';
-  };
-
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
       <div 
@@ -101,7 +76,6 @@ export const ResultPopup: React.FC<ResultPopupProps> = ({
           <div className={`text-3xl mb-2 transform transition-all duration-700 ${
             animationPhase === 'celebration' ? 'animate-bounce' : ''
           }`}>
-            {getSegmentEmoji(result.segment.text)}
           </div>
         </div>
         

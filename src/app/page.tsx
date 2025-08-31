@@ -192,34 +192,18 @@ export default function Home() {
       
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header with Settings Button */}
-        <div className="flex justify-between items-start mb-8">
-          <div className="w-24"></div> {/* Spacer to balance the right side */}
-          <div className="text-center flex-1 cinematic-enter">
-            <div className="relative inline-block">
-              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
-                SpinVerse
-              </h1>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
-            </div>
-            <TypewriterText 
-              text="Transform spins into epic stories"
-              className="text-2xl text-gray-100 font-medium tracking-wide font-pacifico"
-              delay={500}
-              speed={70}
-            />
-          </div>
-          
-          {/* User Button & Settings */}
-          <div className="flex items-center space-x-3">
+        <div className="mb-8">
+          {/* User Button & Settings - positioned absolutely */}
+          <div className="absolute top-4 right-4 flex items-center space-x-3 z-20">
             <UserButton />
             
             <button
               onClick={() => setShowSettings(true)}
-              className="p-3 glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
+              className="w-10 h-10 flex items-center justify-center glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
               title="Settings"
             >
               <svg 
-                className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" 
+                className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -238,6 +222,22 @@ export default function Home() {
                 />
               </svg>
             </button>
+          </div>
+          
+          {/* Centered Title */}
+          <div className="text-center cinematic-enter">
+            <div className="relative inline-block">
+              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
+                SpinVerse
+              </h1>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
+            </div>
+            <TypewriterText 
+              text="Transform spins into epic stories"
+              className="text-2xl text-gray-100 font-medium tracking-wide font-pacifico"
+              delay={500}
+              speed={70}
+            />
           </div>
         </div>
 
@@ -382,8 +382,8 @@ export default function Home() {
             )}
 
             {/* SpinVerse Templates Section - moved to third position and renamed */}
-            <div className="text-center mb-4 cinematic-enter" style={{animationDelay: '0.4s'}}>
-              <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-4">
+            <div className="text-center mb-6 cinematic-enter" style={{animationDelay: '0.4s'}}>
+              <h2 className="text-3xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-2">
                 SpinVerse Templates
               </h2>
             </div>
@@ -458,29 +458,60 @@ export default function Home() {
             </div>
 
 
-            <div className="glass-panel hud-panel rounded-2xl p-8 max-w-3xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.8s'}}>
-              <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-6 text-center">
-                🚀 Next-Gen Storytelling Features
+            <div className="glass-panel hud-panel rounded-2xl p-8 max-w-4xl w-full mt-12 cinematic-enter" style={{animationDelay: '0.8s'}}>
+              <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-4 text-center">
+                🎯 What is SpinVerse?
               </h2>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-bold text-emerald-400 mb-3 text-lg">🌀 Auto-Flow Magic</h3>
+              
+              {/* Description */}
+              <div className="text-center mb-8">
+                <p className="text-gray-200 text-lg font-medium leading-relaxed max-w-3xl mx-auto">
+                  SpinVerse transforms simple wheel spins into <span className="text-emerald-400 font-semibold">epic storytelling experiences</span>. 
+                  Create engaging and interactive narratives where every choice matters, followed by a full story generated by SpinVerse!
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="space-y-4 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🎪</span>
+                  </div>
+                  <h3 className="font-bold text-emerald-400 mb-3 text-lg">Sequence-Based Stories</h3>
                   <div className="space-y-2">
-                    {['Auto-advance between wheels', 'Cinematic transitions', 'Progress tracking', 'Result persistence'].map((feature, i) => (
-                      <div key={i} className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
-                        <span className="text-gray-100 font-medium">{feature}</span>
+                    {['Auto-advancing wheel sequences', 'Conditional branching paths', 'Progress tracking & persistence', 'Cinematic story flow'].map((feature, i) => (
+                      <div key={i} className="flex items-center justify-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2}s`}}></div>
+                        <span className="text-gray-100 font-medium text-sm">{feature}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <h3 className="font-bold text-cyan-400 mb-3 text-lg">✨ Visual Excellence</h3>
+                
+                <div className="space-y-4 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500 to-purple-500 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🪄</span>
+                  </div>
+                  <h3 className="font-bold text-cyan-400 mb-3 text-lg">SpinVerse Story Generation</h3>
                   <div className="space-y-2">
-                    {['Gaming-inspired UI', 'Immersive animations', 'Mobile-first design', 'AI-powered narratives'].map((feature, i) => (
-                      <div key={i} className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2 + 1}s`}}></div>
-                        <span className="text-gray-100 font-medium">{feature}</span>
+                    {['Multi-language narratives', 'Character archetype analysis', 'Rarity scoring system', 'Context-aware storytelling'].map((feature, i) => (
+                      <div key={i} className="flex items-center justify-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2 + 0.5}s`}}></div>
+                        <span className="text-gray-100 font-medium text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="space-y-4 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🛠️</span>
+                  </div>
+                  <h3 className="font-bold text-purple-400 mb-3 text-lg">Professional Builder</h3>
+                  <div className="space-y-2">
+                    {['Drag-and-drop interface', 'Visual sequence editor', 'Custom wheel configurations', 'Import/Export capabilities'].map((feature, i) => (
+                      <div key={i} className="flex items-center justify-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: `${i * 0.2 + 1}s`}}></div>
+                        <span className="text-gray-100 font-medium text-sm">{feature}</span>
                       </div>
                     ))}
                   </div>

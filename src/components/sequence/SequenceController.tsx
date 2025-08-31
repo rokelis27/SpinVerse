@@ -150,7 +150,6 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
   // Log completion for debugging
   useEffect(() => {
     if (isComplete && currentTheme) {
-      console.log('Sequence completed!', useSequenceStore.getState().results);
     }
   }, [isComplete, currentTheme]);
 
@@ -233,13 +232,6 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
             </p>
           </div>
         )}
-        
-        {/* Enhanced debug info for development */}
-        <div className="text-xs text-gray-500 font-mono bg-black/20 rounded-lg px-3 py-1 inline-block">
-          🎯 {currentStep.id} | {useSequenceStore.getState().currentStepIndex + 1}/{currentTheme.steps.length} | 
-          Results: {useSequenceStore.getState().results.length} | 
-          {isComplete ? '✅ Complete' : '⚡ In Progress'}
-        </div>
       </div>
 
 

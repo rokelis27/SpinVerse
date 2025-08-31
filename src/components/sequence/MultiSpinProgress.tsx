@@ -14,14 +14,6 @@ export const MultiSpinProgress: React.FC<MultiSpinProgressProps> = ({ className 
     return null;
   }
 
-  console.log('🎰 MultiSpinProgress state:', {
-    currentCount: multiSpinState.currentCount,
-    totalCount: multiSpinState.totalCount,
-    resultsLength: multiSpinState.results.length,
-    displayText: multiSpinState.currentCount < multiSpinState.totalCount 
-      ? `Spin ${multiSpinState.currentCount + 1} of ${multiSpinState.totalCount}`
-      : `Completed ${multiSpinState.currentCount} of ${multiSpinState.totalCount}`
-  });
 
   const progress = multiSpinState.totalCount > 0 
     ? (multiSpinState.currentCount / multiSpinState.totalCount) * 100 

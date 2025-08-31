@@ -6,8 +6,6 @@ import { useWheelSettings } from '@/stores/settingsStore';
 import { SPEED_PRESETS } from '@/types/settings';
 import { selectWeightedSegment, calculateTargetAngle, calculateSegmentProbabilities, findSegmentByAngle } from '@/utils/probabilityUtils';
 import { useAnonymousStore } from '@/stores/anonymousStore';
-import { useFeatureGate } from '@/hooks/useFeatureGate';
-import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 
 interface SpinWheelProps {
   config: WheelConfig;
@@ -22,7 +20,6 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
 }) => {
   const wheelSettings = useWheelSettings();
   const anonymousStore = useAnonymousStore();
-  const { checkWheelOptions } = useFeatureGate();
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>(0);
@@ -38,19 +35,8 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
   
   const [isIdleRotating, setIsIdleRotating] = useState(true);
   const [hasCompletedSpin, setHasCompletedSpin] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  // Check wheel options limit
-  const wheelOptionsCheck = useMemo(() => 
-    checkWheelOptions(config.segments.length), 
-    [checkWheelOptions, config.segments.length]
-  );
 
-  // Check if we need to show upgrade prompt based on wheel options
-  const shouldShowWheelUpgrade = useMemo(() => 
-    wheelOptionsCheck.usagePercentage >= 80,
-    [wheelOptionsCheck.usagePercentage]
-  );
 
   // Generate stable particle positions for spinning effect
   const spinParticles = useMemo(() => 
@@ -481,36 +467,6 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-6 relative">
-      {/* Wheel Options Limit Warning */}
-      {shouldShowWheelUpgrade && (
-        <div className="mb-4 p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg max-w-md">
-          <div className="flex items-center space-x-2 mb-2">
-            <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span className="text-sm font-medium text-purple-300">
-              {wheelOptionsCheck.currentUsage}/{wheelOptionsCheck.limit} Wheel Options Used
-            </span>
-          </div>
-          <p className="text-xs text-gray-400 mb-3">
-            {wheelOptionsCheck.upgradeMessage}
-          </p>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setShowUpgradeModal(true)}
-              className="px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-xs rounded font-medium transition-all duration-200"
-            >
-              Upgrade to PRO
-            </button>
-            <div className="flex-1 bg-gray-700 rounded-full h-2 mt-1">
-              <div 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(100, wheelOptionsCheck.usagePercentage)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Gaming HUD overlay */}
       <div className="absolute -inset-4 bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 rounded-full opacity-20 blur-lg animate-pulse" />
@@ -573,12 +529,6 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
         </div>
       )}
 
-      {/* Upgrade Modal */}
-      <UpgradeFlow
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        triggerFeature="options"
-      />
     </div>
   );
 };

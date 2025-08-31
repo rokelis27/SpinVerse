@@ -95,7 +95,7 @@ export function UserButton() {
         {/* Subscription Status Badge */}
         <button
           onClick={() => setShowSubscriptionManager(true)}
-          className={`px-3 py-1 rounded-lg text-xs font-bold transition-all duration-200 hover:scale-105 ${
+          className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 hover:scale-105 ${
             isPro 
               ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg' 
               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -108,7 +108,7 @@ export function UserButton() {
         <ClerkUserButton 
           appearance={{
             elements: {
-              avatarBox: 'w-8 h-8',
+              avatarBox: 'w-10 h-10',
               userButtonPopoverCard: 'bg-gray-900/95 backdrop-blur-sm border border-gray-800 shadow-2xl',
               userButtonPopoverActionButton: 'text-gray-300 hover:text-white hover:bg-gray-800/50',
               userButtonPopoverActionButtonText: 'text-gray-300',

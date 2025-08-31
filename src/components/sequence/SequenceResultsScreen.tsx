@@ -30,6 +30,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
   const [hasGenerated, setHasGenerated] = useState(false); // Track if user already generated once
   const [isClient, setIsClient] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [currentResultIndex, setCurrentResultIndex] = useState(0);
 
   // Generate stable particle positions
   const celebrationParticles = useMemo(() => 
@@ -201,7 +202,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
             <div className="border-t border-cyan-400/30 pt-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
-                  🤖 AI-Generated Epic
+                  🤖 SpinVerse-Generated Epic
                 </h3>
                 <div className="glass-panel px-4 py-2 rounded-full border border-purple-400/50 neon-glow">
                   <span className="text-purple-300 font-bold text-sm">
@@ -296,67 +297,115 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         )}
       </div>
 
-      {/* Enhanced Results Showcase */}
+      {/* Enhanced Results Showcase - Slider Format */}
       <div className="glass-panel hud-panel rounded-2xl p-8 cinematic-enter" style={{animationDelay: '0.4s'}}>
-        <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text mb-8">
-          🎯 The Wheel has decided...
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {results.map((result, index) => {
-            const step = currentTheme.steps.find(s => s.id === result.stepId);
-            return (
-              <div
-                key={`${result.stepId}-${result.timestamp}-${index}`}
-                className="glass-panel hud-panel rounded-xl p-6 hover:scale-105 transition-all duration-300 micro-bounce relative overflow-hidden"
-                style={{animationDelay: `${0.1 * index}s`}}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                <div className="relative flex items-center justify-between">
-                  <div className="text-left space-y-2">
-                    <div className="font-semibold text-gray-300 text-sm uppercase tracking-wider flex items-center gap-2">
-                      {step?.title || `Step ${index + 1}`}
-                      {result.multiSpinResults && result.multiSpinResults.length > 1 && (
-                        <span className="text-xs bg-purple-600/30 text-purple-300 px-2 py-1 rounded-full border border-purple-400/30">
-                          🎰 {result.multiSpinResults.length} Spins
-                        </span>
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      {result.multiSpinResults && result.multiSpinResults.length > 1 ? (
-                        // Show all multi-spin results
-                        result.multiSpinResults.map((spinResult, spinIndex) => (
-                          <div key={spinIndex} className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400 w-6">#{spinIndex + 1}</span>
-                            <div 
-                              className="font-bold text-sm"
-                              style={{ color: spinResult.segment.color }}
-                            >
-                              {spinResult.segment.text}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        // Show single result
-                        <div 
-                          className="font-bold text-xl"
-                          style={{ color: result.spinResult.segment.color }}
-                        >
-                          {result.spinResult.segment.text}
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
+            🎯 The Wheel has decided...
+          </h3>
+          <div className="flex items-center space-x-2 text-sm text-gray-400">
+            <span>{currentResultIndex + 1}</span>
+            <span>/</span>
+            <span>{results.length}</span>
+          </div>
+        </div>
+        
+        {/* Slider Container with proper layout */}
+        <div className="flex items-center justify-center space-x-4">
+          {/* Left Arrow */}
+          {results.length > 1 && (
+            <button
+              onClick={() => setCurrentResultIndex(prev => prev > 0 ? prev - 1 : results.length - 1)}
+              className="flex-shrink-0 w-12 h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg"
+            >
+              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+          
+          {/* Result Card Container */}
+          <div className="flex-1 max-w-2xl overflow-hidden">
+            <div 
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentResultIndex * 100}%)` }}
+            >
+              {results.map((result, index) => {
+                const step = currentTheme.steps.find(s => s.id === result.stepId);
+                return (
+                  <div
+                    key={`${result.stepId}-${result.timestamp}-${index}`}
+                    className="w-full flex-shrink-0"
+                  >
+                    <div className="glass-panel hud-panel rounded-xl p-8 hover:scale-105 transition-all duration-300 micro-bounce relative overflow-hidden mx-auto max-w-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+                      <div className="relative text-center space-y-4">
+                        <div className="font-semibold text-gray-300 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                          {step?.title || `Step ${index + 1}`}
+                          {result.multiSpinResults && result.multiSpinResults.length > 1 && (
+                            <span className="text-xs bg-purple-600/30 text-purple-300 px-2 py-1 rounded-full border border-purple-400/30">
+                              🎰 {result.multiSpinResults.length} Spins
+                            </span>
+                          )}
                         </div>
-                      )}
+                        <div className="space-y-2">
+                          {result.multiSpinResults && result.multiSpinResults.length > 1 ? (
+                            // Show all multi-spin results
+                            result.multiSpinResults.map((spinResult, spinIndex) => (
+                              <div key={spinIndex} className="flex items-center justify-center gap-2">
+                                <span className="text-xs text-gray-400 w-6">#{spinIndex + 1}</span>
+                                <div 
+                                  className="font-bold text-lg"
+                                  style={{ color: spinResult.segment.color }}
+                                >
+                                  {spinResult.segment.text}
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            // Show single result
+                            <div 
+                              className="font-bold text-2xl"
+                              style={{ color: result.spinResult.segment.color }}
+                            >
+                              {result.spinResult.segment.text}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-4xl animate-pulse">
-                    {index === 0 && '🔮'}
-                    {index === 1 && '🏰'}
-                    {index === 2 && '🪄'}
-                    {index === 3 && '🦉'}
-                    {index === 4 && '⚡'}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Right Arrow */}
+          {results.length > 1 && (
+            <button
+              onClick={() => setCurrentResultIndex(prev => prev < results.length - 1 ? prev + 1 : 0)}
+              className="flex-shrink-0 w-12 h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg"
+            >
+              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+        </div>
+        
+        {/* Dot indicators */}
+        <div className="flex justify-center space-x-2 mt-6">
+          {results.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentResultIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentResultIndex 
+                  ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50' 
+                  : 'bg-gray-600 hover:bg-gray-500'
+              }`}
+            />
+          ))}
         </div>
       </div>
 
@@ -385,12 +434,11 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
 
       {/* Future Export - Gaming Style */}
       <div className="glass-panel hud-panel rounded-2xl p-8 border-2 border-dashed border-cyan-400/50 cinematic-enter" style={{animationDelay: '0.8s'}}>
-        <div className="text-4xl mb-4">🚀</div>
         <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text mb-4">
-          Next-Gen Features Incoming!
+          New SpinVerse Features Incoming!
         </h3>
         <p className="text-gray-300 text-lg mb-6">
-          🎬 Share your epic story across all social platforms
+          🎬 Share your stories across all social platforms
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
           <button className="px-6 py-3 glass-panel rounded-xl text-purple-400 cursor-not-allowed opacity-50 border border-purple-400/30" disabled>
@@ -402,7 +450,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
           <button className="px-6 py-3 glass-panel rounded-xl text-cyan-400 cursor-not-allowed opacity-50 border border-cyan-400/30" disabled>
             <span className="flex items-center space-x-2">
               <span>📸</span>
-              <span>Generate Story Card</span>
+              <span>Generate Visuals</span>
             </span>
           </button>
         </div>

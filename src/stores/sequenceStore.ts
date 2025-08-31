@@ -65,7 +65,6 @@ export const useSequenceStore = create<SequenceStore>()(
         const lastCallTime = (window as any).lastCompleteStepTimes?.[lastCallKey] || 0;
         
         if (now - lastCallTime < 100) {
-          console.log('🚫 DUPLICATE CALL BLOCKED:', spinResult.segment.text);
           return; // Block duplicate call within 100ms
         }
         
@@ -73,7 +72,6 @@ export const useSequenceStore = create<SequenceStore>()(
         (window as any).lastCompleteStepTimes = (window as any).lastCompleteStepTimes || {};
         (window as any).lastCompleteStepTimes[lastCallKey] = now;
         
-        console.log('✅ PROCESSING CALL:', spinResult.segment.text);
         
         // Take a fresh snapshot of the state at the beginning
         let state = get();
@@ -117,13 +115,6 @@ export const useSequenceStore = create<SequenceStore>()(
         // Check if current step has multi-spin configuration  
         // IMPORTANT: Only check for multi-spin initialization if NOT currently active
         const currentStep = findStepById(currentTheme, currentStepId);
-        console.log('🔍 Multi-spin check:', {
-          step: currentStepId,
-          hasMultiSpin: currentStep?.multiSpin?.enabled,
-          multiSpinActive: multiSpinState.isActive,
-          currentMultiSpinStepId: multiSpinState.currentStepId,
-          willInitialize: currentStep?.multiSpin?.enabled && !multiSpinState.isActive
-        });
         if (currentStep?.multiSpin?.enabled && !multiSpinState.isActive) {
           // Determine spin count based on mode
           let spinCount = 1;
@@ -151,11 +142,9 @@ export const useSequenceStore = create<SequenceStore>()(
               if (typeof parsedSpinCount === 'number' && parsedSpinCount >= 1 && parsedSpinCount <= 5) {
                 spinCount = parsedSpinCount;
               } else {
-                console.warn('Invalid determiner result, falling back to 1 spin:', segmentId);
                 spinCount = 1;
               }
             } else {
-              console.warn('Dynamic multi-spin missing determiner result, falling back to 1 spin');
               spinCount = 1;
             }
           }
@@ -180,7 +169,6 @@ export const useSequenceStore = create<SequenceStore>()(
             return; // Stay in multi-spin mode, don't complete step yet
           } else if (spinCount === 1) {
             // When determiner step results in 1 spin, complete step normally and advance
-            console.log('🎯 Determiner resulted in 1 spin, completing step and advancing');
             
             // Complete the step first
             const sequenceResult: SequenceResult = {
@@ -215,7 +203,6 @@ export const useSequenceStore = create<SequenceStore>()(
         // Check if this step is already completed to prevent duplicates
         const existingResult = results.find(r => r.stepId === currentStepId);
         if (existingResult && !multiSpinState.isActive) {
-          console.log('🚫 Step already completed, blocking duplicate spin:', currentStepId);
           return;
         }
 
@@ -226,7 +213,6 @@ export const useSequenceStore = create<SequenceStore>()(
         };
 
         const newResults = [...results, sequenceResult];
-        console.log('✅ Completing step normally:', currentStepId, 'Result:', spinResult.segment.text);
         const completed = newResults.length;
         const expectedPath = getSequencePath(currentTheme, newResults);
         const total = expectedPath.length;
