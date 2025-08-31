@@ -21,13 +21,13 @@ export const SPEED_PRESETS = {
   slow: {
     minPower: 4,
     maxPower: 10,
-    friction: 0.99,      // LOW friction = spins much longer
-    minVelocity: 0.0002, // Very low threshold = maximum suspense
+    friction: 0.97,      // LOW friction = spins much longer
+    minVelocity: 0.00075, // Very low threshold = maximum suspense
     description: 'Long, suspenseful spins',
   },
   normal: {
-    minPower: 3,
-    maxPower: 6,
+    minPower: 5,
+    maxPower: 10,
     friction: 0.95,     // Medium friction 
     minVelocity: 0.001,  // Standard threshold
     description: 'Balanced spinning experience',
