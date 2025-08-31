@@ -41,10 +41,11 @@ export function useFeatureGate() {
     getStorageSize,
   } = useAnonymousStore();
 
-  // Determine if user is PRO
+  // Determine if user is PRO (includes cancelled but still active subscriptions)
   const isPro = useMemo(() => {
     if (!isLoaded || !user) return false;
-    return userStore.subscription.tier === 'PRO' && userStore.subscription.status === 'active';
+    return userStore.subscription.tier === 'PRO' && 
+           (userStore.subscription.status === 'active' || userStore.subscription.status === 'cancelled');
   }, [user, isLoaded, userStore.subscription]);
 
   // Validate data integrity on each use

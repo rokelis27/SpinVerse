@@ -150,23 +150,34 @@ export async function POST(request: NextRequest) {
           clerkUserId,
           isAnonymousUpgrade,
           customerEmail,
-          status: subscription.status
+          status: subscription.status,
+          currentPeriodStart: subscription.current_period_start,
+          currentPeriodEnd: subscription.current_period_end,
         });
+        
+        // Build complete subscription metadata
+        const subscriptionMetadata = {
+          subscription_tier: subscription.status === 'active' ? 'PRO' : 'FREE',
+          subscription_status: subscription.status,
+          stripe_customer_id: subscription.customer,
+          stripe_subscription_id: subscription.id,
+          subscription_start_date: subscription.current_period_start,
+          subscription_end_date: subscription.current_period_end,
+          subscription_created_at: subscription.created,
+          cancel_at_period_end: subscription.cancel_at_period_end || false,
+          trial_end: subscription.trial_end || null,
+          upgraded_at: new Date().toISOString(),
+          last_webhook_at: Math.floor(Date.now() / 1000),
+        };
         
         if (clerkUserId) {
           // For existing Clerk users, update their subscription status
           try {
             const clerk = await clerkClient();
             await clerk.users.updateUser(clerkUserId, {
-              publicMetadata: {
-                subscription_tier: 'PRO',
-                subscription_status: subscription.status,
-                stripe_customer_id: subscription.customer,
-                stripe_subscription_id: subscription.id,
-                upgraded_at: new Date().toISOString(),
-              }
+              publicMetadata: subscriptionMetadata
             });
-            console.log(`📝 Updated Clerk user ${clerkUserId} to PRO status`);
+            console.log(`📝 Updated Clerk user ${clerkUserId} to PRO status with complete metadata`);
           } catch (error) {
             console.error(`❌ Failed to update Clerk user ${clerkUserId}:`, error);
           }
@@ -183,15 +194,11 @@ export async function POST(request: NextRequest) {
               const user = users.data[0];
               await clerk.users.updateUser(user.id, {
                 publicMetadata: {
-                  subscription_tier: 'PRO',
-                  subscription_status: subscription.status,
-                  stripe_customer_id: subscription.customer,
-                  stripe_subscription_id: subscription.id,
-                  upgraded_at: new Date().toISOString(),
+                  ...subscriptionMetadata,
                   created_via: 'payment_first_flow',
                 }
               });
-              console.log(`📝 Updated hybrid flow user ${user.id} (${customerEmail}) to PRO status`);
+              console.log(`📝 Updated hybrid flow user ${user.id} (${customerEmail}) to PRO status with complete metadata`);
             } else {
               console.warn(`⚠️ Could not find user with email ${customerEmail} to update subscription status`);
             }
@@ -206,22 +213,141 @@ export async function POST(request: NextRequest) {
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
         const clerkUserId = subscription.metadata?.clerk_user_id;
+        const customerEmail = subscription.metadata?.customer_email;
         
+        console.log(`📝 Subscription updated:`, {
+          subscriptionId: subscription.id,
+          clerkUserId,
+          customerEmail,
+          status: subscription.status,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          currentPeriodStart: subscription.current_period_start,
+          currentPeriodEnd: subscription.current_period_end,
+        });
+        
+        // Build updated subscription metadata
+        const subscriptionMetadata = {
+          subscription_tier: subscription.status === 'active' ? 'PRO' : 'FREE',
+          subscription_status: subscription.status,
+          stripe_customer_id: subscription.customer,
+          stripe_subscription_id: subscription.id,
+          subscription_start_date: subscription.current_period_start,
+          subscription_end_date: subscription.current_period_end,
+          subscription_created_at: subscription.created,
+          cancel_at_period_end: subscription.cancel_at_period_end || false,
+          trial_end: subscription.trial_end || null,
+          updated_at: new Date().toISOString(),
+          last_webhook_at: Math.floor(Date.now() / 1000),
+        };
+        
+        // Update user metadata with current subscription status
+        const updateUserMetadata = async (userId: string) => {
+          try {
+            const clerk = await clerkClient();
+            await clerk.users.updateUser(userId, {
+              publicMetadata: subscriptionMetadata
+            });
+            console.log(`✅ Updated subscription metadata for user ${userId}`);
+          } catch (error) {
+            console.error(`❌ Failed to update user ${userId} metadata:`, error);
+          }
+        };
+
         if (clerkUserId) {
-          console.log(`📝 Subscription updated for user ${clerkUserId}:`, subscription.status);
-          // Update user subscription status
+          await updateUserMetadata(clerkUserId);
+        } else if (customerEmail) {
+          // Find user by email if no Clerk user ID in metadata
+          try {
+            const clerk = await clerkClient();
+            const users = await clerk.users.getUserList({
+              emailAddress: [customerEmail]
+            });
+            
+            if (users.data.length > 0) {
+              const user = users.data[0];
+              await updateUserMetadata(user.id);
+            } else {
+              console.warn(`⚠️ Could not find user with email ${customerEmail} for subscription update`);
+            }
+          } catch (error) {
+            console.error(`❌ Failed to find user by email for subscription update:`, error);
+          }
         }
+        
         break;
       }
 
       case 'customer.subscription.deleted': {
         const subscription = event.data.object;
         const clerkUserId = subscription.metadata?.clerk_user_id;
+        const customerEmail = subscription.metadata?.customer_email;
         
+        console.log(`❌ Subscription deleted/cancelled:`, {
+          subscriptionId: subscription.id,
+          clerkUserId,
+          customerEmail,
+          canceledAt: subscription.canceled_at,
+          endedAt: subscription.ended_at,
+        });
+        
+        // Build cancellation metadata
+        const cancellationMetadata = {
+          subscription_tier: 'FREE',
+          subscription_status: 'cancelled',
+          stripe_customer_id: subscription.customer,
+          stripe_subscription_id: subscription.id,
+          subscription_cancelled_at: subscription.canceled_at || Math.floor(Date.now() / 1000),
+          subscription_ended_at: subscription.ended_at || Math.floor(Date.now() / 1000),
+          previous_tier: 'PRO', // Track what they had before
+          downgraded_at: new Date().toISOString(),
+          last_webhook_at: Math.floor(Date.now() / 1000),
+          // Keep some history for potential reactivation
+          last_active_period_start: subscription.current_period_start,
+          last_active_period_end: subscription.current_period_end,
+        };
+        
+        // Revert user to FREE tier
+        const downgradeUser = async (userId: string) => {
+          try {
+            const clerk = await clerkClient();
+            
+            // Get current metadata to preserve other fields
+            const user = await clerk.users.getUser(userId);
+            const currentMetadata = user.publicMetadata || {};
+            
+            await clerk.users.updateUser(userId, {
+              publicMetadata: {
+                ...currentMetadata,
+                ...cancellationMetadata,
+              }
+            });
+            console.log(`✅ Downgraded user ${userId} to FREE tier`);
+          } catch (error) {
+            console.error(`❌ Failed to downgrade user ${userId}:`, error);
+          }
+        };
+
         if (clerkUserId) {
-          console.log(`❌ Subscription cancelled for user ${clerkUserId}`);
-          // Revert user to FREE tier
+          await downgradeUser(clerkUserId);
+        } else if (customerEmail) {
+          // Find user by email if no Clerk user ID in metadata
+          try {
+            const clerk = await clerkClient();
+            const users = await clerk.users.getUserList({
+              emailAddress: [customerEmail]
+            });
+            
+            if (users.data.length > 0) {
+              const user = users.data[0];
+              await downgradeUser(user.id);
+            } else {
+              console.warn(`⚠️ Could not find user with email ${customerEmail} for subscription cancellation`);
+            }
+          } catch (error) {
+            console.error(`❌ Failed to find user by email for subscription cancellation:`, error);
+          }
         }
+        
         break;
       }
 
