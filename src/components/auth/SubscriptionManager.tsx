@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import useSubscriptionStatus from '@/hooks/useSubscriptionStatus';
+import { useUpgradeModal } from '@/hooks/useUpgradeModal';
 
 /**
  * Subscription Management Component
@@ -21,9 +22,14 @@ interface SubscriptionManagerProps {
 export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
   const { user } = useUser();
   const subscriptionStatus = useSubscriptionStatus();
+  const { openModal } = useUpgradeModal();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<{
+    type: 'cancel' | 'reactivate';
+    endDate?: string;
+  } | null>(null);
 
   const handleCancelClick = () => {
     setShowCancelConfirm(true);
@@ -56,18 +62,34 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
       console.log('Cancel subscription success:', data);
       
       setShowCancelConfirm(false);
+      setError(null);
+      
+      // Show immediate success confirmation
+      setShowSuccessMessage({
+        type: 'cancel',
+        endDate: data.metadata?.access_until || subscriptionStatus.endDate
+      });
+      
+      // Don't close the main modal yet - success modal needs to be visible inside it
       
       // Wait a moment for API/webhook to process, then refresh subscription status
       setTimeout(async () => {
         try {
           await subscriptionStatus.verifyWithStripe();
           console.log('✅ Subscription status refreshed after cancellation');
+          // Hide success message and close main modal after refresh completes
+          setTimeout(() => {
+            setShowSuccessMessage(null);
+            onClose();
+          }, 2000);
         } catch (error) {
           console.error('⚠️ Failed to refresh subscription status:', error);
+          setTimeout(() => {
+            setShowSuccessMessage(null);
+            onClose();
+          }, 2000);
         }
       }, 1500);
-      
-      setError(null);
       // Success will be shown in the UI automatically when subscription status updates
     } catch (err: any) {
       console.error('Failed to cancel subscription:', err);
@@ -103,19 +125,36 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
       const data = await response.json();
       console.log('Reactivate subscription success:', data);
       
+      setError(null);
+      
+      // Show immediate success confirmation  
+      setShowSuccessMessage({
+        type: 'reactivate',
+        endDate: data.metadata?.next_billing || subscriptionStatus.endDate
+      });
+      
+      // Don't close the main modal yet - success modal needs to be visible inside it
+      
       // Wait a moment for API/webhook to process, then refresh subscription status
       setTimeout(async () => {
         try {
           await subscriptionStatus.verifyWithStripe();
           console.log('✅ Subscription status refreshed after reactivation');
+          // Hide success message and close main modal after refresh completes
+          setTimeout(() => {
+            setShowSuccessMessage(null);
+            onClose();
+          }, 2000);
         } catch (error) {
           console.error('⚠️ Failed to refresh subscription status:', error);
           // If verification fails, reload the page as fallback
+          setTimeout(() => {
+            setShowSuccessMessage(null);
+            onClose();
+          }, 2000);
           window.location.reload();
         }
       }, 1500);
-      
-      setError(null);
       // Success will be shown in the UI automatically when subscription status updates
     } catch (err: any) {
       console.error('Failed to reactivate subscription:', err);
@@ -256,7 +295,7 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                     <button
                       onClick={handleCancelClick}
                       disabled={isLoading}
-                      className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 disabled:from-gray-700 disabled:to-gray-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed border border-gray-500/30"
                     >
                       {isLoading ? 'Cancelling...' : 'Cancel Subscription'}
                     </button>
@@ -270,7 +309,10 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
             ) : (
               <>
                 <button
-                  onClick={onClose}
+                  onClick={() => {
+                    onClose(); // Close subscription manager
+                    openModal('sequences'); // Open upgrade modal
+                  }}
                   className="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   Upgrade to PRO
@@ -282,14 +324,6 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
               </>
             )}
 
-            {/* Refresh Status */}
-            <button
-              onClick={subscriptionStatus.verifyWithStripe}
-              disabled={subscriptionStatus.isLoading}
-              className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-white rounded-lg text-sm font-medium transition-colors disabled:cursor-not-allowed"
-            >
-              {subscriptionStatus.isLoading ? 'Refreshing...' : 'Refresh Status'}
-            </button>
           </div>
 
           {/* Error Display */}
@@ -349,18 +383,83 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                 <button
                   onClick={() => setShowCancelConfirm(false)}
                   disabled={isLoading}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-white rounded-lg font-medium transition-colors disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-700 disabled:to-gray-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
                 >
                   Keep Subscription
                 </button>
                 <button
                   onClick={handleCancelConfirm}
                   disabled={isLoading}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 disabled:from-gray-700 disabled:to-gray-800 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed border border-gray-500/30"
                 >
                   {isLoading ? 'Cancelling...' : 'Yes, Cancel'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Confirmation Modal */}
+      {showSuccessMessage && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900/95 backdrop-blur-sm border border-purple-500/30 rounded-2xl shadow-2xl max-w-sm w-full">
+            <div className="p-6 text-center">
+              {/* Success Icon */}
+              <div className="mx-auto flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 mb-4">
+                <svg className="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              {showSuccessMessage.type === 'cancel' ? (
+                <>
+                  <h3 className="text-lg font-semibold text-white mb-2">Subscription Cancelled</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Your PRO subscription has been successfully cancelled. You'll keep full access to all PRO features until{' '}
+                    {showSuccessMessage.endDate ? (
+                      <strong className="text-purple-300">
+                        {formatDate(showSuccessMessage.endDate)}
+                      </strong>
+                    ) : (
+                      <strong className="text-purple-300">the end of your billing period</strong>
+                    )}.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-lg font-semibold text-white mb-2">Subscription Reactivated!</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Welcome back! Your PRO subscription has been successfully reactivated. Your next billing date is{' '}
+                    {showSuccessMessage.endDate ? (
+                      <strong className="text-purple-300">
+                        {formatDate(showSuccessMessage.endDate)}
+                      </strong>
+                    ) : (
+                      <strong className="text-purple-300">unchanged</strong>
+                    )}.
+                  </p>
+                </>
+              )}
+
+              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3 mb-4">
+                <p className="text-purple-300 text-sm">
+                  <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Updating your account status...
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowSuccessMessage(null);
+                  onClose(); // Close the main subscription management modal
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                Got it!
+              </button>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { useAnonymousStore } from '@/stores/anonymousStore';
 import { useAccountStore } from '@/stores/hybridStore';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
@@ -37,10 +38,14 @@ interface MigrationState {
 }
 
 export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }: UpgradeFlowProps) {
+  const { user, isLoaded: clerkLoaded } = useUser();
   const [currentStep, setCurrentStep] = useState<FlowStep>('benefits');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [emailError, setEmailError] = useState('');
+  
+  // Determine if user is logged in
+  const isLoggedIn = clerkLoaded && !!user;
   
   const [paymentState, setPaymentState] = useState<PaymentState>({
     isProcessing: false,
@@ -64,8 +69,16 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
   useEffect(() => {
     if (isOpen) {
       setCurrentStep('benefits');
-      setEmail('');
-      setName('');
+      
+      // Pre-fill user data if logged in
+      if (isLoggedIn && user) {
+        setEmail(user.emailAddresses[0]?.emailAddress || '');
+        setName(user.fullName || user.firstName || '');
+      } else {
+        setEmail('');
+        setName('');
+      }
+      
       setEmailError('');
       setPaymentState({
         isProcessing: false,
@@ -80,7 +93,7 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
         error: null,
       });
     }
-  }, [isOpen]);
+  }, [isOpen, isLoggedIn, user]);
 
   // Email validation
   const validateEmail = useCallback((emailValue: string): string => {
@@ -96,7 +109,55 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
     return '';
   }, []);
 
-  // Handle email step
+  // Handle authenticated user checkout (skip email step)
+  const handleAuthenticatedCheckout = useCallback(async () => {
+    if (!isLoggedIn || !user) {
+      console.error('User not logged in');
+      return;
+    }
+
+    setPaymentState(prev => ({ ...prev, isProcessing: true, error: null }));
+
+    try {
+      console.log('Creating authenticated checkout session for user:', user.id);
+
+      // Use authenticated checkout API
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: STRIPE_PRODUCTS.PRO_MONTHLY.priceId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || result.details || 'Failed to create checkout session');
+      }
+
+      console.log('Authenticated checkout session created:', result.sessionId);
+
+      // Redirect to Stripe Checkout
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        throw new Error('No checkout URL received from Stripe');
+      }
+
+    } catch (error: any) {
+      console.error('Authenticated checkout creation failed:', error);
+      setPaymentState(prev => ({
+        ...prev,
+        isProcessing: false,
+        error: error.message || 'Failed to create checkout session. Please try again.',
+      }));
+    }
+  }, [isLoggedIn, user]);
+
+  // Handle email step (for anonymous users)
   const handleEmailSubmit = useCallback(async () => {
     const emailValidationError = validateEmail(email);
     if (emailValidationError) {
@@ -140,6 +201,15 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
       const result = await response.json();
 
       if (!response.ok) {
+        // Handle specific error for existing email
+        if (result.error === 'EXISTING_EMAIL' || result.error === 'EXISTING_SUBSCRIPTION') {
+          setPaymentState(prev => ({
+            ...prev,
+            isProcessing: false,
+            error: `${result.message} Please log in to manage your existing subscription.`,
+          }));
+          return;
+        }
         throw new Error(result.error || result.details || 'Failed to create checkout session');
       }
 
@@ -332,10 +402,16 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
                 </div>
                 
                 <h3 className="text-2xl font-bold text-white mb-2">
-                  Unlock Unlimited Creativity
+                  {isLoggedIn ? 'Upgrade to PRO' : 'Unlock Unlimited Creativity'}
                 </h3>
                 <p className="text-gray-400 mb-6">
-                  Get access to all premium features with cloud sync across devices. Your account will be created after successful payment.
+                  {isLoggedIn ? (
+                    <>
+                      Hi {user?.firstName || user?.fullName || 'there'}! Upgrade your account to PRO and get access to all premium features with cloud sync across devices.
+                    </>
+                  ) : (
+                    'Get access to all premium features with cloud sync across devices. Your account will be created after successful payment.'
+                  )}
                 </p>
               </div>
 
@@ -360,11 +436,18 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
                 <p className="text-sm text-gray-500">Cancel anytime</p>
               </div>
 
+              {paymentState.error && (
+                <div className="p-4 bg-red-900/50 border border-red-500/50 rounded-lg">
+                  <p className="text-red-400 text-sm">{paymentState.error}</p>
+                </div>
+              )}
+
               <button
-                onClick={() => setCurrentStep('email')}
-                className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={isLoggedIn ? handleAuthenticatedCheckout : () => setCurrentStep('email')}
+                disabled={paymentState.isProcessing}
+                className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Get Started
+                {paymentState.isProcessing ? 'Processing...' : (isLoggedIn ? 'Upgrade Now' : 'Get Started')}
               </button>
             </div>
           )}

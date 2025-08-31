@@ -19,21 +19,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create or retrieve Stripe customer for anonymous user
+    // Check if customer already exists with this email
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     let customer;
+    
     try {
-      customer = await StripeServerOperations.createCustomer({
+      // Search for existing customers with this email
+      const existingCustomers = await stripe.customers.list({
         email: email.trim().toLowerCase(),
-        name: name?.trim() || undefined,
-        metadata: {
-          user_type: 'anonymous_upgrade',
-          upgrade_source: 'anonymous_to_pro',
-          registration_flow: 'payment_first',
-          ...metadata,
-        },
+        limit: 1,
       });
+
+      if (existingCustomers.data.length > 0) {
+        // Customer with this email already exists - they should log in instead
+        console.warn(`⚠️ User ${email} already exists in Stripe, blocking anonymous upgrade`);
+        return NextResponse.json(
+          { 
+            error: 'EXISTING_EMAIL',
+            message: 'An account with this email address already exists.',
+            details: 'If you need help accessing your account, please contact support.'
+          }, 
+          { status: 409 }
+        );
+      } else {
+        // Create new customer
+        customer = await StripeServerOperations.createCustomer({
+          email: email.trim().toLowerCase(),
+          name: name?.trim() || undefined,
+          metadata: {
+            user_type: 'anonymous_upgrade',
+            upgrade_source: 'anonymous_to_pro',
+            registration_flow: 'payment_first',
+            ...metadata,
+          },
+        });
+        console.log(`✨ Created new Stripe customer for ${email}:`, customer.id);
+      }
     } catch (error) {
-      console.error('Failed to create customer for anonymous user:', error);
+      console.error('Failed to create/retrieve customer for anonymous user:', error);
       return NextResponse.json(
         { error: 'Failed to create customer account' }, 
         { status: 500 }
@@ -41,7 +64,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Stripe checkout session for anonymous user
-    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
