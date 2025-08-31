@@ -35,7 +35,7 @@ export const STRIPE_PRODUCTS = {
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY || 'price_pro_monthly',
     name: 'SpinVerse PRO',
     description: '100 saved sequences, 50 daily AI stories, and premium features',
-    amount: 999, // $9.99 in cents
+    amount: 399, // €3.99/mo in cents
     currency: 'usd',
     interval: 'month' as const,
     features: [

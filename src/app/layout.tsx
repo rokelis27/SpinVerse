@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
 import { Geist, Geist_Mono, Orbitron, Pacifico } from "next/font/google";
+import { UpgradeModalProvider } from '@/components/providers/UpgradeModalProvider';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -41,7 +42,9 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${pacifico.variable} antialiased`}
         >
-          {children}
+          <UpgradeModalProvider>
+            {children}
+          </UpgradeModalProvider>
         </body>
       </html>
     </ClerkProvider>
