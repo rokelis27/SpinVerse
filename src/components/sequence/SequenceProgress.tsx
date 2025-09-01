@@ -52,33 +52,33 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
   const visibleSteps = steps.slice(activeSlideIndex, activeSlideIndex + stepsPerView);
 
   return (
-    <div className={`w-full max-w-4xl mx-auto ${className}`}>
+    <div className={`w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 ${className}`}>
       {/* Modern Progress Header */}
-      <div className="glass-panel hud-panel rounded-2xl p-6 mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-3">
+      <div className="glass-panel-mobile hud-panel rounded-2xl mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-3 sm:space-y-0">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             {/* Theme Logo */}
             {currentTheme.id === 'mystical-academy' && (
-              <span className="text-2xl opacity-80">🧙‍♂️</span>
+              <span className="text-xl sm:text-2xl opacity-80">🧙‍♂️</span>
             )}
             {currentTheme.id === 'survival-tournament' && (
-              <span className="text-2xl opacity-80">🏹</span>
+              <span className="text-xl sm:text-2xl opacity-80">🏹</span>
             )}
             {currentTheme.id === 'detective-mystery' && (
-              <span className="text-2xl opacity-80">🕵️‍♂️</span>
+              <span className="text-xl sm:text-2xl opacity-80">🕵️‍♂️</span>
             )}
             {currentTheme.id === 'underground-racing' && (
-              <span className="text-2xl opacity-80">🏁</span>
+              <span className="text-xl sm:text-2xl opacity-80">🏁</span>
             )}
-            <h3 className="text-xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
+            <h3 className="text-lg sm:text-xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
               {currentTheme.name}
             </h3>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-emerald-400 font-bold text-lg">{progress.completed}</span>
+          <div className="flex items-center justify-center sm:justify-end space-x-2">
+            <span className="text-emerald-400 font-bold text-base sm:text-lg">{progress.completed}</span>
             <span className="text-gray-300">/</span>
-            <span className="text-gray-200 font-semibold">{progress.total}</span>
-            <span className="text-gray-300 text-sm ml-2">Steps Complete</span>
+            <span className="text-gray-200 font-semibold text-base sm:text-lg">{progress.total}</span>
+            <span className="text-gray-300 text-xs sm:text-sm ml-2">Steps Complete</span>
           </div>
         </div>
         
@@ -110,9 +110,9 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
             <button
               onClick={() => setSlideIndex(Math.max(0, activeSlideIndex - 1))}
               disabled={activeSlideIndex === 0}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full glass-panel hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2 rounded-full glass-panel hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed btn-touch"
             >
-              <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -120,9 +120,9 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
             <button
               onClick={() => setSlideIndex(Math.min(maxSlideIndex, activeSlideIndex + 1))}
               disabled={activeSlideIndex >= maxSlideIndex}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full glass-panel hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-2 rounded-full glass-panel hover:bg-white/10 transition-all disabled:opacity-30 disabled:cursor-not-allowed btn-touch"
             >
-              <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -130,8 +130,8 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
         )}
         
         {/* Step indicators */}
-        <div className="mx-8 overflow-hidden">
-          <div className="flex justify-between items-start space-x-4 transition-transform duration-300">
+        <div className="mx-2 sm:mx-8 overflow-hidden">
+          <div className="flex justify-between items-start space-x-2 sm:space-x-4 transition-transform duration-300">
             {visibleSteps.map((step, visibleIndex) => {
               const actualIndex = activeSlideIndex + visibleIndex;
               const stepResult = results.find(r => r.stepId === step.id);
@@ -161,9 +161,9 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
                   )}
                   
                   {/* Step Circle */}
-                  <div className="relative mb-3">
+                  <div className="relative mb-2 sm:mb-3">
                     <div
-                      className={`w-14 h-14 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all duration-300 relative z-10 ${
+                      className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300 relative z-10 ${
                         isCompleted
                           ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/50'
                           : isCurrent
@@ -174,11 +174,11 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
                       }`}
                     >
                       {isCompleted ? (
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       ) : isSkipped ? (
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
                       ) : (
@@ -195,7 +195,7 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
                   {/* Step Info */}
                   <div className="text-center min-w-0 w-full">
                     <div 
-                      className={`text-base font-semibold mb-2 transition-colors duration-200 ${
+                      className={`text-xs sm:text-sm md:text-base font-semibold mb-1 sm:mb-2 transition-colors duration-200 leading-tight ${
                         isCompleted
                           ? 'text-emerald-400'
                           : isCurrent
@@ -205,12 +205,12 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
                           : 'text-gray-400'
                       }`}
                     >
-                      {step.title}
+                      {step.title.length > 12 ? `${step.title.substring(0, 12)}...` : step.title}
                     </div>
                     
                     {/* Status indicator - Fixed height container */}
-                    <div className="h-6 flex items-center justify-center mb-1">
-                      <div className={`text-xs px-2 py-1 rounded-full ${
+                    <div className="h-5 sm:h-6 flex items-center justify-center mb-1">
+                      <div className={`text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ${
                         isCompleted
                           ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                           : isCurrent
@@ -224,11 +224,11 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
                     </div>
                     
                     {/* Show result if completed - Fixed height container */}
-                    <div className="h-6 flex items-center justify-center">
+                    <div className="h-5 sm:h-6 flex items-center justify-center">
                       {isCompleted && stepResult && (
-                        <div className="text-xs text-gray-300 px-2 py-1 bg-gray-700/50 rounded-full">
-                          {stepResult.spinResult.segment.text.length > 15 
-                            ? `${stepResult.spinResult.segment.text.substring(0, 15)}...`
+                        <div className="text-xs text-gray-300 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-gray-700/50 rounded-full">
+                          {stepResult.spinResult.segment.text.length > 10 
+                            ? `${stepResult.spinResult.segment.text.substring(0, 10)}...`
                             : stepResult.spinResult.segment.text}
                         </div>
                       )}

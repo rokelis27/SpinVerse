@@ -191,53 +191,101 @@ export default function Home() {
       )}
       
       <div className="max-w-4xl mx-auto relative z-10">
-        {/* Header with Settings Button */}
+        {/* Responsive Header */}
         <div className="mb-8">
-          {/* User Button & Settings - positioned absolutely */}
-          <div className="absolute top-4 right-4 flex items-center space-x-3 z-20">
-            <UserButton />
-            
-            <button
-              onClick={() => setShowSettings(true)}
-              className="w-10 h-10 flex items-center justify-center glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
-              title="Settings"
-            >
-              <svg 
-                className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+          {/* Mobile Header Layout */}
+          <div className="sm:hidden mb-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+                  SpinVerse
+                </h1>
+                <TypewriterText 
+                  text="Transform spins into epic stories"
+                  className="text-lg text-gray-100 font-medium tracking-wide font-pacifico"
+                  delay={500}
+                  speed={70}
                 />
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
-                />
-              </svg>
-            </button>
-          </div>
-          
-          {/* Centered Title */}
-          <div className="text-center cinematic-enter">
-            <div className="relative inline-block">
-              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
-                SpinVerse
-              </h1>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
+              </div>
+              <div className="flex items-center space-x-2 ml-4">
+                <UserButton />
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="w-10 h-10 flex items-center justify-center glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
+                  title="Settings"
+                >
+                  <svg 
+                    className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+                    />
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <TypewriterText 
-              text="Transform spins into epic stories"
-              className="text-2xl text-gray-100 font-medium tracking-wide font-pacifico"
-              delay={500}
-              speed={70}
-            />
+          </div>
+
+          {/* Desktop Header Layout */}
+          <div className="hidden sm:block relative">
+            {/* User Button & Settings - positioned absolutely for desktop */}
+            <div className="absolute top-4 right-4 flex items-center space-x-3 z-20">
+              <UserButton />
+              
+              <button
+                onClick={() => setShowSettings(true)}
+                className="w-10 h-10 flex items-center justify-center glass-panel rounded-full shadow-cosmic hover:shadow-xl transition-all duration-300 hover:scale-110 group neon-glow micro-bounce"
+                title="Settings"
+              >
+                <svg 
+                  className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+                  />
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                  />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Centered Title */}
+            <div className="text-center cinematic-enter">
+              <div className="relative inline-block">
+                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
+                  SpinVerse
+                </h1>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
+              </div>
+              <TypewriterText 
+                text="Transform spins into epic stories"
+                className="text-2xl text-gray-100 font-medium tracking-wide font-pacifico"
+                delay={500}
+                speed={70}
+              />
+            </div>
           </div>
         </div>
 
@@ -388,7 +436,7 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full max-w-4xl">
               {themes.filter(theme => theme.id !== 'underground-racing').map((theme, index) => (
                 <div
                   key={theme.id}

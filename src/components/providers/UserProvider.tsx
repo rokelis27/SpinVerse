@@ -78,7 +78,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       // Update user data in store
       setUser(userData);
       
-      console.log('✅ UserProvider: Synced user data for', userData.email);
     } catch (error) {
       console.error('❌ UserProvider: Failed to sync user data:', error);
     }
@@ -222,12 +221,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         metadataHash: currentMetadataHash,
       };
       
-      // Log the sync event
-      if (isNewUser) {
-        console.log('🔄 UserProvider: New user login detected', currentUserId);
-      } else if (isMetadataChanged) {
-        console.log('🔄 UserProvider: User metadata changed', currentUserId);
-      }
     }
   }, [
     user, 

@@ -112,9 +112,9 @@ export const NarrativeTemplateEditor: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-sm text-purple-300 font-medium mb-1">AI Story Generation</p>
+                <p className="text-sm text-purple-300 font-medium mb-1">SpinVerse Story Generation</p>
                 <p className="text-xs text-purple-200">
-                  The AI will use your sequence name, description, and chosen options to create personalized narratives. 
+                  SpinVerse will use your sequence name, description, and chosen options to create personalized narratives. 
                   More detailed descriptions lead to richer, more contextual stories.
                 </p>
               </div>

@@ -98,7 +98,137 @@ body {
 
 .neon-glow:hover::before {
   opacity: 0.7;
-  animation: neon-pulse 2s infinite;
+}
+
+/* Mobile-First Responsive Design */
+/* Touch-friendly button sizes */
+.btn-touch {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile optimized spacing */
+.mobile-padding {
+  padding: 1rem;
+}
+
+.mobile-padding-sm {
+  padding: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .mobile-padding {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-padding {
+    padding: 2rem;
+  }
+}
+
+/* Mobile text scaling */
+.text-mobile-xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-mobile-2xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-mobile-3xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+@media (min-width: 480px) {
+  .text-mobile-xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+  
+  .text-mobile-2xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+  
+  .text-mobile-3xl {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+/* Mobile-optimized glass panels */
+.glass-panel-mobile {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  padding: 1rem;
+  box-shadow: 
+    0 4px 16px 0 rgba(31, 38, 135, 0.37),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .glass-panel-mobile {
+    padding: 1.5rem;
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.37),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Mobile navigation utilities */
+.mobile-nav-hidden {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.mobile-nav-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Mobile-friendly animations */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-enter,
+  .micro-bounce,
+  .particle,
+  .starfield {
+    animation: none !important;
+  }
+}
+
+/* Safe area adjustments for notched devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Force text wrapping on mobile */
+@media (max-width: 640px) {
+  .break-words {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Ensure no horizontal overflow */
+  .overflow-x-hidden {
+    overflow-x: hidden !important;
+  }
+  
+  /* Force container width on mobile */
+  .w-full {
+    width: 100% !important;
+  }
 }
 
 @keyframes neon-pulse {

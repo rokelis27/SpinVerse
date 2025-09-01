@@ -135,7 +135,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
   };
 
   return (
-    <div className={`max-w-4xl mx-auto text-center space-y-10 ${className} relative`}>
+    <div className={`w-full max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 md:space-y-8 lg:space-y-10 px-3 sm:px-4 md:px-6 lg:px-8 ${className} relative overflow-x-hidden`}>
       {/* Celebration particles - Only render on client */}
       {isClient && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -154,44 +154,44 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         </div>
       )}
       {/* Epic Celebration Header */}
-      <div className="space-y-6 cinematic-enter relative z-10">
-        <div className="text-8xl animate-bounce">
+      <div className="space-y-4 sm:space-y-6 cinematic-enter relative z-10">
+        <div className="text-4xl sm:text-6xl md:text-8xl animate-bounce">
           🎉✨🎊
         </div>
         <div className="relative">
           <div className="absolute -inset-2 bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 rounded-lg blur opacity-30"></div>
-          <h1 className="relative text-4xl md:text-6xl font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="relative text-mobile-3xl sm:text-4xl md:text-6xl font-bold bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
             Epic Journey Complete!
           </h1>
         </div>
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
           {/* Theme Logo */}
           {currentTheme.id === 'mystical-academy' && (
-            <span className="text-3xl opacity-80">🧙‍♂️</span>
+            <span className="text-2xl sm:text-3xl opacity-80">🧙‍♂️</span>
           )}
           {currentTheme.id === 'survival-tournament' && (
-            <span className="text-3xl opacity-80">🏹</span>
+            <span className="text-2xl sm:text-3xl opacity-80">🏹</span>
           )}
           {currentTheme.id === 'detective-mystery' && (
-            <span className="text-3xl opacity-80">🕵️‍♂️</span>
+            <span className="text-2xl sm:text-3xl opacity-80">🕵️‍♂️</span>
           )}
           {currentTheme.id === 'underground-racing' && (
-            <span className="text-3xl opacity-80">🏁</span>
+            <span className="text-2xl sm:text-3xl opacity-80">🏁</span>
           )}
-          <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text">
+          <h2 className="text-lg sm:text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-pink-400 bg-clip-text text-center">
             🌟 {currentTheme.name} Universe 🌟
           </h2>
         </div>
       </div>
 
       {/* Immersive Story Narrative */}
-      <div className="glass-panel hud-panel rounded-2xl p-10 relative overflow-hidden cinematic-enter" style={{animationDelay: '0.2s'}}>
+      <div className="glass-panel-mobile hud-panel rounded-2xl relative overflow-hidden cinematic-enter" style={{animationDelay: '0.2s'}}>
         {/* Enhanced Story Header */}
-        <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-6">
+        <h3 className="text-xl sm:text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text mb-4 sm:mb-6">
           📖 {generatedStory ? 'Your Origin Story' : 'Your Epic Journey'}
         </h3>
-        <div className="glass-panel rounded-xl p-6 mb-8 border border-cyan-400/30">
-          <p className="text-gray-200 leading-relaxed text-xl font-light">
+        <div className="glass-panel rounded-xl p-3 sm:p-4 md:p-6 mb-6 sm:mb-8 border border-cyan-400/30 w-full overflow-hidden">
+          <p className="text-gray-200 leading-relaxed text-sm sm:text-base md:text-lg lg:text-xl font-light break-words hyphens-auto">
             {storyText}
           </p>
         </div>
@@ -261,36 +261,36 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         
         {/* Enhanced Generate Button */}
         {!hasGenerated && (
-          <div className="border-t border-cyan-400/30 pt-8">
+          <div className="border-t border-cyan-400/30 pt-6 sm:pt-8">
             <button
               onClick={handleGenerateStory}
               disabled={isGenerating}
-              className="px-12 py-5 btn-cosmic text-white font-bold rounded-2xl shadow-cosmic hover:shadow-3xl transition-all duration-300 micro-bounce neon-glow disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+              className="w-full sm:w-auto px-6 sm:px-12 py-4 sm:py-5 btn-cosmic text-white font-bold rounded-2xl shadow-cosmic hover:shadow-3xl transition-all duration-300 micro-bounce neon-glow disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden btn-touch"
             >
-              <span className="relative z-10 flex items-center space-x-3">
+              <span className="relative z-10 flex items-center justify-center space-x-2 sm:space-x-3">
                 {isGenerating ? (
                   <>
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>SpinVerse Crafting Your Legend...</span>
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm sm:text-base">SpinVerse Crafting Your Legend...</span>
                   </>
                 ) : (
                   <>
-                    <span>Generate Epic SpinVerse Story</span>
-                    <span className="text-2xl">✨</span>
+                    <span className="text-sm sm:text-base">Generate Epic SpinVerse Story</span>
+                    <span className="text-xl sm:text-2xl">✨</span>
                   </>
                 )}
               </span>
             </button>
             
             {error && !isRateLimitError && (
-              <div className="text-sm mt-4 glass-panel rounded-lg p-4 border border-red-400/30 bg-red-500/10">
+              <div className="text-sm mt-4 glass-panel rounded-lg p-3 sm:p-4 border border-red-400/30 bg-red-500/10">
                 <p className="text-red-400">
                   {error}
                 </p>
               </div>
             )}
             
-            <p className="text-gray-300 text-sm mt-4">
+            <p className="text-gray-300 text-xs sm:text-sm mt-4 text-center sm:text-left">
               🎭 Get generated narrative with rarity analysis & character matches!
             </p>
           </div>
@@ -298,12 +298,12 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       </div>
 
       {/* Enhanced Results Showcase - Slider Format */}
-      <div className="glass-panel hud-panel rounded-2xl p-8 cinematic-enter" style={{animationDelay: '0.4s'}}>
-        <div className="flex items-center justify-between mb-8">
-          <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text">
+      <div className="glass-panel-mobile hud-panel rounded-2xl cinematic-enter" style={{animationDelay: '0.4s'}}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 space-y-2 sm:space-y-0">
+          <h3 className="text-lg sm:text-2xl font-bold text-transparent bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-center sm:text-left">
             🎯 The Wheel has decided...
           </h3>
-          <div className="flex items-center space-x-2 text-sm text-gray-400">
+          <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
             <span>{currentResultIndex + 1}</span>
             <span>/</span>
             <span>{results.length}</span>
@@ -311,14 +311,14 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         </div>
         
         {/* Slider Container with proper layout */}
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4">
           {/* Left Arrow */}
           {results.length > 1 && (
             <button
               onClick={() => setCurrentResultIndex(prev => prev > 0 ? prev - 1 : results.length - 1)}
-              className="flex-shrink-0 w-12 h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg"
+              className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg btn-touch"
             >
-              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -337,11 +337,11 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
                     key={`${result.stepId}-${result.timestamp}-${index}`}
                     className="w-full flex-shrink-0"
                   >
-                    <div className="glass-panel hud-panel rounded-xl p-8 hover:scale-105 transition-all duration-300 micro-bounce relative overflow-hidden mx-auto max-w-lg">
+                    <div className="glass-panel hud-panel rounded-xl mobile-padding hover:scale-105 transition-all duration-300 micro-bounce relative overflow-hidden mx-auto max-w-lg">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-                      <div className="relative text-center space-y-4">
-                        <div className="font-semibold text-gray-300 text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                          {step?.title || `Step ${index + 1}`}
+                      <div className="relative text-center space-y-3 sm:space-y-4">
+                        <div className="font-semibold text-gray-300 text-xs sm:text-sm uppercase tracking-wider flex flex-col sm:flex-row items-center justify-center gap-2">
+                          <span>{step?.title || `Step ${index + 1}`}</span>
                           {result.multiSpinResults && result.multiSpinResults.length > 1 && (
                             <span className="text-xs bg-purple-600/30 text-purple-300 px-2 py-1 rounded-full border border-purple-400/30">
                               🎰 {result.multiSpinResults.length} Spins
@@ -355,7 +355,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
                               <div key={spinIndex} className="flex items-center justify-center gap-2">
                                 <span className="text-xs text-gray-400 w-6">#{spinIndex + 1}</span>
                                 <div 
-                                  className="font-bold text-lg"
+                                  className="font-bold text-sm sm:text-lg break-words"
                                   style={{ color: spinResult.segment.color }}
                                 >
                                   {spinResult.segment.text}
@@ -365,7 +365,7 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
                           ) : (
                             // Show single result
                             <div 
-                              className="font-bold text-2xl"
+                              className="font-bold text-lg sm:text-2xl break-words"
                               style={{ color: result.spinResult.segment.color }}
                             >
                               {result.spinResult.segment.text}
@@ -384,9 +384,9 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
           {results.length > 1 && (
             <button
               onClick={() => setCurrentResultIndex(prev => prev < results.length - 1 ? prev + 1 : 0)}
-              className="flex-shrink-0 w-12 h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg"
+              className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 glass-panel rounded-full flex items-center justify-center hover:scale-110 transition-all duration-300 neon-glow shadow-lg btn-touch"
             >
-              <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -394,12 +394,12 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
         </div>
         
         {/* Dot indicators */}
-        <div className="flex justify-center space-x-2 mt-6">
+        <div className="flex justify-center space-x-2 mt-4 sm:mt-6">
           {results.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentResultIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 sm:w-2 sm:h-2 rounded-full transition-all duration-300 btn-touch ${
                 index === currentResultIndex 
                   ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50' 
                   : 'bg-gray-600 hover:bg-gray-500'
@@ -410,24 +410,24 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
       </div>
 
       {/* Epic Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-6 justify-center cinematic-enter" style={{animationDelay: '0.6s'}}>
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center cinematic-enter" style={{animationDelay: '0.6s'}}>
         <button
           onClick={onRestart}
-          className="px-10 py-4 btn-cosmic text-white font-bold rounded-xl shadow-cosmic hover:shadow-3xl transition-all duration-300 micro-bounce neon-glow relative overflow-hidden"
+          className="w-full sm:w-auto px-6 sm:px-10 py-3 sm:py-4 btn-cosmic text-white font-bold rounded-xl shadow-cosmic hover:shadow-3xl transition-all duration-300 micro-bounce neon-glow relative overflow-hidden btn-touch"
         >
-          <span className="relative z-10 flex items-center space-x-2">
-            <span className="text-xl">🔄</span>
-            <span>Forge New Legend</span>
+          <span className="relative z-10 flex items-center justify-center space-x-2">
+            <span className="text-lg sm:text-xl">🔄</span>
+            <span className="text-sm sm:text-base">Forge New Legend</span>
           </span>
         </button>
         
         <button
           onClick={onBackToHome}
-          className="px-10 py-4 glass-panel hud-panel text-gray-300 hover:text-white font-bold rounded-xl shadow-lg hover:shadow-cosmic transition-all duration-300 micro-bounce neon-glow"
+          className="w-full sm:w-auto px-6 sm:px-10 py-3 sm:py-4 glass-panel hud-panel text-gray-300 hover:text-white font-bold rounded-xl shadow-lg hover:shadow-cosmic transition-all duration-300 micro-bounce neon-glow btn-touch"
         >
-          <span className="flex items-center space-x-2">
-            <span className="text-xl">🌌</span>
-            <span>Explore Universes</span>
+          <span className="flex items-center justify-center space-x-2">
+            <span className="text-lg sm:text-xl">🌌</span>
+            <span className="text-sm sm:text-base">Explore Universes</span>
           </span>
         </button>
       </div>
