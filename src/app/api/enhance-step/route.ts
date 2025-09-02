@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     // Call OpenAI API with retry logic
     console.log('🚀 Calling OpenAI API...');
-    let completion;
+    let completion: any = null;
     let retryCount = 0;
     const maxRetries = 3;
 

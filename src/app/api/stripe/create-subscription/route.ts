@@ -28,7 +28,7 @@ function checkRateLimit(identifier: string): boolean {
 interface CreateSubscriptionRequest {
   email: string;
   name?: string;
-  priceId?: string;
+  priceId: string; // Required after validation
   anonymousData?: any; // Data to migrate from anonymous usage
   metadata?: Record<string, string>;
 }
@@ -42,6 +42,12 @@ function validateRequest(body: any): CreateSubscriptionRequest | null {
 
   // Validate required fields
   if (!email || typeof email !== 'string' || !isValidEmail(email)) {
+    return null;
+  }
+
+  // Ensure priceId is valid
+  if (!priceId || typeof priceId !== 'string') {
+    console.error('Invalid priceId:', priceId);
     return null;
   }
 
@@ -66,7 +72,7 @@ export async function POST(request: NextRequest) {
   
   try {
     // Get client IP for rate limiting
-    const headersList = headers();
+    const headersList = await headers();
     const clientIP = headersList.get('x-forwarded-for') || 
                     headersList.get('x-real-ip') || 
                     'unknown';
