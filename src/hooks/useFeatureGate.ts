@@ -453,21 +453,21 @@ export function useFeatureGate() {
     const features = getAllFeatureStates();
     
     // Find the most urgent feature that needs an upgrade
-    let mostUrgent: { feature: string; result: FeatureGateResult } | null = null;
+    type FeatureKey = keyof typeof features;
+    let urgentFeature: FeatureKey | null = null;
+    let urgentResult: FeatureGateResult | null = null;
     
-    Object.entries(features).forEach(([key, result]) => {
+    (Object.entries(features) as Array<[FeatureKey, FeatureGateResult]>).forEach(([key, result]) => {
       if (result.urgencyLevel === 'critical' || result.usagePercentage >= 90) {
-        if (!mostUrgent || result.usagePercentage > mostUrgent.result.usagePercentage) {
-          mostUrgent = { feature: key, result };
+        if (!urgentResult || result.usagePercentage > urgentResult.usagePercentage) {
+          urgentFeature = key;
+          urgentResult = result;
         }
       }
     });
     
-    if (mostUrgent !== null) {
-      return getUpgradePromptConfig(
-        mostUrgent.feature as Parameters<typeof getUpgradePromptConfig>[0],
-        mostUrgent.result
-      );
+    if (urgentFeature && urgentResult) {
+      return getUpgradePromptConfig(urgentFeature, urgentResult);
     }
     
     return null;

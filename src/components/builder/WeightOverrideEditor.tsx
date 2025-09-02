@@ -31,7 +31,7 @@ export const WeightOverrideEditor: React.FC<WeightOverrideEditorProps> = ({
 
     const newOverride: WeightOverride = {
       segmentId: firstSegment.id,
-      newWeight: firstSegment.weight
+      newWeight: firstSegment.weight || 1
     };
     onUpdate([...weightOverrides, newOverride]);
   };
@@ -114,7 +114,7 @@ export const WeightOverrideEditor: React.FC<WeightOverrideEditorProps> = ({
               <div className="text-xs">
                 <p className="text-blue-300 font-medium mb-1">Weight Override System</p>
                 <p className="text-blue-200">
-                  When this branch is taken, these weight overrides will be applied to the target step "{targetStep.title}". 
+                  When this branch is taken, these weight overrides will be applied to the target step &quot;{targetStep.title}&quot;. 
                   Segments not overridden will share the remaining weight equally.
                 </p>
               </div>

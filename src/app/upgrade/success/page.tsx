@@ -1,11 +1,11 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useUserStore } from '@/stores/userStore';
 import { useUser } from '@clerk/nextjs';
 
-export default function UpgradeSuccessPage() {
+function UpgradeSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useUser();
@@ -157,5 +157,20 @@ export default function UpgradeSuccessPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function UpgradeSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-blue-900 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    }>
+      <UpgradeSuccessContent />
+    </Suspense>
   );
 }

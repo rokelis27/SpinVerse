@@ -101,7 +101,7 @@ const createDeterminerStep = (targetStepId: string): SequenceStepBuilder => ({
     size: 400,
     spinDuration: 3000,
     friction: 0.02,
-    theme: 'system'
+    theme: 'default'
   }
 });
 
@@ -132,7 +132,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
           id: 'step-1',
           title: 'Your Choice',
           description: 'Make your first decision',
-          isCustom: true,
           wheelConfig: {
             segments: [
               {
@@ -140,16 +139,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
                 text: 'Option 1',
                 color: '#4682B4',
                 rarity: 'common',
-                weight: 50,
-                description: 'First choice'
+                weight: 50
               },
               {
                 id: 'option-2', 
                 text: 'Option 2',
                 color: '#32CD32',
                 rarity: 'common',
-                weight: 50,
-                description: 'Second choice'
+                weight: 50
               }
             ],
             size: 400,
@@ -399,9 +396,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       ...updatedSteps[targetIndex + 1],
       multiSpin: {
         ...updatedSteps[targetIndex + 1].multiSpin,
-        mode: 'dynamic',
+        mode: 'dynamic' as const,
         determinerStepId: determinerStep.id,
-        aggregateResults: true
+        aggregateResults: true,
+        enabled: updatedSteps[targetIndex + 1].multiSpin?.enabled ?? true
       }
     };
     updatedSteps[targetIndex + 1] = updatedTargetStep;

@@ -113,12 +113,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('❌ Cancelling subscription:', {
-      userId: clerkUserId,
-      email: user.emailAddresses[0]?.emailAddress,
-      subscriptionId: stripeSubscriptionId,
-    });
-
     // Cancel subscription at period end
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     
@@ -139,14 +133,6 @@ export async function POST(request: NextRequest) {
     });
 
     const responseTime = Date.now() - startTime;
-
-    console.log('✅ Subscription cancelled successfully:', {
-      userId: clerkUserId,
-      subscriptionId: stripeSubscriptionId,
-      currentPeriodEnd: subscription.current_period_end,
-      accessUntil: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : 'unknown',
-      responseTimeMs: responseTime,
-    });
 
     return NextResponse.json(
       {
@@ -169,12 +155,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     const responseTime = Date.now() - startTime;
-    
-    console.error('❌ Subscription cancellation failed:', {
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-      responseTimeMs: responseTime,
-    });
 
     // Handle specific Stripe errors
     if (error.type?.startsWith('Stripe')) {

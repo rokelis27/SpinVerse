@@ -262,7 +262,7 @@ Please describe what you were doing when this error occurred:
           </div>
           
           <p className="text-sm text-gray-400 mb-3">
-            A component failed to load. This won't affect other parts of the app.
+            A component failed to load. This won&apos;t affect other parts of the app.
           </p>
           
           <button

@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (error) {
-      console.error('Failed to create customer:', error);
       return NextResponse.json({ error: 'Failed to create customer' }, { status: 500 });
     }
 
@@ -62,7 +61,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Checkout session creation failed:', error);
     return NextResponse.json(
       { error: 'Failed to create checkout session', details: error.message },
       { status: 500 }

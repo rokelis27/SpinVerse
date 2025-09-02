@@ -514,7 +514,7 @@ export const useAnonymousStore = create<AnonymousState>()(
           const validSequences = state.sequences.filter((seq) => {
             if (!isValidSequence(seq)) {
               needsRepair = true;
-              repairs.push(`Removed invalid sequence: ${seq?.name || 'unknown'}`);
+              repairs.push(`Removed invalid sequence: ${(seq as any)?.name || 'unknown'}`);
               return false;
             }
             return true;

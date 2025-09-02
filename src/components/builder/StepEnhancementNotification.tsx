@@ -59,7 +59,7 @@ export const StepEnhancementNotification: React.FC<StepEnhancementNotificationPr
             </div>
             
             <p className="text-xs text-green-200 mb-2">
-              "{stepTitle}"
+              &quot;{stepTitle}&quot;
             </p>
             
             <div className="text-xs text-green-100">

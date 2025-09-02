@@ -358,7 +358,7 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
                         const targetSegment = targetStep?.wheelConfig.segments.find(s => s.id === conflict.condition.segmentId);
                         return (
                           <p key={index} className="text-xs text-yellow-200 mb-1">
-                            Branches {conflict.branch1Index + 1} and {conflict.branch2Index + 1} both trigger on "{targetSegment?.text}" from {targetStep?.title}. Only Branch {conflict.branch1Index + 1} will execute.
+                            Branches {conflict.branch1Index + 1} and {conflict.branch2Index + 1} both trigger on &quot;{targetSegment?.text}&quot; from {targetStep?.title}. Only Branch {conflict.branch1Index + 1} will execute.
                           </p>
                         );
                       })}

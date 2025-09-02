@@ -47,7 +47,6 @@ function validateRequest(body: any): CreateSubscriptionRequest | null {
 
   // Ensure priceId is valid
   if (!priceId || typeof priceId !== 'string') {
-    console.error('Invalid priceId:', priceId);
     return null;
   }
 
@@ -117,7 +116,6 @@ export async function POST(request: NextRequest) {
     const { email, name, priceId, anonymousData, metadata } = validatedData;
 
     // Step 1: Create Stripe customer
-    console.log(`Creating Stripe customer for email: ${email}`);
     const customer = await StripeServerOperations.createCustomer({
       email,
       name,
@@ -131,7 +129,6 @@ export async function POST(request: NextRequest) {
     });
 
     // Step 2: Create subscription
-    console.log(`Creating subscription for customer: ${customer.id}`);
     const subscription = await StripeServerOperations.createSubscription({
       customerId: customer.id,
       priceId,
@@ -150,14 +147,6 @@ export async function POST(request: NextRequest) {
     }
 
     const responseTime = Date.now() - startTime;
-    
-    // Log successful operation
-    console.log(`Subscription created successfully:`, {
-      customerId: customer.id,
-      subscriptionId: subscription.id,
-      responseTime,
-      email: email.replace(/(.{2})(.*)(.{2})/, '$1***$3'), // Mask email for logs
-    });
 
     // Return success response
     return NextResponse.json(
@@ -192,15 +181,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     const responseTime = Date.now() - startTime;
-    
-    // Log error details
-    console.error('Subscription creation failed:', {
-      error: error.message,
-      type: error.type,
-      code: error.code,
-      responseTime,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-    });
+  
 
     // Handle specific error types
     if (error instanceof StripeOperationError) {

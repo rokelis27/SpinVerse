@@ -30,11 +30,9 @@ interface StepEnhancementSummary {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('🔥 Step Enhancement API called');
   const startTime = Date.now();
   
   try {
-    console.log('📥 Parsing request body...');
     const { 
       step, 
       sequenceContext, 
@@ -45,7 +43,6 @@ export async function POST(request: NextRequest) {
 
     // PRO-only feature check
     if (userMode === 'anonymous') {
-      console.log('❌ Anonymous user trying to access PRO-only feature');
       return NextResponse.json({
         error: 'PRO_FEATURE_REQUIRED',
         message: 'Steps AI Enhancer is a PRO-only feature. Upgrade to enhance your sequence steps!',
@@ -59,13 +56,6 @@ export async function POST(request: NextRequest) {
         ]
       }, { status: 403 });
     }
-
-    console.log('✅ Request parsed:', { 
-      stepTitle: step?.title,
-      sequenceName: sequenceContext?.name,
-      enhancementType,
-      originalOptionsCount: step?.wheelConfig?.segments?.length || 0
-    });
 
     // Enhanced validation
     if (!step || !step.wheelConfig || !step.wheelConfig.segments) {
@@ -119,12 +109,9 @@ export async function POST(request: NextRequest) {
     const originalOptionsCount = step.wheelConfig.segments.length;
 
     // Build the AI prompt
-    console.log('🤖 Building AI prompt...');
     const prompt = buildStepEnhancementPrompt(step, sequenceContext, enhancementType, preserveExisting);
-    console.log('📝 Prompt length:', prompt.length);
 
     // Call OpenAI API with retry logic
-    console.log('🚀 Calling OpenAI API...');
     let completion: any = null;
     let retryCount = 0;
     const maxRetries = 3;
@@ -178,11 +165,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Failed to get response from AI service after multiple attempts');
     }
 
-    console.log('✅ OpenAI response received');
-
     const aiResponse = completion.choices[0]?.message?.content;
-    console.log('📄 AI Response length:', aiResponse?.length);
-    console.log('📄 AI Response preview:', aiResponse?.substring(0, 300));
     
     if (!aiResponse) {
       console.error('❌ No response content from AI');
@@ -192,38 +175,26 @@ export async function POST(request: NextRequest) {
     // Parse and validate the enhanced step with fallback
     let enhancedStep: SequenceStepBuilder;
     try {
-      console.log('🔍 Attempting to parse JSON...');
       enhancedStep = JSON.parse(aiResponse);
-      console.log('✅ JSON parsed successfully');
     } catch (parseError) {
-      console.log('⚠️ Direct JSON parse failed, trying to extract...');
-      console.log('Parse error:', parseError);
-      
       // Try to extract JSON from response if it's wrapped in text
       const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        console.log('🔍 Found JSON match, attempting to parse...');
         try {
           enhancedStep = JSON.parse(jsonMatch[0]);
-          console.log('✅ Extracted JSON parsed successfully');
         } catch (extractError) {
-          console.error('❌ Failed to parse extracted JSON:', extractError);
           throw new Error('AI returned invalid response format. Please try again.');
         }
       } else {
-        console.error('❌ No JSON found in AI response');
         throw new Error('AI did not return a valid enhancement. Please try again.');
       }
     }
 
     // Validate the enhanced step
-    console.log('🔍 Validating enhanced step...');
     const validationResult = validateEnhancedStep(enhancedStep, step);
     if (!validationResult.isValid) {
-      console.error('❌ Validation failed:', validationResult.errors);
       throw new Error(`AI enhancement failed validation: ${validationResult.errors.slice(0, 2).join(', ')}. Please try again.`);
     }
-    console.log('✅ Enhanced step validated successfully');
 
     // Ensure the step keeps original ID and required properties
     enhancedStep.id = step.id;

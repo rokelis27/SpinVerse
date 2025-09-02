@@ -216,7 +216,6 @@ export async function POST(req: NextRequest) {
     }, { headers: responseHeaders });
 
   } catch (error) {
-    console.error('Story generation error:', error);
     return NextResponse.json(
       { error: 'Failed to generate story' },
       { status: 500 }
@@ -632,7 +631,6 @@ function parseAIResponse(content: string): { story: string; characterArchetype: 
       characterArchetype: 'A unique character shaped by their distinctive journey'
     };
   } catch (error) {
-    console.error('Error parsing AI response:', error);
     return {
       story: content,
       characterArchetype: 'A unique character shaped by their distinctive journey'

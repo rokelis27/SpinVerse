@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { useAnonymousStore } from './anonymousStore';
 import { useUserStore } from './userStore';
+import { useFeatureGate } from '@/hooks/useFeatureGate';
 
 // Account state for PRO users
 export interface AccountData {
@@ -517,8 +518,9 @@ export function useHybridUser() {
       if (userMode === 'account') {
         return true; // PRO users have unlimited access
       } else {
-        // Use anonymous feature gating
-        return anonymousStore.canUseFeature(featureName as any, currentUsage);
+        // For anonymous users, delegate to the feature gate system
+        // This will be handled by the useFeatureGate hook in components
+        return false; // Conservative default - components should use useFeatureGate hook
       }
     },
     

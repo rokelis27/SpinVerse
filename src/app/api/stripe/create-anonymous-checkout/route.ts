@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
 
       if (existingCustomers.data.length > 0) {
         // Customer with this email already exists - they should log in instead
-        console.warn(`⚠️ User ${email} already exists in Stripe, blocking anonymous upgrade`);
         return NextResponse.json(
           { 
             error: 'EXISTING_EMAIL',
@@ -53,10 +52,8 @@ export async function POST(request: NextRequest) {
             ...metadata,
           },
         });
-        console.log(`✨ Created new Stripe customer for ${email}:`, customer.id);
       }
     } catch (error) {
-      console.error('Failed to create/retrieve customer for anonymous user:', error);
       return NextResponse.json(
         { error: 'Failed to create customer account' }, 
         { status: 500 }
@@ -107,8 +104,6 @@ export async function POST(request: NextRequest) {
       payment_method_collection: 'if_required',
     });
 
-    console.log(`✅ Anonymous checkout session created for ${email}:`, session.id);
-
     return NextResponse.json({ 
       sessionId: session.id,
       url: session.url,
@@ -117,7 +112,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Anonymous checkout session creation failed:', error);
     
     // Return user-friendly error messages
     if (error.type === 'StripeInvalidRequestError') {

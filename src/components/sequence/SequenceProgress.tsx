@@ -20,32 +20,37 @@ export const SequenceProgress: React.FC<SequenceProgressProps> = ({
     isActive,
   } = useSequenceStore();
 
-  if (!isActive || !currentTheme) {
-    return null;
-  }
-
-  const steps = currentTheme.steps;
   const [slideIndex, setSlideIndex] = useState(0);
   
   // Determine how many steps to show at once based on screen size and total steps
   const stepsPerView = useMemo(() => {
+    if (!currentTheme) return 0;
+    const steps = currentTheme.steps;
     if (steps.length <= 5) return steps.length; // Show all if 5 or fewer
     return Math.min(4, steps.length); // Show max 4 at a time for longer sequences
-  }, [steps.length]);
-  
-  // Calculate the visible steps window
-  const maxSlideIndex = Math.max(0, steps.length - stepsPerView);
-  const currentSlideIndex = Math.min(slideIndex, maxSlideIndex);
+  }, [currentTheme]);
   
   // Auto-center on current step
   const autoSlideIndex = useMemo(() => {
+    if (!currentTheme) return 0;
+    const steps = currentTheme.steps;
     if (steps.length <= stepsPerView) return 0;
     
     // Try to center current step in the view
     const idealStart = Math.max(0, currentStepIndex - Math.floor(stepsPerView / 2));
     const maxStart = Math.max(0, steps.length - stepsPerView);
     return Math.min(idealStart, maxStart);
-  }, [currentStepIndex, steps.length, stepsPerView]);
+  }, [currentStepIndex, currentTheme, stepsPerView]);
+
+  if (!isActive || !currentTheme) {
+    return null;
+  }
+
+  const steps = currentTheme.steps;
+  
+  // Calculate the visible steps window
+  const maxSlideIndex = Math.max(0, steps.length - stepsPerView);
+  const currentSlideIndex = Math.min(slideIndex, maxSlideIndex);
   
   // Use auto-slide if not manually overridden
   const activeSlideIndex = slideIndex === 0 ? autoSlideIndex : currentSlideIndex;

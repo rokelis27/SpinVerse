@@ -476,5 +476,3 @@ export function cleanupOldMigrationBackups(maxAgeDays: number = 30): void {
 export function getMigrationBackupStats() {
   return dataMigrationManager.getBackupStats();
 }
-
-export type { MigrationResult, RollbackResult, MigrationState };

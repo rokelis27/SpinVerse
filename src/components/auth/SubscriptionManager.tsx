@@ -273,7 +273,7 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                         <span className="text-orange-300 font-medium">Subscription Cancelled</span>
                       </div>
                       <p className="text-orange-200 text-sm mb-3">
-                        Your subscription has been cancelled. You'll keep PRO access until{' '}
+                        Your subscription has been cancelled. You&apos;ll keep PRO access until{' '}
                         <strong>{subscriptionStatus.endDate ? formatDate(subscriptionStatus.endDate) : 'the end of your billing period'}</strong>.
                       </p>
                     </div>
@@ -301,7 +301,7 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                     </button>
                     
                     <p className="text-xs text-gray-500 text-center">
-                      Cancel your PRO subscription (you'll keep access until the end of your billing period)
+                      Cancel your PRO subscription (you&apos;ll keep access until the end of your billing period)
                     </p>
                   </>
                 )}
@@ -367,7 +367,7 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
 
               <h3 className="text-lg font-semibold text-white mb-2">Cancel PRO Subscription?</h3>
               <p className="text-gray-300 text-sm mb-6">
-                Are you sure you want to cancel your PRO subscription? You'll keep access to all PRO features until the end of your current billing period.
+                Are you sure you want to cancel your PRO subscription? You&apos;ll keep access to all PRO features until the end of your current billing period.
               </p>
 
               {subscriptionStatus.endDate && (
@@ -416,7 +416,7 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                 <>
                   <h3 className="text-lg font-semibold text-white mb-2">Subscription Cancelled</h3>
                   <p className="text-gray-300 text-sm mb-4">
-                    Your PRO subscription has been successfully cancelled. You'll keep full access to all PRO features until{' '}
+                    Your PRO subscription has been successfully cancelled. You&apos;ll keep full access to all PRO features until{' '}
                     {showSuccessMessage.endDate ? (
                       <strong className="text-purple-300">
                         {formatDate(showSuccessMessage.endDate)}

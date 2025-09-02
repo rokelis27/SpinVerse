@@ -102,7 +102,7 @@ export const NarrativeTemplateEditor: React.FC = () => {
               placeholder="Describe the world/setting for your sequence. This helps AI generate more contextual stories..."
             />
             <p className="text-xs text-gray-500 mt-1">
-              {currentSequence.description.length}/500 characters • Be specific about the setting, tone, and themes. E.g., "A cyberpunk city where hackers battle corporate AI"
+              {currentSequence.description.length}/500 characters • Be specific about the setting, tone, and themes. E.g., &quot;A cyberpunk city where hackers battle corporate AI&quot;
             </p>
           </div>
 

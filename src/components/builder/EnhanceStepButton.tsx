@@ -208,7 +208,7 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
 
             <div className="space-y-4">
               <div className="text-sm text-gray-300 mb-4">
-                <strong>"{step.title}"</strong>
+                <strong>&quot;{step.title}&quot;</strong>
                 <br />
                 <span className="text-xs text-gray-400">
                   Current: {step.wheelConfig.segments.length} options
@@ -253,7 +253,7 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
                   <div>
                     <p className="text-xs text-blue-300 font-medium">Smart Context</p>
                     <p className="text-xs text-blue-200">
-                      AI will consider "{currentSequence.name}" theme and previous {stepIndex} steps for contextual improvements.
+                      AI will consider &quot;{currentSequence.name}&quot; theme and previous {stepIndex} steps for contextual improvements.
                     </p>
                   </div>
                 </div>

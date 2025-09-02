@@ -347,7 +347,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
                         </>
                       ) : (
                         <>
-                          When players reach the determiner step, they'll spin once to get a number (1-5). 
+                          When players reach the determiner step, they&apos;ll spin once to get a number (1-5). 
                           Then this step will automatically spin{' '}
                           <span className="text-purple-300 font-medium">that many times</span>
                           {' '}for dynamic, unpredictable storytelling experiences.

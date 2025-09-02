@@ -21,8 +21,8 @@ export function useAuthSync() {
         setUser({
           clerkUserId: user.id,
           email: user.emailAddresses[0]?.emailAddress || '',
-          name: user.fullName || user.firstName || user.username || null,
-          avatarUrl: user.imageUrl || null,
+          name: user.fullName || user.firstName || user.username || undefined,
+          avatarUrl: user.imageUrl || undefined,
         });
       }
     } else if (!isSignedIn && clerkUserId) {

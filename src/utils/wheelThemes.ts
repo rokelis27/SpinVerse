@@ -2,14 +2,6 @@ import { WheelConfig, WheelSegment } from '@/types/wheel';
 
 // Theme color palettes
 export const THEME_COLORS = {
-  'harry-potter': {
-    primary: ['#740001', '#1a472a', '#ffdb00', '#0e1a40'],
-    secondary: ['#8b0000', '#2d5d3d', '#ffd700', '#1a2b5c']
-  },
-  'marvel': {
-    primary: ['#e62429', '#1f3a93', '#00a652', '#f78f1e', '#9b2d7f'],
-    secondary: ['#cc1e22', '#1a3280', '#008a45', '#e67c1a', '#8a2872']
-  },
   'startup': {
     primary: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
     secondary: ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed']
@@ -22,45 +14,6 @@ export const THEME_COLORS = {
 
 // Predefined wheel configurations for different themes
 export const WHEEL_THEMES = {
-  'harry-potter-house': {
-    segments: [
-      { id: 'gryffindor', text: 'Gryffindor', color: '#740001' },
-      { id: 'slytherin', text: 'Slytherin', color: '#1a472a' },
-      { id: 'hufflepuff', text: 'Hufflepuff', color: '#ffdb00', textColor: '#000000' },
-      { id: 'ravenclaw', text: 'Ravenclaw', color: '#0e1a40' }
-    ],
-    size: 400,
-    theme: 'harry-potter' as const
-  },
-  
-  'harry-potter-wand': {
-    segments: [
-      { id: 'holly', text: 'Holly & Phoenix', color: '#8b4513' },
-      { id: 'oak', text: 'Oak & Dragon', color: '#654321' },
-      { id: 'willow', text: 'Willow & Unicorn', color: '#daa520' },
-      { id: 'maple', text: 'Maple & Phoenix', color: '#d2691e' },
-      { id: 'birch', text: 'Birch & Dragon', color: '#f5deb3', textColor: '#000000' },
-      { id: 'pine', text: 'Pine & Unicorn', color: '#228b22' }
-    ],
-    size: 400,
-    theme: 'harry-potter' as const
-  },
-
-  'marvel-powers': {
-    segments: [
-      { id: 'strength', text: 'Super Strength', color: '#e62429' },
-      { id: 'speed', text: 'Super Speed', color: '#ffd700', textColor: '#000000' },
-      { id: 'flight', text: 'Flight', color: '#1f3a93' },
-      { id: 'telepathy', text: 'Telepathy', color: '#9b2d7f' },
-      { id: 'invisibility', text: 'Invisibility', color: '#4b0082' },
-      { id: 'laser', text: 'Laser Vision', color: '#ff4500' },
-      { id: 'healing', text: 'Healing Factor', color: '#00a652' },
-      { id: 'tech', text: 'Tech Genius', color: '#f78f1e' }
-    ],
-    size: 400,
-    theme: 'marvel' as const
-  },
-
   'startup-industry': {
     segments: [
       { id: 'fintech', text: 'FinTech', color: '#3b82f6' },
