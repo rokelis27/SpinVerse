@@ -21,7 +21,8 @@ const nextConfig: NextConfig = {
                 https://checkout.stripe.com 
                 https://maps.googleapis.com
                 https://*.clerk.accounts.dev
-                https://*.clerk.com;
+                https://*.clerk.com
+                https://clerk.spinverse.fun;
               style-src 'self' 'unsafe-inline' 
                 https://fonts.googleapis.com;
               img-src 'self' data: https: blob:
@@ -35,9 +36,15 @@ const nextConfig: NextConfig = {
                 https://checkout.stripe.com
                 https://*.clerk.accounts.dev
                 https://*.clerk.com
+                https://clerk.spinverse.fun
                 https://api.resend.com
                 wss://clerk.com;
-              frame-src 'none';
+              frame-src 'self' 
+                https://js.stripe.com 
+                https://checkout.stripe.com
+                https://*.clerk.accounts.dev
+                https://*.clerk.com
+                https://clerk.spinverse.fun;
               frame-ancestors 'none';
               form-action 'self' https://checkout.stripe.com;
               object-src 'none';
