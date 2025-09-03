@@ -19,27 +19,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if customer already exists with this email
+    // Check if Clerk user already exists with this email (not just Stripe customer)
+    const { clerkClient } = await import('@clerk/nextjs/server');
     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
     let customer;
     
     try {
-      // Search for existing customers with this email
+      // First check if Clerk user exists with this email
+      const clerk = await clerkClient();
+      const existingClerkUsers = await clerk.users.getUserList({
+        emailAddress: [email.trim().toLowerCase()]
+      });
+
+      if (existingClerkUsers.data.length > 0) {
+        // Clerk user exists - they should log in instead
+        return NextResponse.json(
+          { 
+            error: 'EXISTING_EMAIL',
+            message: 'An account with this email address already exists.',
+            details: 'Please sign in to manage your existing subscription.'
+          }, 
+          { status: 409 }
+        );
+      }
+
+      // Check for existing Stripe customers to reuse them
       const existingCustomers = await stripe.customers.list({
         email: email.trim().toLowerCase(),
         limit: 1,
       });
 
       if (existingCustomers.data.length > 0) {
-        // Customer with this email already exists - they should log in instead
-        return NextResponse.json(
-          { 
-            error: 'EXISTING_EMAIL',
-            message: 'An account with this email address already exists.',
-            details: 'If you need help accessing your account, please contact support.'
-          }, 
-          { status: 409 }
-        );
+        // Reuse existing Stripe customer (no Clerk account exists yet)
+        customer = existingCustomers.data[0];
+        console.log(`Reusing existing Stripe customer: ${customer.id} for anonymous upgrade`);
       } else {
         // Create new customer
         customer = await StripeServerOperations.createCustomer({
