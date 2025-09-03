@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { SequenceResult } from '@/types/sequence';
 import { headers } from 'next/headers';
+import * as Sentry from '@sentry/nextjs';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -73,8 +74,16 @@ function checkAnonymousRateLimit(identifier: string): { allowed: boolean; remain
 }
 
 export async function POST(req: NextRequest) {
+  let userMode = 'anonymous';
+  let results: any = null;
+  let themeName: string = '';
+  let themeId: string = '';
+  let isCustomSequence: boolean = false;
+  let sequenceDescription: string = '';
+  
   try {
-    const { results, themeName, themeId, isCustomSequence, sequenceDescription, userMode = 'anonymous' } = await req.json();
+    const requestData = await req.json();
+    ({ results, themeName, themeId, isCustomSequence, sequenceDescription, userMode = 'anonymous' } = requestData);
 
     if (!results || !Array.isArray(results)) {
       return NextResponse.json({ error: 'Invalid results provided' }, { status: 400 });
@@ -216,6 +225,22 @@ export async function POST(req: NextRequest) {
     }, { headers: responseHeaders });
 
   } catch (error) {
+    // Enhanced error tracking with Sentry
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: '/api/generate-story',
+        userMode: userMode || 'anonymous',
+        themeId: themeId || 'unknown'
+      },
+      extra: {
+        resultsCount: results?.length || 0,
+        themeName,
+        isCustomSequence,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+    console.error('Story generation error:', error);
     return NextResponse.json(
       { error: 'Failed to generate story' },
       { status: 500 }

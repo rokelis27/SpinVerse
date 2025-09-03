@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { StripeServerOperations } from '@/lib/stripe';
 import { clerkClient } from '@clerk/nextjs/server';
+import * as Sentry from '@sentry/nextjs';
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
@@ -124,6 +125,19 @@ export async function POST(request: NextRequest) {
               await sendWelcomeEmail(email, name, invitation.url);
               
             } catch (error) {
+              // Track critical Clerk invitation failures
+              Sentry.captureException(error, {
+                tags: {
+                  endpoint: '/api/stripe/webhook',
+                  event_type: 'checkout.session.completed',
+                  error_type: 'clerk_invitation_failed'
+                },
+                extra: {
+                  sessionId: session.id,
+                  customerEmail: email,
+                  stripeCustomerId: session.customer
+                }
+              });
               console.error('❌ Failed to create Clerk invitation:', error);
             }
           } else {
