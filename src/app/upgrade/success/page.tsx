@@ -145,14 +145,8 @@ function UpgradeSuccessContent() {
               onClick={handleContinue}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Start Creating Amazing Stories
+              I have checked my email!
             </button>
-
-            {sessionId && (
-              <p className="text-xs text-white/50">
-                Session ID: {sessionId.substring(0, 20)}...
-              </p>
-            )}
           </div>
         )}
       </div>

@@ -174,12 +174,6 @@ function CompleteSignupContent() {
           >
             {isProcessing ? 'Creating Account...' : 'Complete Setup & Access PRO Features'}
           </button>
-
-          {sessionId && (
-            <p className="text-xs text-white/50 text-center">
-              Payment Session: {sessionId.substring(0, 20)}...
-            </p>
-          )}
         </form>
       </div>
     </div>
