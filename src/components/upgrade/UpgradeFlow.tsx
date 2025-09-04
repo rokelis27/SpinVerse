@@ -13,6 +13,7 @@ import {
   isValidEmail 
 } from '@/lib/stripe';
 import { migrateAnonymousToAccount, MigrationResult } from '@/lib/dataMigration';
+import { useTermsModal } from '@/components/providers/TermsModalProvider';
 
 interface UpgradeFlowProps {
   isOpen: boolean;
@@ -39,10 +40,13 @@ interface MigrationState {
 
 export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }: UpgradeFlowProps) {
   const { user, isLoaded: clerkLoaded } = useUser();
+  const { openTerms } = useTermsModal();
   const [currentStep, setCurrentStep] = useState<FlowStep>('benefits');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [termsError, setTermsError] = useState('');
   
   // Determine if user is logged in
   const isLoggedIn = clerkLoaded && !!user;
@@ -159,13 +163,21 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
 
   // Handle email step (for anonymous users)
   const handleEmailSubmit = useCallback(async () => {
+    // Validate email
     const emailValidationError = validateEmail(email);
     if (emailValidationError) {
       setEmailError(emailValidationError);
       return;
     }
 
+    // Validate terms & conditions
+    if (!agreedToTerms) {
+      setTermsError('You must agree to the Terms & Conditions to continue');
+      return;
+    }
+
     setEmailError('');
+    setTermsError('');
     setPaymentState(prev => ({ ...prev, isProcessing: true, error: null }));
 
     try {
@@ -242,7 +254,7 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
         error: error.message || 'Failed to create checkout session. Please try again.',
       }));
     }
-  }, [email, name, triggerFeature, anonymousStore, getAnalyticsData]);
+  }, [email, name, agreedToTerms, triggerFeature, anonymousStore, getAnalyticsData, validateEmail]);
 
   // Handle payment processing
   const handlePaymentSubmit = useCallback(async (event: React.FormEvent) => {
@@ -499,6 +511,43 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
                     placeholder="Enter your name"
                     maxLength={100}
                   />
+                </div>
+
+                {/* Terms & Conditions Checkbox */}
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex items-center h-5 mt-1">
+                      <input
+                        id="terms-checkbox"
+                        type="checkbox"
+                        checked={agreedToTerms}
+                        onChange={(e) => {
+                          setAgreedToTerms(e.target.checked);
+                          if (termsError) setTermsError('');
+                        }}
+                        className={`w-4 h-4 rounded border-2 bg-gray-800 focus:ring-2 focus:ring-offset-0 transition-colors ${
+                          termsError 
+                            ? 'border-red-500 focus:ring-red-500' 
+                            : 'border-gray-600 focus:ring-purple-500 text-purple-600'
+                        }`}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label htmlFor="terms-checkbox" className="text-sm text-gray-300 leading-relaxed">
+                        I agree to the{' '}
+                        <button
+                          type="button"
+                          onClick={openTerms}
+                          className="text-purple-400 hover:text-purple-300 underline underline-offset-2 transition-colors"
+                        >
+                          Terms & Conditions
+                        </button>{' '}
+                      </label>
+                      {termsError && (
+                        <p className="text-red-400 text-xs mt-1">{termsError}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
 

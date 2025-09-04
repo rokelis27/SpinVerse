@@ -3,7 +3,9 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Geist, Geist_Mono, Orbitron, Pacifico } from "next/font/google";
 import { UpgradeModalProvider } from '@/components/providers/UpgradeModalProvider';
 import { UserProvider } from '@/components/providers/UserProvider';
+import { TermsModalProvider } from '@/components/providers/TermsModalProvider';
 import { Analytics } from '@vercel/analytics/react';
+import { Footer } from '@/components/ui/Footer';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,9 +47,12 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${pacifico.variable} antialiased`}
         >
           <UserProvider>
-            <UpgradeModalProvider>
-              {children}
-            </UpgradeModalProvider>
+            <TermsModalProvider>
+              <UpgradeModalProvider>
+                {children}
+                <Footer />
+              </UpgradeModalProvider>
+            </TermsModalProvider>
           </UserProvider>
           <Analytics />
         </body>

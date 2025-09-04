@@ -36,7 +36,7 @@ export const STRIPE_PRODUCTS = {
     name: 'SpinVerse PRO',
     description: '100 saved sequences, 50 daily AI stories, and premium features',
     amount: 399, // €3.99/mo in cents
-    currency: 'usd',
+    currency: 'eur',
     interval: 'month' as const,
     features: [
       '100 saved sequences (vs 3 free)',
