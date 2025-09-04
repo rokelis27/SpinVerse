@@ -253,7 +253,7 @@ export const EnhanceStepButton: React.FC<EnhanceStepButtonProps> = ({ step, step
                   <div>
                     <p className="text-xs text-blue-300 font-medium">Smart Context</p>
                     <p className="text-xs text-blue-200">
-                      AI will consider &quot;{currentSequence.name}&quot; theme and previous {stepIndex} steps for contextual improvements.
+                      SpinVerse will consider &quot;{currentSequence.name}&quot; theme and previous {stepIndex} steps for contextual improvements.
                     </p>
                   </div>
                 </div>

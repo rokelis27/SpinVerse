@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { ClerkProvider } from '@clerk/nextjs';
 import { Geist, Geist_Mono, Orbitron, Pacifico } from "next/font/google";
 import { UpgradeModalProvider } from '@/components/providers/UpgradeModalProvider';
@@ -46,6 +47,13 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${pacifico.variable} antialiased`}
         >
+          {/* Termly Consent Management Platform */}
+          <Script
+            src="https://app.termly.io/embed.min.js"
+            data-auto-block="on"
+            data-website-uuid="a2d3cedf-857c-48bf-9994-a70c4d3560cc"
+            strategy="afterInteractive"
+          />
           <UserProvider>
             <TermsModalProvider>
               <UpgradeModalProvider>
