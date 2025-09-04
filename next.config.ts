@@ -41,7 +41,8 @@ const nextConfig: NextConfig = {
                 https://api.resend.com
                 wss://clerk.com
                 https://*.sentry.io
-                https://o4509957944377344.ingest.de.sentry.io;
+                https://o4509957944377344.ingest.de.sentry.io
+                https://vitals.vercel-analytics.com;
               worker-src 'self' blob:;
               frame-src 'self' 
                 https://js.stripe.com 
