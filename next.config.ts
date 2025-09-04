@@ -44,7 +44,8 @@ const nextConfig: NextConfig = {
                 https://*.sentry.io
                 https://o4509957944377344.ingest.de.sentry.io
                 https://vitals.vercel-analytics.com
-                https://app.termly.io;
+                https://app.termly.io
+                https://us.consent.api.termly.io;
               worker-src 'self' blob:;
               frame-src 'self' 
                 https://js.stripe.com 
