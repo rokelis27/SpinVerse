@@ -20,7 +20,7 @@ export const NarrativeTemplateEditor: React.FC = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">Story Settings</h3>
-            <p className="text-sm text-gray-400">Configure how AI will generate your stories</p>
+            <p className="text-sm text-gray-400">Configure how SpinVerse will generate your stories</p>
           </div>
         </div>
         

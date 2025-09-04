@@ -23,7 +23,8 @@ const nextConfig: NextConfig = {
                 https://maps.googleapis.com
                 https://*.clerk.accounts.dev
                 https://*.clerk.com
-                https://clerk.spinverse.fun;
+                https://clerk.spinverse.fun
+                https://app.termly.io;
               style-src 'self' 'unsafe-inline' 
                 https://fonts.googleapis.com;
               img-src 'self' data: https: blob:
@@ -42,7 +43,8 @@ const nextConfig: NextConfig = {
                 wss://clerk.com
                 https://*.sentry.io
                 https://o4509957944377344.ingest.de.sentry.io
-                https://vitals.vercel-analytics.com;
+                https://vitals.vercel-analytics.com
+                https://app.termly.io;
               worker-src 'self' blob:;
               frame-src 'self' 
                 https://js.stripe.com 
