@@ -59,8 +59,9 @@ export default function RootLayout({
           {/* Termly Consent Management Platform */}
           <Script
             src="https://app.termly.io/embed.min.js"
-            data-auto-block="on"
+            data-auto-block="functional"
             data-website-uuid="a2d3cedf-857c-48bf-9994-a70c4d3560cc"
+            data-allow-list="*.clerk.accounts.dev,*.clerk.dev,accounts.dev"
             strategy="afterInteractive"
           />
           <UserProvider>
