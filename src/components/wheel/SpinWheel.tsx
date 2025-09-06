@@ -26,6 +26,9 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
   const lastFrameTimeRef = useRef<number>(0);
   const pulsePhaseRef = useRef<number>(0);
   const offscreenCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const staticWheelCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const segmentGradientsRef = useRef<CanvasGradient[]>([]);
+  const segmentPathsRef = useRef<Path2D[]>([]);
   const [physics, setPhysics] = useState<WheelPhysics>({
     currentAngle: 0,
     velocity: 0,
@@ -95,6 +98,104 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
       return { bgColor, textColor };
     });
   }, [config.segments]);
+
+  // Pre-render static wheel components for performance optimization
+  const createStaticWheel = useCallback(() => {
+    if (!staticWheelCanvasRef.current) {
+      staticWheelCanvasRef.current = document.createElement('canvas');
+    }
+    
+    const staticCanvas = staticWheelCanvasRef.current;
+    const ctx = staticCanvas.getContext('2d');
+    if (!ctx) return;
+
+    const size = config.size || 400;
+    staticCanvas.width = size;
+    staticCanvas.height = size;
+    
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = Math.min(centerX, centerY) - 20;
+
+    // Clear and rebuild cached elements
+    segmentGradientsRef.current = [];
+    segmentPathsRef.current = [];
+
+    // Pre-create all gradients and paths for segments
+    let cumulativeAngle = 0;
+    config.segments.forEach((_, index) => {
+      const startAngle = cumulativeAngle;
+      const endAngle = startAngle + segmentAngles[index];
+      cumulativeAngle = endAngle;
+      
+      const colors = segmentColors[index];
+
+      // Create and cache gradient (expensive operation)
+      const gradient = ctx.createRadialGradient(centerX, centerY, radius * 0.2, centerX, centerY, radius);
+      gradient.addColorStop(0, `${colors.bgColor}ff`);
+      gradient.addColorStop(0.4, colors.bgColor);
+      gradient.addColorStop(0.8, `${colors.bgColor}cc`);
+      gradient.addColorStop(1, `${colors.bgColor}66`);
+      segmentGradientsRef.current[index] = gradient;
+
+      // Create and cache path (enables hardware acceleration)
+      const path = new Path2D();
+      path.arc(centerX, centerY, radius, startAngle, endAngle);
+      path.lineTo(centerX, centerY);
+      path.closePath();
+      segmentPathsRef.current[index] = path;
+    });
+
+    // Render static wheel elements to offscreen canvas
+    ctx.save();
+    ctx.shadowColor = 'rgba(99, 102, 241, 0.6)';
+    ctx.shadowBlur = 25;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 8;
+
+    // Batch draw all segments using cached elements
+    config.segments.forEach((_, index) => {
+      const colors = segmentColors[index];
+      const gradient = segmentGradientsRef.current[index];
+      const path = segmentPathsRef.current[index];
+
+      // Fast fill and stroke using cached path
+      ctx.fillStyle = gradient;
+      ctx.fill(path);
+      ctx.strokeStyle = `${colors.bgColor}aa`;
+      ctx.lineWidth = 3;
+      ctx.stroke(path);
+    });
+
+    ctx.shadowColor = 'transparent';
+    ctx.restore();
+
+    // Pre-render all text (most expensive operation)
+    let textCumulativeAngle = 0;
+    config.segments.forEach((segment, index) => {
+      const startAngle = textCumulativeAngle;
+      const endAngle = startAngle + segmentAngles[index];
+      textCumulativeAngle = endAngle;
+      
+      const colors = segmentColors[index];
+      const textAngle = startAngle + segmentAngles[index] / 2;
+      
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(textAngle);
+      ctx.fillStyle = colors.textColor;
+      ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Minimal shadow for performance
+      ctx.shadowColor = colors.bgColor;
+      ctx.shadowBlur = 2;
+      ctx.fillText(segment.text, radius * 0.7, 0);
+      ctx.restore();
+    });
+
+  }, [config.segments, config.size, segmentAngles, segmentColors]);
 
   // Helper functions for drawing wheel parts
   const drawPointer = useCallback((ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number) => {
@@ -174,7 +275,7 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
     ctx.shadowBlur = 0;
   }, []);
 
-  // Optimized wheel drawing function
+  // Highly optimized wheel drawing function using cached elements
   const drawWheel = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
@@ -184,79 +285,50 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Save context for rotation
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(physics.currentAngle);
-
-    // Enhanced gaming-style shadow with neon glow
-    ctx.shadowColor = 'rgba(99, 102, 241, 0.6)';
-    ctx.shadowBlur = 25;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 8;
-
-    // Draw segments with proportional angles - optimized with pre-computed colors
-    let cumulativeAngle = 0;
-    config.segments.forEach((segment, index) => {
-      const startAngle = cumulativeAngle;
-      const endAngle = startAngle + segmentAngles[index];
-      cumulativeAngle = endAngle;
-      
-      const colors = segmentColors[index];
-
-      // Create enhanced cyberpunk gradient - simplified for performance
-      const gradient = ctx.createRadialGradient(0, 0, radius * 0.2, 0, 0, radius);
-      gradient.addColorStop(0, `${colors.bgColor}ff`);
-      gradient.addColorStop(0.4, colors.bgColor);
-      gradient.addColorStop(0.8, `${colors.bgColor}cc`);
-      gradient.addColorStop(1, `${colors.bgColor}66`);
-
-      // Draw segment
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, startAngle, endAngle);
-      ctx.lineTo(0, 0);
-      ctx.fillStyle = gradient;
-      ctx.fill();
-
-      // Enhanced neon border effect - simplified for performance
-      ctx.strokeStyle = `${colors.bgColor}aa`;
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      
-      // Add inner glow border
-      ctx.beginPath();
-      ctx.arc(0, 0, radius - 5, startAngle, endAngle);
-      ctx.lineTo(0, 0);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Optimized text rendering
+    // Use pre-rendered static wheel if available
+    if (staticWheelCanvasRef.current) {
       ctx.save();
-      const textAngle = startAngle + segmentAngles[index] / 2;
-      ctx.rotate(textAngle);
-      ctx.fillStyle = colors.textColor;
-      ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+      ctx.translate(centerX, centerY);
+      ctx.rotate(physics.currentAngle);
       
-      // Simplified text glow - only one pass for performance
-      ctx.shadowColor = colors.bgColor;
-      ctx.shadowBlur = 6;
-      ctx.fillText(segment.text, radius * 0.7, 0);
-      ctx.shadowBlur = 0;
+      // Draw the entire pre-rendered wheel in one operation
+      ctx.drawImage(
+        staticWheelCanvasRef.current, 
+        -centerX, -centerY
+      );
       
       ctx.restore();
-    });
+    } else {
+      // Fallback to manual drawing if static canvas not ready
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(physics.currentAngle);
 
-    // Reset shadow for other elements
-    ctx.shadowColor = 'transparent';
-    ctx.restore();
+      // Use cached gradients and paths for ultra-fast rendering
+      if (segmentGradientsRef.current.length === config.segments.length) {
+        config.segments.forEach((segment, index) => {
+          const gradient = segmentGradientsRef.current[index];
+          const path = segmentPathsRef.current[index];
+          const colors = segmentColors[index];
 
-    // Draw static elements using helper functions
+          if (gradient && path) {
+            // Ultra-fast drawing using cached elements
+            ctx.fillStyle = gradient;
+            ctx.fill(path);
+            ctx.strokeStyle = `${colors.bgColor}aa`;
+            ctx.lineWidth = 3;
+            ctx.stroke(path);
+          }
+        });
+      }
+
+      ctx.restore();
+    }
+
+    // Draw static elements using helper functions (these are minimal)
     drawPointer(ctx, centerX, centerY, radius);
     drawWheelCenter(ctx, centerX, centerY, radius, currentTime);
-  }, [physics.currentAngle, config.segments, segmentAngles, segmentColors, drawPointer, drawWheelCenter]);
+  }, [physics.currentAngle, config.segments, segmentColors, drawPointer, drawWheelCenter]);
 
   // Optimized animation loop - eliminated Date.now() calls
   const animate = useCallback(() => {
@@ -424,7 +496,7 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
     // Future: implement touch handling with proper passive event management
   }, []);
 
-  // Setup canvas and start animation
+  // Setup canvas and create static wheel for performance
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -437,9 +509,17 @@ const SpinWheelComponent: React.FC<SpinWheelProps> = ({
     canvas.width = size;
     canvas.height = size;
 
+    // Create static wheel for performance optimization
+    createStaticWheel();
+
     // Draw initial wheel
     drawWheel(ctx, canvas);
-  }, [config.size, drawWheel]);
+  }, [config.size, config.segments, createStaticWheel, drawWheel]);
+
+  // Recreate static wheel when segments change significantly
+  useEffect(() => {
+    createStaticWheel();
+  }, [createStaticWheel]);
 
   // Start animation when spinning or idle rotating
   useEffect(() => {

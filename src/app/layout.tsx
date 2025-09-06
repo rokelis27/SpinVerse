@@ -42,7 +42,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: undefined,
+        variables: { colorPrimary: '#8B5CF6' }
+      }}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+    >
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${pacifico.variable} antialiased`}

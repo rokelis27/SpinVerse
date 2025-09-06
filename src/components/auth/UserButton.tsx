@@ -16,6 +16,7 @@ export function UserButton() {
   const { openSignIn } = useClerk();
   const { openModal } = useUpgradeModal();
 
+
   if (!isLoaded) {
     return (
       <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse" />

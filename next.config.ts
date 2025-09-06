@@ -24,7 +24,8 @@ const nextConfig: NextConfig = {
                 https://*.clerk.accounts.dev
                 https://*.clerk.com
                 https://clerk.spinverse.fun
-                https://app.termly.io;
+                https://app.termly.io
+                https://va.vercel-scripts.com;
               style-src 'self' 'unsafe-inline' 
                 https://fonts.googleapis.com;
               img-src 'self' data: https: blob:
@@ -39,6 +40,7 @@ const nextConfig: NextConfig = {
                 https://*.clerk.accounts.dev
                 https://*.clerk.com
                 https://clerk.spinverse.fun
+                https://clerk-telemetry.com
                 https://api.resend.com
                 wss://clerk.com
                 https://*.sentry.io
