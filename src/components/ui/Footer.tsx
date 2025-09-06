@@ -1,11 +1,12 @@
 'use client';
 
-import { useTermsModal, useCookieModal } from '@/components/providers/TermsModalProvider';
+import { useTermsModal, useCookieModal, usePrivacyModal } from '@/components/providers/TermsModalProvider';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { openTerms } = useTermsModal();
   const { openCookies } = useCookieModal();
+  const { openPrivacy } = usePrivacyModal();
 
   return (
     <footer className="w-full py-8 mt-2 border-t border-gray-800/20 bg-gradient-to-t from-gray-900/50 to-transparent backdrop-blur-sm">
@@ -24,12 +25,18 @@ export function Footer() {
           </div>
 
           {/* Center - Links */}
-          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
+          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <button
               className="text-gray-400 hover:text-white text-sm px-3 py-2 rounded-md hover:bg-gray-800/50 transition-all duration-200"
               onClick={openTerms}
             >
               Terms and Conditions
+            </button>
+            <button
+              className="text-gray-400 hover:text-white text-sm px-3 py-2 rounded-md hover:bg-gray-800/50 transition-all duration-200"
+              onClick={openPrivacy}
+            >
+              Privacy Policy
             </button>
             <button
               className="text-gray-400 hover:text-white text-sm px-3 py-2 rounded-md hover:bg-gray-800/50 transition-all duration-200"
