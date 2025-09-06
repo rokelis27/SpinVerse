@@ -107,9 +107,11 @@ export function UserButton() {
         </button>
         
         <ClerkUserButton 
+          showName={false}
           appearance={{
             elements: {
-              avatarBox: 'w-10 h-10',
+              avatarBox: 'w-10 h-10 ring-2 ring-purple-500/30 bg-gradient-to-r from-purple-500 to-pink-500',
+              avatarImage: 'w-full h-full object-cover rounded-full',
               userButtonPopoverCard: 'bg-gray-900/95 backdrop-blur-sm border border-gray-800 shadow-2xl',
               userButtonPopoverActionButton: 'text-gray-300 hover:text-white hover:bg-gray-800/50',
               userButtonPopoverActionButtonText: 'text-gray-300',
