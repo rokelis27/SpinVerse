@@ -832,12 +832,22 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'Where does your detective story begin?',
       wheelConfig: {
         segments: [
-          { id: 'neo-tokyo', text: 'Neo-Tokyo', color: '#FF1493', rarity: 'uncommon', weight: 15 },
-          { id: 'victorian-london', text: 'Victorian London', color: '#8B4513', rarity: 'rare', weight: 10 },
-          { id: 'modern-new-york', text: 'Modern New York', color: '#4169E1', rarity: 'common', weight: 20 },
-          { id: 'coastal-town', text: 'Small Coastal Town', color: '#20B2AA', rarity: 'common', weight: 18 },
-          { id: 'las-vegas', text: 'Las Vegas', color: '#FFD700', rarity: 'uncommon', weight: 12 },
-          { id: 'new-orleans', text: 'New Orleans', color: '#9370DB', rarity: 'uncommon', weight: 25 },
+          { id: 'neo-tokyo', text: 'Neo-Tokyo', color: '#FF1493', rarity: 'uncommon', weight: 10 },
+          { id: 'victorian-london', text: 'Victorian London', color: '#8B4513', rarity: 'rare', weight: 6 },
+          { id: 'modern-new-york', text: 'Modern New York', color: '#4169E1', rarity: 'common', weight: 12 },
+          { id: 'coastal-town', text: 'Small Coastal Town', color: '#20B2AA', rarity: 'common', weight: 11 },
+          { id: 'las-vegas', text: 'Las Vegas', color: '#FFD700', rarity: 'uncommon', weight: 8 },
+          { id: 'new-orleans', text: 'New Orleans', color: '#9370DB', rarity: 'uncommon', weight: 10 },
+          { id: 'chicago', text: 'Chicago', color: '#DC143C', rarity: 'common', weight: 11 },
+          { id: 'miami', text: 'Miami', color: '#FF69B4', rarity: 'uncommon', weight: 9 },
+          { id: 'detroit', text: 'Detroit', color: '#2F4F4F', rarity: 'common', weight: 10 },
+          { id: 'seattle', text: 'Seattle', color: '#4682B4', rarity: 'common', weight: 9 },
+          { id: 'mountain-town', text: 'Remote Mountain Town', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          { id: 'desert-city', text: 'Desert Border City', color: '#CD853F', rarity: 'uncommon', weight: 7 },
+          { id: 'industrial-city', text: 'Industrial Rust Belt City', color: '#696969', rarity: 'common', weight: 9 },
+          { id: 'college-town', text: 'University College Town', color: '#228B22', rarity: 'uncommon', weight: 8 },
+          { id: 'resort-destination', text: 'Tourist Resort Destination', color: '#FF6347', rarity: 'uncommon', weight: 7 },
+          { id: 'farming-community', text: 'Rural Farming Community', color: '#9ACD32', rarity: 'common', weight: 8 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -854,12 +864,20 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'What horrific scene greets you this morning?',
       wheelConfig: {
         segments: [
-          { id: 'locked-mansion', text: 'Locked Mansion Murder', color: '#8B0000', rarity: 'uncommon', weight: 18 },
-          { id: 'serial-killer', text: 'Serial Killer\'s Latest', color: '#DC143C', rarity: 'rare', weight: 12 },
-          { id: 'art-heist', text: 'High-Stakes Heist', color: '#B8860B', rarity: 'uncommon', weight: 15 },
-          { id: 'corporate-murder', text: 'Corporate Executive Found Dead', color: '#2F4F2F', rarity: 'common', weight: 20 },
-          { id: 'missing-child', text: 'Missing Child Case', color: '#FF69B4', rarity: 'common', weight: 20 },
-          { id: 'cold-case', text: 'Cold Case Reopened', color: '#4682B4', rarity: 'uncommon', weight: 15 },
+          { id: 'locked-mansion', text: 'Locked Mansion Murder', color: '#8B0000', rarity: 'uncommon', weight: 12 },
+          { id: 'serial-killer', text: 'Serial Killer\'s Latest', color: '#DC143C', rarity: 'rare', weight: 8 },
+          { id: 'art-heist', text: 'High-Stakes Art Heist', color: '#B8860B', rarity: 'uncommon', weight: 10 },
+          { id: 'corporate-murder', text: 'Corporate Executive Found Dead', color: '#2F4F2F', rarity: 'common', weight: 12 },
+          { id: 'missing-child', text: 'Missing Child Case', color: '#FF69B4', rarity: 'common', weight: 12 },
+          { id: 'cold-case', text: 'Cold Case Reopened', color: '#4682B4', rarity: 'uncommon', weight: 10 },
+          { id: 'bank-heist', text: 'Bank Heist Gone Wrong', color: '#FFD700', rarity: 'uncommon', weight: 10 },
+          { id: 'witness-protection', text: 'Witness Protection Murder', color: '#2F4F4F', rarity: 'rare', weight: 6 },
+          { id: 'political-assassination', text: 'Political Assassination', color: '#800080', rarity: 'rare', weight: 6 },
+          { id: 'art-forgery-ring', text: 'International Art Forgery Ring', color: '#9370DB', rarity: 'rare', weight: 5 },
+          { id: 'human-trafficking', text: 'Human Trafficking Network', color: '#8B0000', rarity: 'uncommon', weight: 8 },
+          { id: 'cybercrime', text: 'High-Tech Cybercrime', color: '#4169E1', rarity: 'uncommon', weight: 9 },
+          { id: 'domestic-terrorism', text: 'Domestic Terrorism Plot', color: '#DC143C', rarity: 'rare', weight: 4 },
+          { id: 'celebrity-stalker', text: 'Celebrity Stalker Case', color: '#FF1493', rarity: 'uncommon', weight: 8 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -876,12 +894,102 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'What\'s your detective superpower?',
       wheelConfig: {
         segments: [
-          { id: 'forensic-genius', text: 'Forensic Genius', color: '#E6E6FA', rarity: 'uncommon', weight: 18 },
-          { id: 'psychology-master', text: 'Psychology Master', color: '#9370DB', rarity: 'uncommon', weight: 16 },
-          { id: 'tech-detective', text: 'Tech Detective', color: '#4169E1', rarity: 'rare', weight: 12 },
-          { id: 'street-veteran', text: 'Street Veteran', color: '#A0522D', rarity: 'common', weight: 22 },
-          { id: 'by-the-book', text: 'By-the-Book Professional', color: '#228B22', rarity: 'common', weight: 20 },
-          { id: 'undercover-specialist', text: 'Undercover Specialist', color: '#2F2F2F', rarity: 'rare', weight: 12 },
+          { id: 'forensic-genius', text: 'Forensic Genius', color: '#E6E6FA', rarity: 'uncommon', weight: 12 },
+          { id: 'psychology-master', text: 'Psychology Master', color: '#9370DB', rarity: 'uncommon', weight: 11 },
+          { id: 'tech-detective', text: 'Tech Detective', color: '#4169E1', rarity: 'rare', weight: 8 },
+          { id: 'street-veteran', text: 'Street Veteran', color: '#A0522D', rarity: 'common', weight: 14 },
+          { id: 'by-the-book', text: 'By-the-Book Professional', color: '#228B22', rarity: 'common', weight: 13 },
+          { id: 'undercover-specialist', text: 'Undercover Specialist', color: '#2F2F2F', rarity: 'rare', weight: 8 },
+          { id: 'homicide-specialist', text: 'Homicide Specialist', color: '#8B0000', rarity: 'uncommon', weight: 10 },
+          { id: 'cold-case-expert', text: 'Cold Case Expert', color: '#4682B4', rarity: 'uncommon', weight: 9 },
+          { id: 'financial-crimes', text: 'Financial Crimes Expert', color: '#FFD700', rarity: 'uncommon', weight: 8 },
+          { id: 'gang-specialist', text: 'Gang Task Force Specialist', color: '#DC143C', rarity: 'uncommon', weight: 7 },
+          { id: 'behavioral-analyst', text: 'Behavioral Analyst', color: '#800080', rarity: 'rare', weight: 6 },
+          { id: 'narcotics-detective', text: 'Narcotics Detective', color: '#228B22', rarity: 'common', weight: 9 },
+          { id: 'cybercrime-expert', text: 'Cybercrime Expert', color: '#00CED1', rarity: 'rare', weight: 5 },
+          { id: 'rookie-prodigy', text: 'Rookie Prodigy', color: '#FF69B4', rarity: 'uncommon', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'initial-evidence',
+    },
+
+    // Step 4: Initial Evidence Collection
+    {
+      id: 'initial-evidence',
+      title: 'Initial Evidence Discovery',
+      description: 'Your first sweep of the crime scene reveals crucial evidence...',
+      wheelConfig: {
+        segments: [
+          { id: 'dna-evidence', text: 'DNA Evidence Found', color: '#E6E6FA', rarity: 'common', weight: 15 },
+          { id: 'fingerprints', text: 'Clear Fingerprints', color: '#4682B4', rarity: 'common', weight: 14 },
+          { id: 'murder-weapon', text: 'Murder Weapon Discovered', color: '#8B0000', rarity: 'uncommon', weight: 12 },
+          { id: 'digital-traces', text: 'Digital Footprints', color: '#4169E1', rarity: 'uncommon', weight: 11 },
+          { id: 'witness-statement', text: 'Key Witness Statement', color: '#32CD32', rarity: 'common', weight: 13 },
+          { id: 'security-footage', text: 'Security Camera Footage', color: '#2F2F2F', rarity: 'uncommon', weight: 10 },
+          { id: 'financial-records', text: 'Suspicious Financial Records', color: '#FFD700', rarity: 'uncommon', weight: 9 },
+          { id: 'threatening-letters', text: 'Threatening Letters/Messages', color: '#DC143C', rarity: 'common', weight: 12 },
+          { id: 'personal-belongings', text: 'Victim\'s Personal Items', color: '#9370DB', rarity: 'common', weight: 11 },
+          { id: 'no-evidence', text: 'Scene Suspiciously Clean', color: '#696969', rarity: 'rare', weight: 6 },
+          { id: 'planted-evidence', text: 'Evidence Seems Planted', color: '#FF4500', rarity: 'rare', weight: 5 },
+          { id: 'multiple-scenes', text: 'Multiple Crime Scenes Found', color: '#8B008B', rarity: 'rare', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'first-lead-investigation',
+    },
+
+    // Step 5: First Lead Investigation
+    {
+      id: 'first-lead-investigation',
+      title: 'Following Your First Lead',
+      description: 'The evidence points to a specific direction. Your investigation reveals...',
+      wheelConfig: {
+        segments: [
+          { id: 'secret-affair', text: 'Victim\'s Secret Affair', color: '#FF1493', rarity: 'common', weight: 14 },
+          { id: 'financial-motive', text: 'Major Financial Motive', color: '#228B22', rarity: 'common', weight: 15 },
+          { id: 'blackmail-scheme', text: 'Elaborate Blackmail Scheme', color: '#800080', rarity: 'uncommon', weight: 12 },
+          { id: 'professional-hit', text: 'Professional Assassination', color: '#2F2F2F', rarity: 'rare', weight: 8 },
+          { id: 'family-secrets', text: 'Dark Family Secrets', color: '#8B0000', rarity: 'uncommon', weight: 11 },
+          { id: 'business-rivalry', text: 'Deadly Business Rivalry', color: '#4682B4', rarity: 'common', weight: 13 },
+          { id: 'witness-intimidation', text: 'Witness Intimidation Pattern', color: '#DC143C', rarity: 'uncommon', weight: 10 },
+          { id: 'drug-connection', text: 'Drug Trade Connection', color: '#228B22', rarity: 'uncommon', weight: 9 },
+          { id: 'political-conspiracy', text: 'Political Conspiracy', color: '#4B0082', rarity: 'rare', weight: 6 },
+          { id: 'cult-involvement', text: 'Religious Cult Involvement', color: '#8B008B', rarity: 'rare', weight: 5 },
+          { id: 'identity-theft', text: 'Stolen Identity Discovery', color: '#FF4500', rarity: 'uncommon', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'investigation-obstacle',
+    },
+
+    // Step 6: Investigation Obstacle
+    {
+      id: 'investigation-obstacle',
+      title: 'Major Investigation Obstacle',
+      description: 'Just when you think you\'re making progress, you encounter...',
+      wheelConfig: {
+        segments: [
+          { id: 'corrupt-officials', text: 'Corrupt Officials Block You', color: '#8B0000', rarity: 'uncommon', weight: 14 },
+          { id: 'evidence-disappears', text: 'Key Evidence Disappears', color: '#2F2F2F', rarity: 'uncommon', weight: 13 },
+          { id: 'witness-murdered', text: 'Key Witness Murdered', color: '#DC143C', rarity: 'rare', weight: 10 },
+          { id: 'false-confession', text: 'Someone Confesses Falsely', color: '#9370DB', rarity: 'uncommon', weight: 12 },
+          { id: 'media-interference', text: 'Media Circus Interference', color: '#FF4500', rarity: 'common', weight: 15 },
+          { id: 'jurisdiction-battle', text: 'Jurisdiction Battle', color: '#4682B4', rarity: 'common', weight: 14 },
+          { id: 'superior-pressure', text: 'Pressure from Superiors', color: '#800080', rarity: 'common', weight: 13 },
+          { id: 'victim-family-lies', text: 'Victim\'s Family Lies', color: '#B8860B', rarity: 'uncommon', weight: 11 },
+          { id: 'federal-takeover', text: 'Federal Agency Takeover', color: '#191970', rarity: 'rare', weight: 7 },
+          { id: 'personal-threat', text: 'Personal Death Threat', color: '#8B0000', rarity: 'rare', weight: 6 },
+          { id: 'lawyer-obstruction', text: 'High-Powered Lawyer Obstruction', color: '#2F4F4F', rarity: 'uncommon', weight: 9 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -891,7 +999,7 @@ const detectiveMysteryTheme: SequenceTheme = {
       defaultNextStep: 'suspect-count-determiner',
     },
 
-    // Step 4A: Suspect Count Determiner (System-Generated)
+    // Step 7A: Suspect Count Determiner (System-Generated)
     {
       id: 'suspect-count-determiner',
       title: 'Suspect Count Determiner',
@@ -962,6 +1070,20 @@ const detectiveMysteryTheme: SequenceTheme = {
           { id: 'victim-double', text: 'Victim\'s Body Double', color: '#FFD700', rarity: 'legendary', weight: 2 },
           { id: 'identical-twin', text: 'Secret Identical Twin', color: '#FF4500', rarity: 'legendary', weight: 2 },
           { id: 'witness', text: 'Key Witness', color: '#32CD32', rarity: 'uncommon', weight: 10 },
+          
+          // Additional Suspects - Professional/Medical  
+          { id: 'corrupt-judge', text: 'Corrupt Judge', color: '#2F4F2F', rarity: 'rare', weight: 4 },
+          { id: 'undercover-agent', text: 'Undercover Federal Agent', color: '#191970', rarity: 'rare', weight: 5 },
+          { id: 'victim-therapist', text: 'Victim\'s Therapist', color: '#9370DB', rarity: 'uncommon', weight: 7 },
+          { id: 'blackmail-victim', text: 'Blackmail Victim', color: '#800080', rarity: 'uncommon', weight: 8 },
+          { id: 'witness-protection-person', text: 'Person in Witness Protection', color: '#4682B4', rarity: 'rare', weight: 6 },
+          { id: 'foreign-operative', text: 'Foreign Intelligence Operative', color: '#8B008B', rarity: 'rare', weight: 4 },
+          { id: 'plastic-surgeon', text: 'Plastic Surgeon', color: '#FF69B4', rarity: 'uncommon', weight: 6 },
+          { id: 'insurance-investigator', text: 'Insurance Investigator', color: '#4169E1', rarity: 'uncommon', weight: 7 },
+          { id: 'victim-doppelganger', text: 'Victim\'s Doppelganger', color: '#FF4500', rarity: 'legendary', weight: 3 },
+          { id: 'amnesia-suspect', text: 'Suspect with Amnesia', color: '#9370DB', rarity: 'rare', weight: 5 },
+          { id: 'online-stalker', text: 'Anonymous Online Stalker', color: '#2F2F2F', rarity: 'uncommon', weight: 8 },
+          { id: 'victim-clone', text: 'Victim\'s Genetic Clone', color: '#FF0000', rarity: 'legendary', weight: 2 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -978,12 +1100,72 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'How do you pursue the truth?',
       wheelConfig: {
         segments: [
-          { id: 'follow-money', text: 'Follow the Money', color: '#FFD700', rarity: 'common', weight: 18 },
-          { id: 'psychological-pressure', text: 'Psychological Pressure', color: '#9370DB', rarity: 'uncommon', weight: 15 },
-          { id: 'surveillance', text: 'Surveillance Operation', color: '#2F2F2F', rarity: 'uncommon', weight: 16 },
-          { id: 'forensic-analysis', text: 'Forensic Deep Dive', color: '#E6E6FA', rarity: 'uncommon', weight: 17 },
-          { id: 'witness-protection', text: 'Witness Protection', color: '#4682B4', rarity: 'rare', weight: 12 },
-          { id: 'undercover-infiltration', text: 'Undercover Infiltration', color: '#8B0000', rarity: 'rare', weight: 22 },
+          { id: 'follow-money', text: 'Follow the Money', color: '#FFD700', rarity: 'common', weight: 12 },
+          { id: 'psychological-pressure', text: 'Psychological Pressure', color: '#9370DB', rarity: 'uncommon', weight: 10 },
+          { id: 'surveillance', text: 'Surveillance Operation', color: '#2F2F2F', rarity: 'uncommon', weight: 11 },
+          { id: 'forensic-analysis', text: 'Forensic Deep Dive', color: '#E6E6FA', rarity: 'uncommon', weight: 12 },
+          { id: 'witness-protection', text: 'Witness Protection', color: '#4682B4', rarity: 'rare', weight: 8 },
+          { id: 'undercover-infiltration', text: 'Undercover Infiltration', color: '#8B0000', rarity: 'rare', weight: 10 },
+          { id: 'data-mining', text: 'Digital Data Mining', color: '#4169E1', rarity: 'uncommon', weight: 9 },
+          { id: 'informant-network', text: 'Informant Network', color: '#A0522D', rarity: 'uncommon', weight: 9 },
+          { id: 'psychological-profiling', text: 'Psychological Profiling', color: '#800080', rarity: 'uncommon', weight: 8 },
+          { id: 'crime-scene-reconstruction', text: 'Crime Scene Reconstruction', color: '#228B22', rarity: 'rare', weight: 7 },
+          { id: 'social-media-investigation', text: 'Social Media Investigation', color: '#FF1493', rarity: 'common', weight: 10 },
+          { id: 'financial-forensics', text: 'Financial Forensics', color: '#B8860B', rarity: 'uncommon', weight: 8 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'mid-investigation-revelation',
+    },
+
+    // Step 9: Mid-Investigation Revelation
+    {
+      id: 'mid-investigation-revelation',
+      title: 'Mid-Investigation Breakthrough',
+      description: 'Halfway through your investigation, a crucial discovery changes everything...',
+      wheelConfig: {
+        segments: [
+          { id: 'second-murder', text: 'Second Murder Occurs', color: '#8B0000', rarity: 'uncommon', weight: 14 },
+          { id: 'victim-alive-revelation', text: 'Victim Still Alive Discovery', color: '#228B22', rarity: 'rare', weight: 8 },
+          { id: 'evidence-planted', text: 'Evidence Was Planted', color: '#FF4500', rarity: 'uncommon', weight: 12 },
+          { id: 'witness-recants', text: 'Key Witness Recants Testimony', color: '#9370DB', rarity: 'common', weight: 15 },
+          { id: 'new-suspect-emerges', text: 'Completely New Suspect Emerges', color: '#4169E1', rarity: 'common', weight: 16 },
+          { id: 'suicide-revelation', text: 'Victim\'s Suicide Note Found', color: '#2F4F2F', rarity: 'uncommon', weight: 11 },
+          { id: 'coverup-discovered', text: 'Massive Cover-Up Discovered', color: '#800080', rarity: 'rare', weight: 9 },
+          { id: 'wrong-identity', text: 'Victim\'s True Identity Revealed', color: '#DC143C', rarity: 'uncommon', weight: 10 },
+          { id: 'faked-death', text: 'Death Was Faked', color: '#FFD700', rarity: 'rare', weight: 7 },
+          { id: 'conspiracy-uncovered', text: 'Criminal Conspiracy Uncovered', color: '#4B0082', rarity: 'rare', weight: 6 },
+          { id: 'informant-betrayal', text: 'Trusted Informant\'s Betrayal', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
+      defaultNextStep: 'breakthrough-evidence',
+    },
+
+    // Step 10: Breakthrough Evidence Discovery
+    {
+      id: 'breakthrough-evidence',
+      title: 'The Breakthrough Evidence',
+      description: 'Finally, you discover the evidence that will crack the case wide open...',
+      wheelConfig: {
+        segments: [
+          { id: 'dna-match', text: 'DNA Match in Database', color: '#E6E6FA', rarity: 'common', weight: 16 },
+          { id: 'hidden-camera', text: 'Hidden Camera Footage', color: '#2F2F2F', rarity: 'uncommon', weight: 13 },
+          { id: 'confession-recording', text: 'Secret Confession Recording', color: '#DC143C', rarity: 'uncommon', weight: 12 },
+          { id: 'financial-smoking-gun', text: 'Financial Smoking Gun', color: '#FFD700', rarity: 'common', weight: 15 },
+          { id: 'murder-weapon-found', text: 'Murder Weapon Finally Found', color: '#8B0000', rarity: 'uncommon', weight: 11 },
+          { id: 'eyewitness-comes-forward', text: 'Eyewitness Finally Comes Forward', color: '#32CD32', rarity: 'common', weight: 14 },
+          { id: 'digital-evidence', text: 'Incriminating Digital Evidence', color: '#4169E1', rarity: 'uncommon', weight: 10 },
+          { id: 'accomplice-confession', text: 'Accomplice Confesses', color: '#9370DB', rarity: 'rare', weight: 8 },
+          { id: 'victim-diary', text: 'Victim\'s Secret Diary', color: '#FF69B4', rarity: 'uncommon', weight: 9 },
+          { id: 'forensic-breakthrough', text: 'Forensic Science Breakthrough', color: '#228B22', rarity: 'rare', weight: 6 },
+          { id: 'insider-tip', text: 'Anonymous Insider Tip', color: '#800080', rarity: 'uncommon', weight: 7 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -993,7 +1175,7 @@ const detectiveMysteryTheme: SequenceTheme = {
       defaultNextStep: 'plot-twist',
     },
 
-    // Step 6: Plot Twist
+    // Step 11: Plot Twist
     {
       id: 'plot-twist',
       title: 'The Shocking Revelation',
@@ -1005,7 +1187,17 @@ const detectiveMysteryTheme: SequenceTheme = {
           { id: 'false-memory', text: 'False Memory', color: '#9370DB', rarity: 'rare', weight: 10 },
           { id: 'twin-switch', text: 'Twin Switch', color: '#4169E1', rarity: 'legendary', weight: 8 },
           { id: 'victim-alive', text: 'Victim Still Alive', color: '#228B22', rarity: 'rare', weight: 14 },
-          { id: 'time-paradox', text: 'Time Paradox', color: '#800080', rarity: 'legendary', weight: 38 },
+          { id: 'time-paradox', text: 'Time Travel Paradox', color: '#800080', rarity: 'legendary', weight: 3 },
+          { id: 'multiple-personalities', text: 'Multiple Personality Disorder', color: '#FF1493', rarity: 'rare', weight: 7 },
+          { id: 'suicide-staged', text: 'Suicide Staged as Murder', color: '#2F4F2F', rarity: 'uncommon', weight: 10 },
+          { id: 'witness-protection-blown', text: 'Witness Protection Cover Blown', color: '#4682B4', rarity: 'uncommon', weight: 9 },
+          { id: 'serial-killer-copycat', text: 'Serial Killer Copycat', color: '#DC143C', rarity: 'uncommon', weight: 8 },
+          { id: 'government-conspiracy', text: 'Government Black Ops Cover-Up', color: '#191970', rarity: 'rare', weight: 6 },
+          { id: 'medical-experiment', text: 'Illegal Medical Experiment', color: '#8B008B', rarity: 'rare', weight: 5 },
+          { id: 'victim-is-killer', text: 'Victim is the Real Killer', color: '#FF0000', rarity: 'legendary', weight: 4 },
+          { id: 'international-spy', text: 'International Spy Network', color: '#4B0082', rarity: 'rare', weight: 6 },
+          { id: 'cult-sacrifice', text: 'Ritual Cult Sacrifice', color: '#8B0000', rarity: 'rare', weight: 5 },
+          { id: 'virtual-reality', text: 'Virtual Reality Simulation', color: '#00CED1', rarity: 'legendary', weight: 3 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -1022,12 +1214,22 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'Who was behind it all along?',
       wheelConfig: {
         segments: [
-          { id: 'innocent-bystander', text: 'The Innocent Bystander', color: '#4682B4', rarity: 'uncommon', weight: 16 },
-          { id: 'victims-child', text: 'Victim\'s Own Child', color: '#8B0000', rarity: 'rare', weight: 14 },
-          { id: 'dirty-partner', text: 'Your Original Partner', color: '#2F2F2F', rarity: 'rare', weight: 12 },
-          { id: 'corrupt-official', text: 'Mayor/Judge/Chief', color: '#800080', rarity: 'legendary', weight: 8 },
-          { id: 'professional-hitman', text: 'Professional Hitman', color: '#DC143C', rarity: 'uncommon', weight: 18 },
-          { id: 'jealous-ex', text: 'Jealous Ex-Lover', color: '#FF69B4', rarity: 'common', weight: 32 },
+          { id: 'innocent-bystander', text: 'The Innocent Bystander', color: '#4682B4', rarity: 'uncommon', weight: 12 },
+          { id: 'victims-child', text: 'Victim\'s Own Child', color: '#8B0000', rarity: 'rare', weight: 10 },
+          { id: 'dirty-partner', text: 'Your Original Partner', color: '#2F2F2F', rarity: 'rare', weight: 10 },
+          { id: 'corrupt-official', text: 'Mayor/Judge/Chief', color: '#800080', rarity: 'legendary', weight: 6 },
+          { id: 'professional-hitman', text: 'Professional Hitman', color: '#DC143C', rarity: 'uncommon', weight: 14 },
+          { id: 'jealous-ex', text: 'Jealous Ex-Lover', color: '#FF69B4', rarity: 'common', weight: 18 },
+          { id: 'business-rival', text: 'Ruthless Business Rival', color: '#B8860B', rarity: 'common', weight: 16 },
+          { id: 'serial-killer', text: 'Hidden Serial Killer', color: '#800000', rarity: 'rare', weight: 8 },
+          { id: 'undercover-agent', text: 'Double Agent', color: '#2E8B57', rarity: 'rare', weight: 9 },
+          { id: 'family-member', text: 'Victim\'s Sibling', color: '#CD5C5C', rarity: 'uncommon', weight: 13 },
+          { id: 'cult-leader', text: 'Cult Leader', color: '#4B0082', rarity: 'legendary', weight: 5 },
+          { id: 'blackmail-victim', text: 'Blackmail Victim', color: '#696969', rarity: 'uncommon', weight: 15 },
+          { id: 'medical-examiner', text: 'The Medical Examiner', color: '#708090', rarity: 'rare', weight: 7 },
+          { id: 'defense-attorney', text: 'Defense Attorney', color: '#556B2F', rarity: 'uncommon', weight: 11 },
+          { id: 'crime-boss', text: 'Crime Boss', color: '#000000', rarity: 'legendary', weight: 4 },
+          { id: 'vigilante', text: 'Vigilante Killer', color: '#8B4513', rarity: 'rare', weight: 8 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -1044,12 +1246,18 @@ const detectiveMysteryTheme: SequenceTheme = {
       description: 'How do you face the suspect?',
       wheelConfig: {
         segments: [
-          { id: 'high-speed-chase', text: 'High-Speed Chase', color: '#FF4500', rarity: 'uncommon', weight: 18 },
-          { id: 'rooftop-standoff', text: 'Rooftop Standoff', color: '#4169E1', rarity: 'uncommon', weight: 16 },
-          { id: 'warehouse-trap', text: 'Warehouse Trap', color: '#2F2F2F', rarity: 'uncommon', weight: 15 },
-          { id: 'courtroom-confession', text: 'Public Confession', color: '#B8860B', rarity: 'rare', weight: 12 },
-          { id: 'quiet-arrest', text: 'Quiet Arrest', color: '#228B22', rarity: 'common', weight: 24 },
-          { id: 'hostage-situation', text: 'Hostage Situation', color: '#8B0000', rarity: 'rare', weight: 15 },
+          { id: 'high-speed-chase', text: 'High-Speed Chase', color: '#FF4500', rarity: 'uncommon', weight: 12 },
+          { id: 'rooftop-standoff', text: 'Rooftop Standoff', color: '#4169E1', rarity: 'uncommon', weight: 10 },
+          { id: 'warehouse-trap', text: 'Warehouse Trap', color: '#2F2F2F', rarity: 'uncommon', weight: 10 },
+          { id: 'courtroom-confession', text: 'Public Confession', color: '#B8860B', rarity: 'rare', weight: 8 },
+          { id: 'quiet-arrest', text: 'Quiet Arrest', color: '#228B22', rarity: 'common', weight: 14 },
+          { id: 'hostage-situation', text: 'Hostage Situation', color: '#8B0000', rarity: 'rare', weight: 9 },
+          { id: 'abandoned-factory', text: 'Abandoned Factory Showdown', color: '#696969', rarity: 'uncommon', weight: 9 },
+          { id: 'courthouse-escape', text: 'Courthouse Escape Attempt', color: '#4682B4', rarity: 'uncommon', weight: 8 },
+          { id: 'underground-tunnel', text: 'Underground Tunnel Chase', color: '#8B4513', rarity: 'uncommon', weight: 7 },
+          { id: 'helicopter-pursuit', text: 'Helicopter Pursuit', color: '#FF69B4', rarity: 'rare', weight: 6 },
+          { id: 'cruise-ship', text: 'Cruise Ship Confrontation', color: '#20B2AA', rarity: 'rare', weight: 5 },
+          { id: 'hospital-standoff', text: 'Hospital Emergency Standoff', color: '#DC143C', rarity: 'uncommon', weight: 8 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -1100,11 +1308,38 @@ const detectiveMysteryTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'detective-mystery',
       },
+      defaultNextStep: 'professional-consequences',
+    },
+
+    // Step 13: Professional Consequences
+    {
+      id: 'professional-consequences',
+      title: 'Professional Consequences',
+      description: 'How did this case impact your detective career?',
+      wheelConfig: {
+        segments: [
+          { id: 'promoted-captain', text: 'Promoted to Captain', color: '#FFD700', rarity: 'uncommon', weight: 12 },
+          { id: 'commendation', text: 'Official Commendation', color: '#32CD32', rarity: 'common', weight: 16 },
+          { id: 'transferred-away', text: 'Quietly Transferred', color: '#4682B4', rarity: 'common', weight: 14 },
+          { id: 'early-retirement', text: 'Forced Early Retirement', color: '#8B0000', rarity: 'uncommon', weight: 10 },
+          { id: 'book-deal', text: 'Bestselling Book Deal', color: '#9370DB', rarity: 'rare', weight: 8 },
+          { id: 'consulting-career', text: 'Private Consulting Career', color: '#228B22', rarity: 'uncommon', weight: 11 },
+          { id: 'demoted-rank', text: 'Demoted in Rank', color: '#DC143C', rarity: 'uncommon', weight: 9 },
+          { id: 'internal-investigation', text: 'Under Internal Investigation', color: '#2F2F2F', rarity: 'uncommon', weight: 8 },
+          { id: 'media-celebrity', text: 'Media Celebrity Status', color: '#FF69B4', rarity: 'rare', weight: 6 },
+          { id: 'ptsd-leave', text: 'PTSD Medical Leave', color: '#800080', rarity: 'uncommon', weight: 9 },
+          { id: 'teaching-academy', text: 'Teaching at Police Academy', color: '#4169E1', rarity: 'uncommon', weight: 7 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'detective-mystery',
+      },
       // Final step - no defaultNextStep
     },
   ],
 
-  narrativeTemplate: "In {city}, you investigated a {crime-discovery} using your expertise as a {detective-specialty}. Your investigation revealed multiple suspects: {potential-suspects}. Through {investigation-method}, you uncovered a shocking {plot-twist}. The real mastermind was {real-culprit}, leading to a dramatic {confrontation}. The trial resulted in {trial-outcome}, and your story ended with {aftermath}.",
+  narrativeTemplate: "In {city}, you investigated a {crime-discovery} using your expertise as a {detective-specialty}. Initial evidence revealed {initial-evidence}, leading to {first-lead-investigation}. Despite facing {investigation-obstacle}, your {investigation-method} approach uncovered {mid-investigation-revelation}. The breakthrough came with {breakthrough-evidence}, followed by a shocking {plot-twist}. The real mastermind was {real-culprit}, leading to a dramatic {confrontation}. The trial resulted in {trial-outcome}, your story ended with {aftermath}, and the case's impact resulted in {professional-consequences}.",
 
   narrativeTemplates: {
     // Legendary Case: The Perfect Detective
@@ -1125,7 +1360,16 @@ const detectiveMysteryTheme: SequenceTheme = {
     // Victory Path: The Master Investigator
     'master-investigator': "🏆 THE MASTER INVESTIGATOR 🏆\n\nYour reputation as a {detective-specialty} in {city} was built on cases like the {crime-discovery}. While others focused on obvious suspects, your methodical approach investigated everyone from {potential-suspects}, and your {investigation-method} uncovered the {plot-twist} that led directly to {real-culprit}. The {confrontation} showcased your skills, the {trial-outcome} delivered justice, and you ended as a {hero-detective} whose methods revolutionized police work.",
 
-    'default': "In {city}, you solved a {crime-discovery} as a {detective-specialty}, investigated suspects like {potential-suspects}, discovered {real-culprit} was the true culprit after a {plot-twist}, and saw justice served with {trial-outcome}."
+    // Tech Detective: Digital Age Crime Fighter
+    'tech-crime-specialist': "💻 THE DIGITAL DETECTIVE 💻\n\nIn the digital age of {city}, your {crime-discovery} required cutting-edge investigative techniques. Your {detective-specialty} skills, combined with {investigation-method}, uncovered digital evidence others missed. When {mid-investigation-revelation} changed everything, your {breakthrough-evidence} proved that modern crimes require modern solutions. Your {professional-consequences} established you as the future of law enforcement.",
+
+    // Psychological Thriller: Mind Games Detective  
+    'psychological-thriller': "🧠 THE MIND GAMES MASTER 🧠\n\nThe {crime-discovery} in {city} wasn't just about evidence - it was a psychological chess match. Your {detective-specialty} background allowed you to see patterns others missed. Despite facing {investigation-obstacle}, you navigated through {mid-investigation-revelation} and uncovered the {plot-twist} that revealed {real-culprit} had been playing mind games all along. Your {confrontation} became a battle of wits that ended with {professional-consequences}.",
+
+    // Complex Investigation: The Methodical Master
+    'methodical-investigator': "🔬 THE METHODICAL MASTER 🔬\n\nYour investigation of the {crime-discovery} in {city} showcased textbook detective work. Starting with {initial-evidence} and following {first-lead-investigation}, you methodically overcame {investigation-obstacle} through pure determination. When {mid-investigation-revelation} threatened to derail everything, your {breakthrough-evidence} proved that patience and persistence solve cases. The {confrontation} with {real-culprit} vindicated your approach, resulting in {professional-consequences}.",
+
+    'default': "In {city}, you investigated a {crime-discovery} as a {detective-specialty}. Despite {investigation-obstacle}, your {investigation-method} approach and {breakthrough-evidence} led you to discover {real-culprit} was the true culprit after a {plot-twist}. The {confrontation} resulted in {trial-outcome} and {professional-consequences}."
   }
 };
 
