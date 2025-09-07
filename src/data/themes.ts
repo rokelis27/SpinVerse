@@ -2008,11 +2008,15 @@ const worldCupManagerTheme: SequenceTheme = {
       wheelConfig: {
         segments: [
           { id: 'first-nine-points', text: 'First Place + 9 Points', color: '#FFD700', rarity: 'legendary', weight: 8 },
-          { id: 'first-seven-points', text: 'First Place + 7 Points', color: '#32CD32', rarity: 'rare', weight: 12 },
-          { id: 'second-six-points', text: 'Second Place + 6 Points', color: '#4169E1', rarity: 'uncommon', weight: 18 },
-          { id: 'second-four-points', text: 'Second Place + 4 Points', color: '#FF69B4', rarity: 'common', weight: 22 },
-          { id: 'third-four-points', text: 'Third Place + 4 Points', color: '#8B0000', rarity: 'common', weight: 20 },
-          { id: 'fourth-one-point', text: 'Fourth Place + 1 Point', color: '#2F4F4F', rarity: 'uncommon', weight: 20 },
+          { id: 'first-seven-points', text: 'First Place + 7 Points', color: '#32CD32', rarity: 'rare', weight: 10 },
+          { id: 'first-six-points', text: 'First Place + 6 Points', color: '#228B22', rarity: 'uncommon', weight: 12 },
+          { id: 'second-six-points', text: 'Second Place + 6 Points', color: '#4169E1', rarity: 'uncommon', weight: 15 },
+          { id: 'second-five-points', text: 'Second Place + 5 Points', color: '#6495ED', rarity: 'common', weight: 16 },
+          { id: 'second-four-points', text: 'Second Place + 4 Points', color: '#FF69B4', rarity: 'common', weight: 14 },
+          { id: 'second-three-points', text: 'Second Place + 3 Points', color: '#9370DB', rarity: 'common', weight: 12 },
+          { id: 'third-three-points', text: 'Third Place + 3 Points', color: '#CD853F', rarity: 'common', weight: 8 },
+          { id: 'third-one-point', text: 'Third Place + 1 Point', color: '#8B4513', rarity: 'common', weight: 8 },
+          { id: 'fourth-zero-points', text: 'Last Place + 0 Points', color: '#2F4F4F', rarity: 'uncommon', weight: 9 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -2022,10 +2026,10 @@ const worldCupManagerTheme: SequenceTheme = {
       // Branching based on qualification
       branches: [
         createBranch('group-stage-moment', [
-          BranchingConditions.oneOf('group-performance', ['first-nine-points', 'first-seven-points', 'second-six-points', 'second-four-points'])
+          BranchingConditions.oneOf('group-performance', ['first-nine-points', 'first-seven-points', 'first-six-points', 'second-six-points', 'second-five-points', 'second-four-points', 'second-three-points'])
         ]),
         createBranch('tournament-ending', [
-          BranchingConditions.oneOf('group-performance', ['third-four-points', 'fourth-one-point'])
+          BranchingConditions.oneOf('group-performance', ['third-three-points', 'third-one-point', 'fourth-zero-points'])
         ])
       ],
       defaultNextStep: 'tournament-ending',
@@ -2102,14 +2106,17 @@ const worldCupManagerTheme: SequenceTheme = {
       description: 'The knockout stage is sudden death. 90 minutes to dreams or devastation...',
       wheelConfig: {
         segments: [
-          { id: 'dominant-4-0-win', text: 'Dominant 4-0 Demolition', color: '#32CD32', rarity: 'legendary', weight: 8 },
-          { id: 'comfortable-3-1', text: 'Comfortable 3-1 Victory', color: '#32CD32', rarity: 'uncommon', weight: 16 },
-          { id: 'professional-2-0', text: 'Professional 2-0 Win', color: '#228B22', rarity: 'common', weight: 18 },
-          { id: 'dramatic-extra-time', text: 'Dramatic 2-1 After Extra Time', color: '#FFD700', rarity: 'uncommon', weight: 15 },
-          { id: 'last-minute-winner', text: 'Last-Minute 1-0 Winner', color: '#4169E1', rarity: 'uncommon', weight: 12 },
-          { id: 'penalty-shootout-win', text: 'Penalty Shootout Heroes', color: '#9370DB', rarity: 'rare', weight: 10 },
-          { id: 'comeback-victory', text: '0-2 Down, Won 3-2', color: '#FFD700', rarity: 'legendary', weight: 6 },
+          { id: 'dominant-4-0-win', text: 'Dominant 4-0 Demolition', color: '#32CD32', rarity: 'legendary', weight: 6 },
+          { id: 'comfortable-3-1', text: 'Comfortable 3-1 Victory', color: '#32CD32', rarity: 'uncommon', weight: 12 },
+          { id: 'professional-2-0', text: 'Professional 2-0 Win', color: '#228B22', rarity: 'common', weight: 14 },
+          { id: 'dramatic-extra-time', text: 'Dramatic 2-1 After Extra Time', color: '#FFD700', rarity: 'uncommon', weight: 12 },
+          { id: 'last-minute-winner', text: 'Last-Minute 1-0 Winner', color: '#4169E1', rarity: 'uncommon', weight: 10 },
+          { id: 'penalty-shootout-win', text: 'Penalty Shootout Heroes', color: '#9370DB', rarity: 'rare', weight: 8 },
+          { id: 'comeback-victory', text: '0-2 Down, Won 3-2', color: '#FFD700', rarity: 'legendary', weight: 4 },
           { id: 'penalty-heartbreak', text: 'Penalty Shootout Heartbreak', color: '#8B0000', rarity: 'common', weight: 15 },
+          { id: 'narrow-defeat', text: 'Heartbreaking 1-2 Loss', color: '#DC143C', rarity: 'common', weight: 12 },
+          { id: 'extra-time-loss', text: 'Extra-Time 0-1 Defeat', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          { id: 'heavy-defeat', text: 'Disappointing 0-3 Loss', color: '#8B0000', rarity: 'uncommon', weight: 6 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -2122,7 +2129,7 @@ const worldCupManagerTheme: SequenceTheme = {
           BranchingConditions.oneOf('round-sixteen-result', ['dominant-4-0-win', 'comfortable-3-1', 'professional-2-0', 'dramatic-extra-time', 'last-minute-winner', 'penalty-shootout-win', 'comeback-victory'])
         ]),
         createBranch('tournament-ending', [
-          BranchingConditions.oneOf('round-sixteen-result', ['penalty-heartbreak'])
+          BranchingConditions.oneOf('round-sixteen-result', ['penalty-heartbreak', 'narrow-defeat', 'extra-time-loss', 'heavy-defeat'])
         ])
       ],
       defaultNextStep: 'tournament-ending',
@@ -2168,13 +2175,16 @@ const worldCupManagerTheme: SequenceTheme = {
       description: 'Only 8 teams remain. The dream is so close you can taste it...',
       wheelConfig: {
         segments: [
-          { id: 'clinical-3-0-win', text: 'Clinical 3-0 Masterclass', color: '#32CD32', rarity: 'legendary', weight: 10 },
-          { id: 'hard-fought-2-1', text: 'Hard-Fought 2-1 Victory', color: '#228B22', rarity: 'uncommon', weight: 18 },
-          { id: 'defensive-1-0', text: 'Defensive 1-0 Grind', color: '#2F4F4F', rarity: 'common', weight: 20 },
-          { id: 'extra-time-thriller', text: 'Extra-Time Thriller Win', color: '#FFD700', rarity: 'uncommon', weight: 15 },
-          { id: 'penalty-drama-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 12 },
-          { id: 'upset-victory', text: 'Massive Upset Victory', color: '#FF4500', rarity: 'legendary', weight: 8 },
-          { id: 'narrow-defeat', text: 'Heartbreaking 1-2 Loss', color: '#8B0000', rarity: 'common', weight: 17 },
+          { id: 'clinical-3-0-win', text: 'Clinical 3-0 Masterclass', color: '#32CD32', rarity: 'legendary', weight: 8 },
+          { id: 'hard-fought-2-1', text: 'Hard-Fought 2-1 Victory', color: '#228B22', rarity: 'uncommon', weight: 14 },
+          { id: 'defensive-1-0', text: 'Defensive 1-0 Grind', color: '#2F4F4F', rarity: 'common', weight: 16 },
+          { id: 'extra-time-thriller', text: 'Extra-Time Thriller Win', color: '#FFD700', rarity: 'uncommon', weight: 12 },
+          { id: 'penalty-drama-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 10 },
+          { id: 'upset-victory', text: 'Massive Upset Victory', color: '#FF4500', rarity: 'legendary', weight: 6 },
+          { id: 'narrow-defeat', text: 'Heartbreaking 1-2 Loss', color: '#8B0000', rarity: 'common', weight: 15 },
+          { id: 'penalty-qf-loss', text: 'Penalty Shootout Agony', color: '#DC143C', rarity: 'common', weight: 12 },
+          { id: 'tactical-defeat', text: 'Outclassed 0-2 Defeat', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          { id: 'late-collapse', text: 'Late Collapse 2-3 Loss', color: '#800080', rarity: 'uncommon', weight: 6 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -2187,7 +2197,7 @@ const worldCupManagerTheme: SequenceTheme = {
           BranchingConditions.oneOf('quarter-final-result', ['clinical-3-0-win', 'hard-fought-2-1', 'defensive-1-0', 'extra-time-thriller', 'penalty-drama-win', 'upset-victory'])
         ]),
         createBranch('tournament-ending', [
-          BranchingConditions.oneOf('quarter-final-result', ['narrow-defeat'])
+          BranchingConditions.oneOf('quarter-final-result', ['narrow-defeat', 'penalty-qf-loss', 'tactical-defeat', 'late-collapse'])
         ])
       ],
       defaultNextStep: 'tournament-ending',
@@ -2228,13 +2238,16 @@ const worldCupManagerTheme: SequenceTheme = {
       description: 'Only 4 teams left. History beckons...',
       wheelConfig: {
         segments: [
-          { id: 'dominant-semi-win', text: 'Dominant 3-0 Victory', color: '#32CD32', rarity: 'legendary', weight: 12 },
-          { id: 'tactical-semi-win', text: 'Tactical 1-0 Masterpiece', color: '#2F4F4F', rarity: 'uncommon', weight: 18 },
-          { id: 'thriller-semi-win', text: 'Epic 4-3 Thriller Win', color: '#FFD700', rarity: 'rare', weight: 15 },
-          { id: 'comeback-semi-win', text: 'Incredible Comeback Win', color: '#FF4500', rarity: 'legendary', weight: 10 },
-          { id: 'penalty-semi-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 15 },
-          { id: 'crushing-semi-loss', text: 'Crushing 0-3 Defeat', color: '#8B0000', rarity: 'common', weight: 15 },
-          { id: 'narrow-semi-loss', text: 'Heartbreaking 1-2 Loss', color: '#DC143C', rarity: 'common', weight: 15 },
+          { id: 'dominant-semi-win', text: 'Dominant 3-0 Victory', color: '#32CD32', rarity: 'legendary', weight: 10 },
+          { id: 'tactical-semi-win', text: 'Tactical 1-0 Masterpiece', color: '#2F4F4F', rarity: 'uncommon', weight: 14 },
+          { id: 'thriller-semi-win', text: 'Epic 4-3 Thriller Win', color: '#FFD700', rarity: 'rare', weight: 12 },
+          { id: 'comeback-semi-win', text: 'Incredible Comeback Win', color: '#FF4500', rarity: 'legendary', weight: 8 },
+          { id: 'penalty-semi-win', text: 'Penalty Shootout Victory', color: '#9370DB', rarity: 'rare', weight: 12 },
+          { id: 'crushing-semi-loss', text: 'Crushing 0-3 Defeat', color: '#8B0000', rarity: 'common', weight: 13 },
+          { id: 'narrow-semi-loss', text: 'Heartbreaking 1-2 Loss', color: '#DC143C', rarity: 'common', weight: 12 },
+          { id: 'penalty-semi-loss', text: 'Penalty Shootout Heartbreak', color: '#800080', rarity: 'common', weight: 10 },
+          { id: 'extra-time-semi-loss', text: 'Extra-Time 0-1 Defeat', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          { id: 'late-semi-collapse', text: '2-0 Up, Lost 2-3', color: '#B22222', rarity: 'uncommon', weight: 6 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -2247,7 +2260,7 @@ const worldCupManagerTheme: SequenceTheme = {
           BranchingConditions.oneOf('semi-final-result', ['dominant-semi-win', 'tactical-semi-win', 'thriller-semi-win', 'comeback-semi-win', 'penalty-semi-win'])
         ]),
         createBranch('third-place-playoff', [
-          BranchingConditions.oneOf('semi-final-result', ['crushing-semi-loss', 'narrow-semi-loss'])
+          BranchingConditions.oneOf('semi-final-result', ['crushing-semi-loss', 'narrow-semi-loss', 'penalty-semi-loss', 'extra-time-semi-loss', 'late-semi-collapse'])
         ])
       ],
       defaultNextStep: 'third-place-playoff',
