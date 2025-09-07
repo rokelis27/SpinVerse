@@ -271,12 +271,26 @@ export default function Home() {
               </button>
             </div>
             
-            {/* Centered Title */}
+            {/* Centered Title with Logo */}
             <div className="text-center cinematic-enter">
               <div className="relative inline-block">
-                <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-tight">
-                  SpinVerse
-                </h1>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <div className="relative animate-float">
+                    <img 
+                      src="/spinverse_logo.png" 
+                      alt="SpinVerse Logo" 
+                      className="h-16 md:h-20 w-auto hover:scale-110 transition-all duration-500 rounded-2xl p-2 backdrop-blur-md bg-white/10 border border-white/20 shadow-cosmic hover:shadow-xl neon-glow"
+                      style={{
+                        filter: 'drop-shadow(0 0 20px rgba(139, 92, 246, 0.4)) drop-shadow(0 0 40px rgba(79, 172, 254, 0.2))',
+                        boxShadow: '0 0 30px rgba(139, 92, 246, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)',
+                        animation: 'float 6s ease-in-out infinite'
+                      }}
+                    />
+                  </div>
+                  <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+                    SpinVerse
+                  </h1>
+                </div>
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
               </div>
               <TypewriterText 
