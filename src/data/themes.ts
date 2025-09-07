@@ -67,8 +67,8 @@ const mysticalAcademyTheme: SequenceTheme = {
         segments: [
           { id: 'healing', text: 'Healing Magic', color: '#E6E6FA', rarity: 'common', weight: 30 },
           { id: 'protection', text: 'Protection Charms', color: '#4682B4', rarity: 'common', weight: 30 },
-          { id: 'transfiguration', text: 'Transfiguration', color: '#32CD32', rarity: 'uncommon', weight: 25 },
-          { id: 'patronus', text: 'Patronus Magic', color: '#FFD700', rarity: 'rare', weight: 15 },
+          { id: 'shape-magic', text: 'Shape Magic', color: '#32CD32', rarity: 'uncommon', weight: 25 },
+          { id: 'spirit-guardian', text: 'Spirit Guardian Magic', color: '#FFD700', rarity: 'rare', weight: 15 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -84,8 +84,8 @@ const mysticalAcademyTheme: SequenceTheme = {
       description: 'Master the complex and forbidden arts...',
       wheelConfig: {
         segments: [
-          { id: 'legilimency', text: 'Legilimency', color: '#4B0082', rarity: 'rare', weight: 20 },
-          { id: 'occlumency', text: 'Occlumency', color: '#800080', rarity: 'rare', weight: 20 },
+          { id: 'mind-reading', text: 'Mind Reading', color: '#4B0082', rarity: 'rare', weight: 20 },
+          { id: 'mental-defense', text: 'Mental Defense', color: '#800080', rarity: 'rare', weight: 20 },
           { id: 'advanced-potions', text: 'Advanced Potions', color: '#2F4F2F', rarity: 'uncommon', weight: 30 },
           { id: 'ancient-runes', text: 'Ancient Runes', color: '#8B4513', rarity: 'uncommon', weight: 25 },
           { id: 'dark-arts', text: 'Dark Arts Defense', color: '#DC143C', rarity: 'legendary', weight: 5 },
@@ -260,9 +260,9 @@ const mysticalAcademyTheme: SequenceTheme = {
           { id: 'potions-master', text: 'Potions Master', color: '#2F4F2F', rarity: 'rare', weight: 15 },
           { id: 'herbology-professor', text: 'Herbology Professor', color: '#6B8E23', rarity: 'uncommon', weight: 20 },
           { id: 'charms-professor', text: 'Charms Professor', color: '#4169E1', rarity: 'uncommon', weight: 20 },
-          { id: 'transfiguration-master', text: 'Transfiguration Master', color: '#32CD32', rarity: 'rare', weight: 15 },
+          { id: 'shape-magic-master', text: 'Shape Magic Master', color: '#32CD32', rarity: 'rare', weight: 15 },
           { id: 'magical-researcher', text: 'Magical Researcher', color: '#9932CC', rarity: 'uncommon', weight: 20 },
-          { id: 'unspeakable', text: 'Unspeakable', color: '#4B0082', rarity: 'legendary', weight: 10 },
+          { id: 'secret-agent', text: 'Secret Agent', color: '#4B0082', rarity: 'legendary', weight: 10 },
         ],
         size: 400,
         spinDuration: 3000,
