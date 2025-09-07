@@ -7,6 +7,7 @@ import { BranchEditor } from './BranchEditor';
 import { EnhanceStepButton } from './EnhanceStepButton';
 import { UpgradeFlow } from '@/components/upgrade/UpgradeFlow';
 import { useFeatureGate } from '@/hooks/useFeatureGate';
+import { HelpTooltip } from './HelpTooltip';
 
 interface StepEditorProps {
   step: SequenceStepBuilder;
@@ -380,7 +381,13 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
               <>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-white">Wheel Options</h4>
+                    <h4 className="text-lg font-semibold text-white flex items-center">
+                      Wheel Options
+                      <HelpTooltip 
+                        content="Create and customize the slices on your spinning wheel. Each option has text, color, and weight (probability). Higher weight = more likely to be spun." 
+                        position="right"
+                      />
+                    </h4>
                     {(() => {
                       const currentCount = step.wheelConfig.segments.length;
                       const optionsCheck = checkWheelOptions(currentCount);
@@ -586,8 +593,12 @@ const SegmentEditor: React.FC<SegmentEditorProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
               Probability Weight: {segment.weight}%
+              <HelpTooltip 
+                content="Controls how likely this option is to be spun. Higher weight = more likely. All weights are automatically balanced to add up to 100%." 
+                position="right"
+              />
             </label>
             <input
               type="range"

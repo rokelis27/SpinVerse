@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SequenceBranch, SequenceCondition, WeightOverride } from '@/types/sequence';
 import { useBuilderStore } from '@/stores/builderStore';
 import { WeightOverrideEditor } from './WeightOverrideEditor';
+import { HelpTooltip } from './HelpTooltip';
 
 interface BranchEditorProps {
   stepIndex: number;
@@ -95,7 +96,13 @@ export const BranchEditor: React.FC<BranchEditorProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-semibold text-white">Step Connections</h4>
+        <h4 className="text-lg font-semibold text-white flex items-center">
+          Step Connections
+          <HelpTooltip 
+            content="Create branching paths based on wheel results. For example: 'If wheel lands on Red, go to Step 3'. This lets you build interactive storylines where different spins lead to different outcomes." 
+            position="right"
+          />
+        </h4>
         <button
           onClick={addBranch}
           className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-sm rounded-lg hover:from-emerald-600 hover:to-cyan-600 transition-all duration-300 flex items-center space-x-2"
