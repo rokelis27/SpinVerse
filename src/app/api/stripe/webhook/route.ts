@@ -33,7 +33,7 @@ async function sendWelcomeEmail(email: string, customerName?: string, invitation
       
       🚀 PRO Features Available:
       • Create sequences with up to 50 steps each
-      • Save up to 100 sequences with cloud sync
+      • Save up to 100 sequences
       • Generate 50 AI stories daily
       • Use the Steps AI Enhancer feature
       
@@ -48,7 +48,7 @@ async function sendWelcomeEmail(email: string, customerName?: string, invitation
       
       🚀 You can now:
       • Create unlimited sequences (up to 50 steps each)
-      • Save up to 100 sequences with cloud sync
+      • Save up to 100 sequences
       • Generate 50 AI stories daily
       • Use the Steps AI Enhancer feature
       

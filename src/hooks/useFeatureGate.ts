@@ -145,7 +145,7 @@ export function useFeatureGate() {
         currentUsage,
         limit,
         remainingUses,
-        upgradeMessage: `PRO: You can save up to ${limit} sequences with cloud sync.`,
+        upgradeMessage: `PRO: You can save up to ${limit} sequences.`,
         urgencyLevel: 'low',
         isPro: true,
       };
@@ -374,10 +374,9 @@ export function useFeatureGate() {
       sequences: {
         ...baseConfig,
         title: 'Need More Sequence Storage?',
-        description: 'Save up to 100 sequences with cloud sync across all your devices.',
+        description: 'Save up to 100 sequences.',
         features: [
           '100 saved sequences (vs 3 free)',
-          'Cloud sync across devices',
           'Automatic backups',
           'Export to multiple formats',
           'Share with team members'

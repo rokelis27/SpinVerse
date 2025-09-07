@@ -526,7 +526,7 @@ export function useHybridUser() {
     
     getUpgradeMessage: (featureName: string) => {
       const messages = {
-        sequences: 'Upgrade to PRO to save up to 100 sequences with cloud sync!',
+        sequences: 'Upgrade to PRO to save up to 100 sequences!',
         steps: 'Upgrade to PRO for 50 steps per sequence!',
         options: 'Upgrade to PRO for up to 100 wheel options!',
         ai: 'Upgrade to PRO for 50 daily AI stories!',

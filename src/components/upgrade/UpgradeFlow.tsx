@@ -419,10 +419,10 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
                 <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">
                   {isLoggedIn ? (
                     <>
-                      Hi {user?.firstName || user?.fullName || 'there'}! Upgrade your account to PRO and get access to all premium features with cloud sync across devices.
+                      Hi {user?.firstName || user?.fullName || 'there'}! Upgrade your account to PRO and get access to all premium features.
                     </>
                   ) : (
-                    'Get access to all premium features with cloud sync across devices. Your account will be created after successful payment.'
+                    'Get access to all premium features! Your account will be created after successful payment.'
                   )}
                 </p>
               </div>

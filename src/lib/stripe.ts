@@ -44,7 +44,6 @@ export const STRIPE_PRODUCTS = {
       '100 wheel options (vs 20 free)',
       '50 daily stories (vs 3 free daily)',
       'Automated step enhancer feature',
-      'Cloud sync across devices',
       'Export to all formats',
     ],
   },
@@ -366,7 +365,7 @@ export function getStripeErrorMessage(error: any): string {
 }
 
 // Format currency for display
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
+export function formatCurrency(amount: number, currency: string = 'EUR'): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency.toUpperCase(),

@@ -107,12 +107,27 @@ function UpgradeSuccessContent() {
               <h1 className="text-3xl font-bold text-white mb-4">
                 {flow === 'anonymous' ? 'Payment Successful! 🎉' : 'Welcome to SpinVerse PRO! 🎉'}
               </h1>
-              <p className="text-white/70 mb-6">
-                {flow === 'anonymous' 
-                  ? 'Your payment was processed successfully! Check your email for account setup instructions.'
-                  : 'Your upgrade was successful! You now have access to all PRO features.'
-                }
-              </p>
+              {flow === 'anonymous' ? (
+                <div className="mb-6">
+                  <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4 mb-4">
+                    <div className="flex items-start space-x-3">
+                      <svg className="w-6 h-6 text-yellow-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.232 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      <div>
+                        <h3 className="text-yellow-400 font-semibold text-sm">Important Next Step</h3>
+                        <p className="text-yellow-200 text-sm mt-1">
+                          Check your email inbox (and spam folder) for an invitation to set up your SpinVerse account with a password.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-white/70 mb-6">
+                  Your upgrade was successful! You now have access to all PRO features.
+                </p>
+              )}
             </div>
 
             <div className="bg-white/5 rounded-lg p-4 text-left space-y-3">
@@ -145,7 +160,7 @@ function UpgradeSuccessContent() {
               onClick={handleContinue}
               className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              I have checked my email!
+              {flow === 'anonymous' ? 'I found my invitation email!' : 'Continue to SpinVerse'}
             </button>
           </div>
         )}
