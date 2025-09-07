@@ -45,7 +45,20 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         baseTheme: undefined,
-        variables: { colorPrimary: '#8B5CF6' }
+        variables: { colorPrimary: '#8B5CF6' },
+        elements: {
+          // Style the captcha container if it appears
+          captcha: {
+            backgroundColor: '#1f2937',
+            borderRadius: '8px',
+            border: '1px solid #374151'
+          }
+        },
+        captcha: {
+          theme: 'dark',
+          size: 'flexible',
+          language: 'en-US'
+        }
       }}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
@@ -61,7 +74,7 @@ export default function RootLayout({
             src="https://app.termly.io/embed.min.js"
             data-auto-block="functional"
             data-website-uuid="a2d3cedf-857c-48bf-9994-a70c4d3560cc"
-            data-allow-list="*.clerk.accounts.dev,*.clerk.dev,accounts.dev,*.recaptcha.net,*.google.com,*.gstatic.com,*.cloudflare.com"
+            data-allow-list="*.clerk.accounts.dev,*.clerk.dev,accounts.dev,*.recaptcha.net,*.google.com,*.gstatic.com,*.cloudflare.com,challenges.cloudflare.com,*.cf-challenge.com"
             strategy="afterInteractive"
           />
           <UserProvider>
