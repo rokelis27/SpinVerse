@@ -376,10 +376,34 @@ const battleRoyaleChampionshipTheme: SequenceTheme = {
         friction: 0.02,
         theme: 'battle-royale-championship',
       },
+      defaultNextStep: 'background',
+    },
+
+    // Wheel 2: Your Background
+    {
+      id: 'background',
+      title: 'Your Background',
+      description: 'What was your life before entering this deadly tournament?',
+      wheelConfig: {
+        segments: [
+          { id: 'former-soldier', text: 'Former Soldier', color: '#8B4513', rarity: 'uncommon', weight: 15 },
+          { id: 'street-fighter', text: 'Street Fighter', color: '#DC143C', rarity: 'common', weight: 20 },
+          { id: 'athlete', text: 'Professional Athlete', color: '#4169E1', rarity: 'common', weight: 18 },
+          { id: 'criminal', text: 'Career Criminal', color: '#2F2F2F', rarity: 'uncommon', weight: 12 },
+          { id: 'bodyguard', text: 'Elite Bodyguard', color: '#B8860B', rarity: 'uncommon', weight: 10 },
+          { id: 'survivor', text: 'Disaster Survivor', color: '#228B22', rarity: 'common', weight: 15 },
+          { id: 'ordinary-person', text: 'Ordinary Person', color: '#87CEEB', rarity: 'common', weight: 8 },
+          { id: 'underground-fighter', text: 'Underground Fighter', color: '#800080', rarity: 'rare', weight: 2 },
+        ],
+        size: 400,
+        spinDuration: 3000,
+        friction: 0.02,
+        theme: 'battle-royale-championship',
+      },
       defaultNextStep: 'competitor-status',
     },
 
-    // Wheel 2: Entry Method  
+    // Wheel 3: Entry Method  
     {
       id: 'competitor-status',
       title: 'How You Entered',
@@ -401,7 +425,7 @@ const battleRoyaleChampionshipTheme: SequenceTheme = {
       defaultNextStep: 'training-score',
     },
 
-    // Wheel 3: Combat Assessment
+    // Wheel 4: Combat Assessment
     {
       id: 'training-score', 
       title: 'Your Combat Assessment',
@@ -780,7 +804,7 @@ const battleRoyaleChampionshipTheme: SequenceTheme = {
     },
   ],
   
-  narrativeTemplate: "You were a competitor from {region} who entered the underground death tournament as a {competitor-status}, earning a combat assessment of {training-score} in the {battle-environment} battle zone. Following a {alliance-strategy} strategy, you survived the initial massacre and fought through every deadly challenge the organizers threw at you. Your {final-showdown} led to your new life as a {rebellion-role}, using your prize money and fame to make your mark on the world.",
+  narrativeTemplate: "You were a {background} from {region} who entered the underground death tournament as a {competitor-status}, earning a combat assessment of {training-score} in the {battle-environment} battle zone. Following a {alliance-strategy} strategy, you survived the initial massacre and fought through every deadly challenge the organizers threw at you. Your {final-showdown} led to your new life as a {rebellion-role}, using your prize money and fame to make your mark on the world.",
   
   narrativeTemplates: {
     // Death storylines
