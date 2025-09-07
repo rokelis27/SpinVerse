@@ -308,7 +308,7 @@ src/
 SpinVerse automatically detects the language of your content and responds accordingly:
 - **AI Step Enhancer**: Enhances options in the same language as your sequence
 - **AI Story Generator**: Creates narratives in the detected language
-- **Supported**: All major languages including Spanish, French, German, Portuguese, Italian, Chinese, Japanese, Korean, Russian, and more
+- **Supported**: All major languages including Spanish, French, German, Portuguese, Italian, Chinese, Japanese, Korean, and more
 
 ---
 
