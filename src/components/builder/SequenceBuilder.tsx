@@ -209,7 +209,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden pb-32">
       {/* Hidden file input for import */}
       <input
         ref={fileInputRef}
@@ -534,7 +534,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                     );
                   })()}
 
-                  <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-280px)]">
+                  <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-400px)]">
                     {currentSequence.steps.map((step, index) => (
                       <div key={step.id}>
                         <div
@@ -807,7 +807,7 @@ export const SequenceBuilder: React.FC<SequenceBuilderProps> = ({ onClose }) => 
                     );
                   })()}
 
-                  <div className="space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 280px)' }}>
+                  <div className="space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
                     {currentSequence.steps.map((step, index) => (
                       <div key={step.id}>
                         <div

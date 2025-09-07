@@ -158,7 +158,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
       {/* Tab Content */}
       <div className="flex-1 overflow-hidden">
         {activeTab === 'basic' && (
-          <div className="h-full overflow-y-auto pr-2 space-y-6" style={{maxHeight: 'calc(100vh - 300px)'}}>
+          <div className="h-full overflow-y-auto pr-2 space-y-6" style={{maxHeight: 'calc(100vh - 420px)'}}>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Step Title
@@ -423,7 +423,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
+                <div className="flex-1 overflow-y-auto space-y-4 pr-2" style={{maxHeight: 'calc(100vh - 470px)'}}>
                   {step.wheelConfig.segments.map((segment) => (
                     <SegmentEditor
                       key={segment.id}
@@ -441,7 +441,7 @@ export const StepEditor: React.FC<StepEditorProps> = ({ step, stepIndex }) => {
         )}
 
         {activeTab === 'connections' && (
-          <div className="h-full overflow-y-auto pr-2" style={{maxHeight: 'calc(100vh - 350px)'}}>
+          <div className="h-full overflow-y-auto pr-2" style={{maxHeight: 'calc(100vh - 470px)'}}>
             {isProtectedStep ? (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center p-8 max-w-md">
