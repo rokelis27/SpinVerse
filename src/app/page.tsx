@@ -589,6 +589,58 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              
+              {/* Divider */}
+              <div className="w-full max-w-md mx-auto my-12">
+                <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
+                <div className="flex items-center justify-center -mt-3">
+                  <div className="bg-gray-900 px-4">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Upcoming Features Section */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text mb-4">
+                  🚀 New SpinVerse Features Incoming!
+                </h2>
+                <p className="text-gray-300 text-lg mb-6">
+                  🎬 Share your stories across all social platforms and discover community content
+                </p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="glass-panel rounded-xl p-6 text-center border border-purple-400/30">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500/20 to-purple-600/20 flex items-center justify-center mx-auto mb-4 border border-purple-400/30">
+                    <span className="text-2xl">📹</span>
+                  </div>
+                  <h3 className="font-bold text-purple-400 mb-3 text-lg">Export TikTok Video</h3>
+                  <p className="text-gray-200 text-sm">
+                    Transform your story results into shareable TikTok-style videos
+                  </p>
+                </div>
+                
+                <div className="glass-panel rounded-xl p-6 text-center border border-cyan-400/30">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-cyan-500/20 to-cyan-600/20 flex items-center justify-center mx-auto mb-4 border border-cyan-400/30">
+                    <span className="text-2xl">📸</span>
+                  </div>
+                  <h3 className="font-bold text-cyan-400 mb-3 text-lg">Generate Visuals</h3>
+                  <p className="text-gray-200 text-sm">
+                    Create stunning artwork and character portraits based on your unique story combinations
+                  </p>
+                </div>
+                
+                <div className="glass-panel rounded-xl p-6 text-center border border-emerald-400/30">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mx-auto mb-4 border border-emerald-400/30">
+                    <span className="text-2xl">🛒</span>
+                  </div>
+                  <h3 className="font-bold text-emerald-400 mb-3 text-lg">Community Sequences Platform</h3>
+                  <p className="text-gray-200 text-sm">
+                    Discover and play community-created story sequences, or share your own custom sequences with other users
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         ) : (

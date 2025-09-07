@@ -441,16 +441,22 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
           🎬 Share your stories across all social platforms
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
-          <button className="px-6 py-3 glass-panel rounded-xl text-purple-400 cursor-not-allowed opacity-50 border border-purple-400/30" disabled>
-            <span className="flex items-center space-x-2">
+          <button className="px-6 py-3 glass-panel rounded-xl text-purple-400 cursor-not-allowed opacity-80 border border-purple-400/30" disabled>
+            <span className="flex items-center space-x-2 font-bold">
               <span>📹</span>
               <span>Export TikTok Video</span>
             </span>
           </button>
-          <button className="px-6 py-3 glass-panel rounded-xl text-cyan-400 cursor-not-allowed opacity-50 border border-cyan-400/30" disabled>
-            <span className="flex items-center space-x-2">
+          <button className="px-6 py-3 glass-panel rounded-xl text-cyan-400 cursor-not-allowed opacity-80 border border-cyan-400/30" disabled>
+            <span className="flex items-center space-x-2 font-bold">
               <span>📸</span>
               <span>Generate Visuals</span>
+            </span>
+          </button>
+          <button className="px-6 py-3 glass-panel rounded-xl text-emerald-400 cursor-not-allowed opacity-80 border border-emerald-400/30" disabled>
+            <span className="flex items-center space-x-2 font-bold">
+              <span>🛒</span>
+              <span>Community Sequences Platform</span>
             </span>
           </button>
         </div>
