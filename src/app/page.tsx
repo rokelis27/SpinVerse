@@ -197,9 +197,14 @@ export default function Home() {
           <div className="sm:hidden mb-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
-                  SpinVerse
-                </h1>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+                    SpinVerse
+                  </h1>
+                  <span className="text-xs font-black px-2 py-1 bg-gradient-to-r from-emerald-500/80 to-green-500/80 text-white rounded-full border border-emerald-400/30 shadow-lg backdrop-blur-sm tracking-wider">
+                    BETA
+                  </span>
+                </div>
                 <TypewriterText 
                   text="Transform spins into epic stories"
                   className="text-lg text-gray-100 font-medium tracking-wide font-pacifico"
@@ -287,9 +292,14 @@ export default function Home() {
                       }}
                     />
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
-                    SpinVerse
-                  </h1>
+                  <div className="flex items-center justify-center space-x-3">
+                    <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+                      SpinVerse
+                    </h1>
+                    <span className="text-sm md:text-base font-black px-3 py-1.5 bg-gradient-to-r from-emerald-500/80 to-green-500/80 text-white rounded-full border border-emerald-400/30 shadow-lg backdrop-blur-sm mt-2 md:mt-4 tracking-wider">
+                      BETA
+                    </span>
+                  </div>
                 </div>
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div>
               </div>
