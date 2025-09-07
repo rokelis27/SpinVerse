@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import useSubscriptionStatus from '@/hooks/useSubscriptionStatus';
 import { useUpgradeModal } from '@/hooks/useUpgradeModal';
@@ -30,6 +30,13 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
     type: 'cancel' | 'reactivate';
     endDate?: string;
   } | null>(null);
+
+  // Auto-refresh subscription data if dates are missing for PRO users
+  useEffect(() => {
+    if (subscriptionStatus.isPro && (!subscriptionStatus.startDate || !subscriptionStatus.endDate)) {
+      subscriptionStatus.verifyWithStripe();
+    }
+  }, [subscriptionStatus.isPro, subscriptionStatus.startDate, subscriptionStatus.endDate]);
 
   const handleCancelClick = () => {
     setShowCancelConfirm(true);
@@ -217,20 +224,24 @@ export function SubscriptionManager({ onClose }: SubscriptionManagerProps) {
                 </span>
               </div>
 
-              {subscriptionStatus.startDate && (
+              {/* Always show start date for PRO users */}
+              {subscriptionStatus.isPro && (
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-400">Started:</span>
-                  <span className="text-white">{formatDate(subscriptionStatus.startDate)}</span>
+                  <span className="text-white">
+                    {subscriptionStatus.startDate ? formatDate(subscriptionStatus.startDate) : 'Fetching information...'}
+                  </span>
                 </div>
               )}
 
-              {subscriptionStatus.endDate && (
+              {/* Always show billing date for PRO users */}
+              {subscriptionStatus.isPro && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">
                     {subscriptionStatus.status === 'cancelled' ? 'Access ends:' : 'Next billing:'}
                   </span>
-                  <span className={`text-white ${subscriptionStatus.status === 'cancelled' ? 'text-orange-400' : 'text-white'}`}>
-                    {formatDate(subscriptionStatus.endDate)}
+                  <span className={`${subscriptionStatus.status === 'cancelled' ? 'text-orange-400' : 'text-white'}`}>
+                    {subscriptionStatus.endDate ? formatDate(subscriptionStatus.endDate) : 'Fetching information...'}
                   </span>
                 </div>
               )}
