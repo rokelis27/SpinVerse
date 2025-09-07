@@ -2,11 +2,11 @@ import { SequenceTheme } from '@/types/sequence';
 import { WheelConfig } from '@/types/wheel';
 import { BranchingConditions, createBranch } from '@/utils/branchingUtils';
 
-// Enhanced Mystical Academy Theme with Multiple Storylines
+// Arcane University Theme - Graduate Magical Studies
 const mysticalAcademyTheme: SequenceTheme = {
   id: 'mystical-academy',
-  name: 'Mystical Academy: Your Magical Destiny',
-  description: 'Discover your complete magical journey from academy to your ultimate purpose',
+  name: 'Arcane University: Your Scholarly Path',
+  description: 'Discover your complete magical education from aptitude assessment to your ultimate specialization',
   color: '#8B4513',
   startStepId: 'origin', // Define the starting step
   steps: [
@@ -32,27 +32,27 @@ const mysticalAcademyTheme: SequenceTheme = {
     },
     {
       id: 'house',
-      title: 'Your House',
-      description: 'The Academy Council will decide your destiny...',
+      title: 'Your Academic Specialization',
+      description: 'Based on your aptitude assessment, which school of magical study suits you best?',
       wheelConfig: {
         segments: [
-          { id: 'courage-house', text: 'House of Courage', color: '#D3A625', rarity: 'common', weight: 25 },
-          { id: 'ambition-house', text: 'House of Ambition', color: '#2A623D', rarity: 'common', weight: 25 },
-          { id: 'loyalty-house', text: 'House of Loyalty', color: '#F0C75E', rarity: 'common', weight: 25 },
-          { id: 'wisdom-house', text: 'House of Wisdom', color: '#226B74', rarity: 'common', weight: 25 },
+          { id: 'elemental-school', text: 'School of Elemental Magic', color: '#D3A625', rarity: 'common', weight: 25 },
+          { id: 'research-school', text: 'School of Magical Research', color: '#2A623D', rarity: 'common', weight: 25 },
+          { id: 'healing-school', text: 'School of Healing Arts', color: '#F0C75E', rarity: 'common', weight: 25 },
+          { id: 'theoretical-school', text: 'School of Theoretical Magic', color: '#226B74', rarity: 'common', weight: 25 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
         theme: 'mystical-academy',
       },
-      // Branching logic: Different magical specializations based on house
+      // Branching logic: Different magical specializations based on school
       branches: [
         createBranch('light-magic', [
-          BranchingConditions.oneOf('house', ['courage-house', 'loyalty-house'])
+          BranchingConditions.oneOf('house', ['elemental-school', 'healing-school'])
         ]),
         createBranch('dark-magic', [
-          BranchingConditions.oneOf('house', ['ambition-house', 'wisdom-house'])
+          BranchingConditions.oneOf('house', ['research-school', 'theoretical-school'])
         ])
       ],
       defaultNextStep: 'wand', // Fallback to original path
@@ -317,37 +317,37 @@ const mysticalAcademyTheme: SequenceTheme = {
       // No defaultNextStep - this is the end of the sequence
     },
   ],
-  narrativeTemplate: "You are a {origin} mage sorted into {house}, wielding a {wand} focus with your loyal {pet} by your side. At the Academy, you were known as a {school-performance}. Your purpose is to {purpose}, working as a {career}, with {spell} as your signature spell.",
+  narrativeTemplate: "You are a {origin} scholar specializing in {house}, mastering your {wand} focus with your loyal {pet} by your side. At the University, you were known as a {school-performance}. Your purpose is to {purpose}, working as a {career}, with {spell} as your signature research.",
   narrativeTemplates: {
     // Easter Egg: The Chosen One Path
-    'chosen-one': "🔥 THE CHOSEN ONE 🔥\n\nYou are a {origin} mage from {house}, wielding the legendary {wand} focus - one of the most powerful ever created. At the Academy, you distinguished yourself as a {school-performance}, showing early signs of greatness. Your {pet} has been your faithful companion through countless dangers. Driven to {purpose}, you've become the most powerful {hero-career} of your generation. Your mastery of {spell} has saved the magical world itself. History will remember you as the one who changed everything.",
+    'chosen-one': "🔥 THE LEGENDARY RESEARCHER 🔥\n\nYou are a {origin} scholar from {house}, wielding the legendary {wand} focus - one of the most powerful research tools ever created. At the University, you distinguished yourself as a {school-performance}, showing early signs of greatness. Your {pet} has been your faithful companion through countless discoveries. Driven to {purpose}, you've become the most renowned {hero-career} of your generation. Your breakthrough with {spell} has revolutionized the magical world itself. History will remember you as the one who changed everything.",
     
     // Easter Egg: The Dark Lord Path
-    'dark-lord': "💀 THE DARK LORD RISES 💀\n\nBorn a {origin} mage, you were sorted into {house} where your ambition knew no bounds. Your {wand} focus trembles with dark power, while your {pet} serves as your most loyal servant. Your purpose to {purpose} has twisted into something far more sinister. As a master of the {dark-magic}, you've become the most feared {scholar-career} in magical history. Your signature spell {spell} strikes terror into the hearts of your enemies. The magical world whispers your name in fear.",
+    'dark-lord': "💀 THE FORBIDDEN RESEARCHER 💀\n\nBorn a {origin} scholar, you specialized in {house} where your ambition knew no bounds. Your {wand} focus trembles with forbidden power, while your {pet} serves as your most loyal assistant. Your purpose to {purpose} has twisted into something far more sinister. As a master of the {dark-magic}, you've become the most feared {scholar-career} in academic history. Your signature research {spell} strikes terror into the hearts of your peers. The magical world whispers your name in fear.",
     
     // Easter Egg: The Grand Protector Path
-    'grand-protector': "✨ THE GRAND PROTECTOR ✨\n\nA wise {origin} mage from {house}, you wield your {wand} focus not for glory, but for the protection of all. Your {pet} has been witness to decades of your wisdom. Your calling to {purpose} has made you the greatest {scholar-career} of your time. Through your mastery of {light-magic} and your signature {spell}, you've become the guardian that the magical world turns to in its darkest hours. Love and wisdom guide your every action.",
+    'grand-protector': "✨ THE GRAND PROFESSOR ✨\n\nA wise {origin} scholar from {house}, you wield your {wand} focus not for glory, but for the protection of all. Your {pet} has been witness to decades of your wisdom. Your calling to {purpose} has made you the greatest {scholar-career} of your time. Through your mastery of {light-magic} and your signature {spell}, you've become the mentor that the magical world turns to in its darkest hours. Love and wisdom guide every lesson you teach.",
     
     // Standard Path Templates
-    'hero-path': "⚔️ You are a brave {origin} mage from {house}. With your {wand} focus and {pet} companion, you've answered the call to {purpose} by becoming an elite {hero-career}. Your mastery of {spell} makes you a legendary protector of the magical world, feared by dark mages and celebrated by the innocent.",
+    'hero-path': "⚔️ You are a brave {origin} scholar from {house}. With your {wand} focus and {pet} companion, you've answered the call to {purpose} by becoming an elite {hero-career}. Your mastery of {spell} makes you a legendary protector of the magical world, feared by dark researchers and celebrated by the innocent.",
     
-    'scholar-path': "📚 You are a brilliant {origin} mage from {house}, driven by an insatiable desire to {purpose}. As a renowned {scholar-career}, you wield your {wand} focus in the pursuit of forbidden knowledge, with your {pet} as your devoted research companion. Your groundbreaking work with {spell} has revolutionized magical understanding for generations.",
+    'scholar-path': "📚 You are a brilliant {origin} scholar from {house}, driven by an insatiable desire to {purpose}. As a renowned {scholar-career}, you wield your {wand} focus in the pursuit of forbidden knowledge, with your {pet} as your devoted research companion. Your groundbreaking work with {spell} has revolutionized magical understanding for generations.",
     
-    'nature-path': "🌿 You are a gentle {origin} mage from {house} who has dedicated their life to {purpose}. Working as a legendary {nature-career}, you use your {wand} focus to heal and protect the magical creatures of the world. Your {pet} was the first to recognize your gift, and your signature {spell} allows you to speak the ancient language of the wild.",
+    'nature-path': "🌿 You are a gentle {origin} scholar from {house} who has dedicated their life to {purpose}. Working as a legendary {nature-career}, you use your {wand} focus to heal and protect the magical creatures of the world. Your {pet} was the first to recognize your gift, and your signature {spell} allows you to speak the ancient language of the wild.",
     
-    'light-path': "🌟 You are a {origin} mage from {house}, blessed with the rare gift of {light-magic}. With your {wand} focus and {pet} companion, you've devoted your life to {purpose}. Your mastery of {spell} brings hope and healing wherever darkness threatens to consume the magical world.",
+    'light-path': "🌟 You are a {origin} scholar from {house}, blessed with the rare gift of {light-magic}. With your {wand} focus and {pet} companion, you've devoted your life to {purpose}. Your mastery of {spell} brings hope and healing wherever darkness threatens to consume the magical world.",
     
-    'dark-path': "🐍 You are a {origin} mage from {house}, who has delved deep into the forbidden art of {dark-magic}. Your {wand} focus pulses with dangerous power, while your {pet} serves as both companion and co-conspirator. Driven to {purpose}, your mastery of {spell} makes even the bravest mages step aside when you pass.",
+    'dark-path': "🐍 You are a {origin} scholar from {house}, who has delved deep into the forbidden art of {dark-magic}. Your {wand} focus pulses with dangerous power, while your {pet} serves as both companion and co-conspirator. Driven to {purpose}, your mastery of {spell} makes even the bravest scholars step aside when you pass.",
     
-    'default': "You are a {origin} mage sorted into {house}, wielding a {wand} focus with your loyal {pet} by your side. Your purpose is to {purpose}, and {spell} is your signature spell."
+    'default': "You are a {origin} scholar specializing in {house}, wielding a {wand} focus with your loyal {pet} by your side. Your purpose is to {purpose}, and {spell} is your signature research."
   },
 };
 
-// Survival Tournament Theme - The Arena Journey
-const survivalTournamentTheme: SequenceTheme = {
-  id: 'survival-tournament',
-  name: 'Survival Tournament: Arena Champion',
-  description: 'From Region citizen to Arena survivor to resistance hero - survive the Tournament and overthrow the Empire',
+// Battle Royale Championship Theme - Underground Death Match Tournament
+const battleRoyaleChampionshipTheme: SequenceTheme = {
+  id: 'battle-royale-championship',
+  name: 'Battle Royale Championship: Fight for Freedom',
+  description: 'From desperate contestant to ultimate survivor - compete in the deadliest underground tournament for the ultimate prize: your freedom',
   color: '#8B0000', // Dark red for danger
   startStepId: 'region',
   steps: [
@@ -374,44 +374,38 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       defaultNextStep: 'competitor-status',
     },
 
-    // Wheel 2: Tribute Status  
+    // Wheel 2: Entry Method  
     {
       id: 'competitor-status',
-      title: 'Your Competitor Status',
-      description: 'How you entered the Tournament determines your preparation and mindset',
+      title: 'How You Entered',
+      description: 'Your path into this underground death tournament determines your preparation and mindset',
       wheelConfig: {
         segments: [
-          { id: 'elite-volunteer', text: 'Elite Volunteer', color: '#B8860B', rarity: 'uncommon', weight: 35 },
-          { id: 'volunteer-save', text: 'Volunteer to Save Someone', color: '#DC143C', rarity: 'rare', weight: 10 },
-          { id: 'reluctant-volunteer', text: 'Reluctant Volunteer', color: '#8B4513', rarity: 'uncommon', weight: 8 },
-          { id: 'selected-first', text: 'Selected - First Time', color: '#4682B4', rarity: 'common', weight: 40 },
-          { id: 'selected-multiple', text: 'Selected - Multiple Entries', color: '#8B0000', rarity: 'common', weight: 7 },
+          { id: 'elite-volunteer', text: 'Professional Fighter', color: '#B8860B', rarity: 'uncommon', weight: 35 },
+          { id: 'volunteer-save', text: 'Taking Someone\'s Place', color: '#DC143C', rarity: 'rare', weight: 10 },
+          { id: 'reluctant-volunteer', text: 'Desperate for Prize Money', color: '#8B4513', rarity: 'uncommon', weight: 8 },
+          { id: 'selected-first', text: 'Recruited by Organizers', color: '#4682B4', rarity: 'common', weight: 40 },
+          { id: 'selected-multiple', text: 'Returning Contestant', color: '#8B0000', rarity: 'common', weight: 7 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
-      // Conditional logic for Elite volunteers
-      branches: [
-        createBranch('elite-training', [
-          BranchingConditions.oneOf('region', ['region-1', 'region-2', 'region-4']),
-          BranchingConditions.equals('competitor-status', 'elite-volunteer')
-        ])
-      ],
+      // All entry methods go to the same next step
       defaultNextStep: 'training-score',
     },
 
-    // Wheel 3: Training Score
+    // Wheel 3: Combat Assessment
     {
       id: 'training-score', 
-      title: 'Your Pre-Tournament Training Score',
-      description: 'Official assessment determines sponsor attention and target level',
+      title: 'Your Combat Assessment',
+      description: 'Official evaluation determines betting odds and initial threat level',
       wheelConfig: {
         segments: [
           { id: 'score-12', text: 'Score 12', color: '#FF0000', rarity: 'legendary', weight: 1 },
@@ -430,16 +424,16 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
-      defaultNextStep: 'arena-environment',
+      defaultNextStep: 'battle-environment',
     },
 
-    // Wheel 4: Arena Environment
+    // Wheel 4: Battle Zone Environment
     {
-      id: 'arena-environment',
-      title: 'Your Arena Environment', 
-      description: 'The battleground that will test your district skills',
+      id: 'battle-environment',
+      title: 'Your Battle Zone', 
+      description: 'The battleground chosen by the tournament organizers',
       wheelConfig: {
         segments: [
           { id: 'dense-forest', text: 'Dense Forest', color: '#228B22', rarity: 'common', weight: 20 },
@@ -454,7 +448,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       defaultNextStep: 'alliance-strategy',
     },
@@ -477,7 +471,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       defaultNextStep: 'opening-bloodbath',
     },
@@ -495,7 +489,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
         // Death branch - end sequence
@@ -521,7 +515,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       // No next step - this ends the sequence
     },
@@ -530,7 +524,7 @@ const survivalTournamentTheme: SequenceTheme = {
     {
       id: 'first-night-survival',
       title: 'First Night Survival',
-      description: 'Exposure, dehydration, and basic survival threaten the remaining tributes',
+      description: 'Exposure, dehydration, and basic survival threaten the remaining contestants',
       wheelConfig: {
         segments: [
           { id: 'survive-night', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 80 },
@@ -539,14 +533,14 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
         createBranch('exposure-death', [
           BranchingConditions.equals('first-night-survival', 'die-exposure')
         ]),
       ],
-      defaultNextStep: 'tracker-jacker-encounter',
+      defaultNextStep: 'engineered-threat-encounter',
     },
 
     // DEATH ENDING: Exposure
@@ -563,15 +557,15 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
     },
 
-    // Wheel 8: Tracker Jacker Encounter (BINARY - conditional on forest arenas)
+    // Wheel 8: Engineered Threat Encounter (BINARY - conditional on forest zones)
     {
-      id: 'tracker-jacker-encounter',
-      title: 'Tracker Jacker Encounter',
-      description: 'Genetically modified wasps with hallucinogenic venom',
+      id: 'engineered-threat-encounter',
+      title: 'Engineered Threat Encounter',
+      description: 'Deadly mechanical drones designed to hunt contestants',
       wheelConfig: {
         segments: [
           { id: 'survive-trackers', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 70 },
@@ -580,42 +574,42 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
         createBranch('tracker-death', [
-          BranchingConditions.equals('tracker-jacker-encounter', 'die-trackers')
+          BranchingConditions.equals('engineered-threat-encounter', 'die-trackers')
         ]),
         // Skip this wheel if not in forest/tropical arena
-        createBranch('arena-disaster-survival', [
-          BranchingConditions.oneOf('arena-environment', ['urban-ruins', 'underground-maze', 'volcanic-hellscape', 'desert-wasteland', 'frozen-tundra', 'mountain-peaks'])
+        createBranch('battle-disaster-survival', [
+          BranchingConditions.oneOf('battle-environment', ['urban-ruins', 'underground-maze', 'volcanic-hellscape', 'desert-wasteland', 'frozen-tundra', 'mountain-peaks'])
         ])
       ],
-      defaultNextStep: 'arena-disaster-survival',
+      defaultNextStep: 'battle-disaster-survival',
     },
 
-    // DEATH ENDING: Tracker Jackers
+    // DEATH ENDING: Mechanical Hunters
     {
       id: 'tracker-death',
-      title: 'Death by Tracker Jackers',
-      description: 'The Empire\'s twisted creatures claim another victim',
+      title: 'Death by Mechanical Hunters',
+      description: 'The tournament organizers\' deadly drones claim another victim',
       wheelConfig: {
         segments: [
-          { id: 'hallucination-death', text: 'Lost in Hallucinations', color: '#FF69B4', rarity: 'common', weight: 50 },
-          { id: 'venom-death', text: 'Killed by Venom', color: '#228B22', rarity: 'common', weight: 30 },
-          { id: 'swarm-death', text: 'Overwhelmed by Swarm', color: '#FFD700', rarity: 'common', weight: 20 },
+          { id: 'drone-hunted', text: 'Hunted by Combat Drones', color: '#FF69B4', rarity: 'common', weight: 50 },
+          { id: 'laser-death', text: 'Killed by Laser Grid', color: '#228B22', rarity: 'common', weight: 30 },
+          { id: 'explosive-death', text: 'Caught in Explosive Trap', color: '#FFD700', rarity: 'common', weight: 20 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
     },
 
-    // Wheel 9: Arena Disaster Survival (BINARY)
+    // Wheel 9: Battle Zone Disaster Survival (BINARY)
     {
-      id: 'arena-disaster-survival',
-      title: 'Arena Disaster Survival',
+      id: 'battle-disaster-survival',
+      title: 'Battle Zone Disaster Survival',
       description: 'Official manipulation: fire, floods, earthquakes, or toxic gas',
       wheelConfig: {
         segments: [
@@ -625,20 +619,20 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
         createBranch('disaster-death', [
-          BranchingConditions.equals('arena-disaster-survival', 'die-disaster')
+          BranchingConditions.equals('battle-disaster-survival', 'die-disaster')
         ]),
       ],
-      defaultNextStep: 'mutt-attack',
+      defaultNextStep: 'robot-attack',
     },
 
-    // DEATH ENDING: Arena Disaster
+    // DEATH ENDING: Battle Zone Disaster
     {
       id: 'disaster-death',
-      title: 'Death by Arena Manipulation',
+      title: 'Death by Zone Manipulation',
       description: 'The Officials\' cruelty claims another life',
       wheelConfig: {
         segments: [
@@ -650,48 +644,48 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
     },
 
-    // Wheel 10: Mutt Attack (BINARY)
+    // Wheel 10: Mechanical Beast Attack (BINARY)
     {
-      id: 'mutt-attack',
-      title: 'Beast Attack',
-      description: 'Empire-engineered creatures designed to hunt and kill',
+      id: 'robot-attack',
+      title: 'Robotic Beast Attack',
+      description: 'Tournament organizers release mechanical predators into the zone',
       wheelConfig: {
         segments: [
-          { id: 'survive-mutts', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 60 },
-          { id: 'die-mutts', text: 'DIE - STORY ENDS', color: '#8B0000', rarity: 'common', weight: 40 },
+          { id: 'survive-robots', text: 'SURVIVE', color: '#32CD32', rarity: 'common', weight: 60 },
+          { id: 'die-robots', text: 'DIE - STORY ENDS', color: '#8B0000', rarity: 'common', weight: 40 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
-        createBranch('mutt-death', [
-          BranchingConditions.equals('mutt-attack', 'die-mutts')
+        createBranch('robot-death', [
+          BranchingConditions.equals('robot-attack', 'die-robots')
         ]),
       ],
       defaultNextStep: 'alliance-betrayal-test',
     },
 
-    // DEATH ENDING: Mutt Attack
+    // DEATH ENDING: Mechanical Beast Attack
     {
-      id: 'mutt-death',
-      title: 'Death by Beasts',
-      description: 'The Empire\'s deadliest creatures prove unstoppable',
+      id: 'robot-death',
+      title: 'Death by Robotic Predators',
+      description: 'The tournament organizers\' mechanical beasts prove unstoppable',
       wheelConfig: {
         segments: [
-          { id: 'wolf-beasts', text: 'Killed by Wolf Beasts', color: '#2F2F2F', rarity: 'common', weight: 40 },
-          { id: 'tracker-beasts', text: 'Hunted by Tracker Beasts', color: '#8B0000', rarity: 'common', weight: 30 },
-          { id: 'snake-beasts', text: 'Poisoned by Snake Beasts', color: '#228B22', rarity: 'common', weight: 30 },
+          { id: 'wolf-robots', text: 'Killed by Robot Wolves', color: '#2F2F2F', rarity: 'common', weight: 40 },
+          { id: 'hunter-drones', text: 'Hunted by Aerial Drones', color: '#8B0000', rarity: 'common', weight: 30 },
+          { id: 'spider-bots', text: 'Poisoned by Spider Bots', color: '#228B22', rarity: 'common', weight: 30 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
     },
 
@@ -708,7 +702,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       branches: [
         createBranch('betrayal-death', [
@@ -736,7 +730,7 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
     },
 
@@ -757,63 +751,63 @@ const survivalTournamentTheme: SequenceTheme = {
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       defaultNextStep: 'rebellion-role',
     },
 
-    // Wheel 13: Rebellion Role (final wheel for survivors)
+    // Wheel 13: Your Legacy (final wheel for survivors)
     {
       id: 'rebellion-role',
-      title: 'Your Resistance Role',
-      description: 'Your part in overthrowing the Empire determines the world\'s future',
+      title: 'Your Prize and Legacy',
+      description: 'Having won the ultimate tournament, what do you do with your freedom and fortune?',
       wheelConfig: {
         segments: [
-          { id: 'the-symbol', text: 'The Symbol of Hope', color: '#FFD700', rarity: 'legendary', weight: 25 },
-          { id: 'underground-coordinator', text: 'Underground Coordinator', color: '#2F4F2F', rarity: 'rare', weight: 20 },
-          { id: 'region-liberator', text: 'Region Liberator', color: '#228B22', rarity: 'rare', weight: 18 },
-          { id: 'mentor-rebel', text: 'Mentor Rebel', color: '#4682B4', rarity: 'uncommon', weight: 15 },
-          { id: 'empire-infiltrator', text: 'Empire Infiltrator', color: '#800080', rarity: 'rare', weight: 12 },
-          { id: 'propaganda-star', text: 'Propaganda Star', color: '#FF6347', rarity: 'uncommon', weight: 8 },
-          { id: 'emperor-assassin', text: 'Emperor Assassin', color: '#8B0000', rarity: 'legendary', weight: 2 },
+          { id: 'wealthy-champion', text: 'Wealthy Champion', color: '#FFD700', rarity: 'legendary', weight: 25 },
+          { id: 'underground-hero', text: 'Underground Hero', color: '#2F4F2F', rarity: 'rare', weight: 20 },
+          { id: 'freedom-fighter', text: 'Freedom Fighter', color: '#228B22', rarity: 'rare', weight: 18 },
+          { id: 'mentor-trainer', text: 'Mentor & Trainer', color: '#4682B4', rarity: 'uncommon', weight: 15 },
+          { id: 'tournament-exposer', text: 'Tournament Exposer', color: '#800080', rarity: 'rare', weight: 12 },
+          { id: 'media-celebrity', text: 'Media Celebrity', color: '#FF6347', rarity: 'uncommon', weight: 8 },
+          { id: 'organizer-hunter', text: 'Organizer Hunter', color: '#8B0000', rarity: 'legendary', weight: 2 },
         ],
         size: 400,
         spinDuration: 3000,
         friction: 0.02,
-        theme: 'survival-tournament',
+        theme: 'battle-royale-championship',
       },
       // No defaultNextStep - this is the final wheel
     },
   ],
   
-  narrativeTemplate: "You were a competitor from {region} who entered the Tournament as a {competitor-status}, earning a training score of {training-score} in the {arena-environment} arena. Following a {alliance-strategy} strategy, you survived the bloodbath and fought through every deadly challenge the Empire threw at you. Your {final-showdown} led to your role as {resistance-role} in the revolution that would ultimately bring down the Emperor's regime.",
+  narrativeTemplate: "You were a competitor from {region} who entered the underground death tournament as a {competitor-status}, earning a combat assessment of {training-score} in the {battle-environment} battle zone. Following a {alliance-strategy} strategy, you survived the initial massacre and fought through every deadly challenge the organizers threw at you. Your {final-showdown} led to your new life as a {rebellion-role}, using your prize money and fame to make your mark on the world.",
   
   narrativeTemplates: {
     // Death storylines
-    'bloodbath-victim': "💀 THE BLOODBATH VICTIM 💀\n\nYou were a {competitor-status} from {region} with a training score of {training-score}. Your journey ended in the first 60 seconds of the Tournament - {bloodbath-death}. But even in death, your sacrifice became part of the fire that would eventually burn down the Empire. Your region remembers you as a hero who faced impossible odds with courage.",
+    'bloodbath-victim': "💀 THE BLOODBATH VICTIM 💀\n\nYou were a {competitor-status} from {region} with a combat assessment of {training-score}. Your journey ended in the first 60 seconds of the tournament - {bloodbath-death}. But even in death, your courage inspired others to question the brutal system. Your region remembers you as someone who faced impossible odds with dignity.",
     
-    'exposure-victim': "❄️ CLAIMED BY THE ELEMENTS ❄️\n\nA {competitor-status} from {region}, you survived the bloodbath only to fall to the {arena-environment}'s harsh conditions. You {exposure-death}, but your determination to survive inspired others. Your family back home knows you fought until your last breath, and your memory fuels the growing resistance.",
+    'exposure-victim': "❄️ CLAIMED BY THE ELEMENTS ❄️\n\nA {competitor-status} from {region}, you survived the initial massacre only to fall to the {battle-environment}'s harsh conditions. You {exposure-death}, but your determination to survive inspired others. Your family back home knows you fought until your last breath, and your memory lives on in those who knew your spirit.",
     
-    'tracker-victim': "🐝 FALLEN TO THE EMPIRE'S CREATURES 🐝\n\nFrom {region} with a score of {training-score}, you made it through multiple Arena challenges before encountering the Empire's deadliest trap. You {tracker-death} in the forest, but your survival skills kept you alive longer than most. The resistance will remember how the Empire's twisted science claimed one of their best.",
+    'tracker-victim': "🤖 FALLEN TO MECHANICAL HUNTERS 🤖\n\nFrom {region} with a score of {training-score}, you made it through multiple battle zone challenges before encountering the organizers' deadliest trap. You {tracker-death} in the combat area, but your survival skills kept you alive longer than most. Others will remember how the tournament's twisted technology claimed a true fighter.",
     
-    'disaster-victim': "🌋 OFFICIAL MANIPULATION VICTIM 🌋\n\nA brave {competitor-status} from {region}, you proved your worth by surviving the bloodbath and early challenges. When the Officials intervened, you {disaster-death}, showing the Empire's true cruelty. Your death exposed their manipulation and became a rallying cry for the revolution.",
+    'disaster-victim': "🌋 TOURNAMENT MANIPULATION VICTIM 🌋\n\nA brave {competitor-status} from {region}, you proved your worth by surviving the initial massacre and early challenges. When the organizers intervened with environmental hazards, you {disaster-death}, showing their true cruelty. Your death exposed their manipulation and became a symbol of the tournament's brutality.",
     
-    'mutt-victim': "🐺 KILLED BY EMPIRE MONSTERS 🐺\n\nYou made it further than most - a {competitor-status} from {region} who survived every human threat in the Arena. But the Empire's final weapons proved too much, and you were {mutt-death}. Your courage in facing these abominations showed the Empire what they were truly fighting against.",
+    'robot-victim': "🤖 KILLED BY MECHANICAL PREDATORS 🤖\n\nYou made it further than most - a {competitor-status} from {region} who survived every human threat in the battle zone. But the organizers' final robotic weapons proved too much, and you were {robot-death}. Your courage in facing these mechanical monsters showed everyone what true bravery looks like.",
     
-    'betrayal-victim': "💔 BETRAYED IN THE FINAL MOMENTS 💔\n\nA {competitor-status} from {region}, you survived every Arena trap through your {alliance-strategy} strategy. In the end, you were {betrayal-death}, proving how the Empire corrupts everything it touches. Your loyalty and sacrifice became the foundation for the rebellion's unity.",
+    'betrayal-victim': "💔 BETRAYED IN THE FINAL MOMENTS 💔\n\nA {competitor-status} from {region}, you survived every battle zone trap through your {alliance-strategy} strategy. In the end, you were {betrayal-death}, proving how the tournament's pressure corrupts even the closest bonds. Your loyalty and sacrifice became a lesson in the cost of trust.",
     
     // Victory storylines  
-    'brutal-survivor': "⚔️ THE BRUTAL SURVIVOR ⚔️\n\nFrom {district} with a training score of {training-score}, you fought through every death trap with ruthless determination. Your {brutal-victory} came at a terrible cost - the lives you took haunt your dreams. But as {rebellion-role}, you channeled that pain into the fire that burned down Snow's empire. The Games made you a killer; the rebellion made you a liberator.",
+    'brutal-survivor': "⚔️ THE BRUTAL SURVIVOR ⚔️\n\nFrom {region} with a combat assessment of {training-score}, you fought through every death trap with ruthless determination. Your {brutal-victory} came at a terrible cost - the lives you took haunt your dreams. But as a {rebellion-role}, you channeled that pain into something meaningful. The tournament made you a killer; freedom made you choose who to become.",
     
-    'strategic-mastermind': "🧠 THE STRATEGIC MASTERMIND 🧠\n\nA brilliant {tribute-status} from {district}, you proved that mind conquers muscle. Through careful planning and your {strategic-victory}, you outmaneuvered every threat in the {arena-environment}. As {rebellion-role}, your tactical genius became the backbone of the revolution's success.",
+    'strategic-mastermind': "🧠 THE STRATEGIC MASTERMIND 🧠\n\nA brilliant {competitor-status} from {region}, you proved that mind conquers muscle. Through careful planning and your {strategic-victory}, you outmaneuvered every threat in the {battle-environment}. As a {rebellion-role}, your tactical genius became your greatest asset in your new life.",
     
-    'unlikely-hero': "🏹 THE UNLIKELY HERO 🏹\n\nYou were just a {tribute-status} from {district} - no one expected you to survive. But through your {sacrifice-victory} and pure determination, you became something more. As {rebellion-role}, you proved that heroes aren't born in Career districts - they're forged in the fires of impossible odds.",
+    'unlikely-hero': "🏹 THE UNLIKELY HERO 🏹\n\nYou were just a {competitor-status} from {region} - no one expected you to survive. But through your {sacrifice-victory} and pure determination, you became something more. As a {rebellion-role}, you proved that heroes aren't born from privilege - they're forged in the fires of impossible odds.",
     
-    'star-crossed': "💕 THE STAR-CROSSED SURVIVORS 💕\n\nTwo hearts from {region} who found love in the darkest place. Your {joint-victory} gave the Empire something the Empire couldn't destroy - hope. Together as {rebellion-role}, you became the symbol that love conquers even the cruelest tyranny.",
+    'star-crossed': "💕 THE STAR-CROSSED SURVIVORS 💕\n\nTwo hearts from {region} who found love in the darkest place. Your {joint-victory} gave the world something beautiful - proof that humanity endures. Together as {rebellion-role}, you became the symbol that love conquers even the cruelest circumstances.",
     
-    'mockingjay-perfect': "🔥 THE PERFECT MOCKINGJAY 🔥\n\nFrom the coal-stained district of {district}, you volunteered to save someone you loved and scored an impossible {training-score}. Your {joint-victory} after exploiting the Gamemakers' rules broke their system entirely. As {the-mockingjay}, you became the symbol that ignited the revolution and personally ensured President Snow's downfall. You are the girl on fire who burned down an empire.",
+    'perfect-champion': "🔥 THE PERFECT CHAMPION 🔥\n\nFrom {region}, you entered the tournament to save someone you loved and scored an incredible {training-score}. Your {joint-victory} after exploiting the organizers' rules broke their system entirely. As a {rebellion-role}, you became the symbol that showed the world what true strength looks like. You are the champion who burned down the corrupt system.",
     
-    'default': "You were a {tribute-status} from {district} who survived the Games and joined the rebellion as {rebellion-role}."
+    'default': "You were a {competitor-status} from {region} who survived the tournament and became a {rebellion-role}."
   }
 };
 
@@ -2381,7 +2375,7 @@ const worldCupManagerTheme: SequenceTheme = {
           { id: 'academy-founder', text: 'Coaching Academy Founder', color: '#228B22', rarity: 'uncommon', weight: 8 },
           { id: 'pundit-career', text: 'Successful TV Pundit', color: '#FF4500', rarity: 'common', weight: 10 },
           { id: 'club-comeback', text: 'Triumphant Club Return', color: '#4169E1', rarity: 'uncommon', weight: 8 },
-          { id: 'fifa-role', text: 'FIFA Technical Director', color: '#87CEEB', rarity: 'rare', weight: 7 },
+          { id: 'federation-president', text: 'Federation president', color: '#87CEEB', rarity: 'rare', weight: 7 },
         ],
         size: 400,
         spinDuration: 3000,
@@ -2423,7 +2417,7 @@ const worldCupManagerTheme: SequenceTheme = {
 // Export all themes
 export const themes: SequenceTheme[] = [
   mysticalAcademyTheme,
-  survivalTournamentTheme,
+  battleRoyaleChampionshipTheme,
   detectiveMysteryTheme,
   undergroundRacingTheme,
   worldCupManagerTheme,
