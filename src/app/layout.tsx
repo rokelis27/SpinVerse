@@ -61,7 +61,7 @@ export default function RootLayout({
             src="https://app.termly.io/embed.min.js"
             data-auto-block="functional"
             data-website-uuid="a2d3cedf-857c-48bf-9994-a70c4d3560cc"
-            data-allow-list="*.clerk.accounts.dev,*.clerk.dev,accounts.dev"
+            data-allow-list="*.clerk.accounts.dev,*.clerk.dev,accounts.dev,*.recaptcha.net,*.google.com,*.gstatic.com,*.cloudflare.com"
             strategy="afterInteractive"
           />
           <UserProvider>
