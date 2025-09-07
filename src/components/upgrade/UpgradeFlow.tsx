@@ -384,10 +384,10 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm ${className}`}>
-      <div className="w-full max-w-md bg-gray-900 rounded-2xl shadow-2xl border border-gray-800">
+      <div className="w-full max-w-sm sm:max-w-md max-h-[90vh] bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <h2 className="text-xl font-bold text-white">Upgrade to PRO</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-800">
+          <h2 className="text-lg sm:text-xl font-bold text-white">Upgrade to PRO</h2>
           {currentStep !== 'processing' && (
             <button
               onClick={handleClose}
@@ -402,21 +402,21 @@ export function UpgradeFlow({ isOpen, onClose, triggerFeature, className = '' }:
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {/* Benefits Step */}
           {currentStep === 'benefits' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-2">
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">
                   {isLoggedIn ? 'Upgrade to PRO' : 'Unlock Unlimited Creativity'}
                 </h3>
-                <p className="text-gray-400 mb-6">
+                <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">
                   {isLoggedIn ? (
                     <>
                       Hi {user?.firstName || user?.fullName || 'there'}! Upgrade your account to PRO and get access to all premium features with cloud sync across devices.
