@@ -80,10 +80,11 @@ export async function POST(req: NextRequest) {
   let themeId: string = '';
   let isCustomSequence: boolean = false;
   let sequenceDescription: string = '';
+  let themeSteps: any[] = [];
   
   try {
     const requestData = await req.json();
-    ({ results, themeName, themeId, isCustomSequence, sequenceDescription, userMode = 'anonymous' } = requestData);
+    ({ results, themeName, themeId, isCustomSequence, sequenceDescription, themeSteps = [], userMode = 'anonymous' } = requestData);
 
     if (!results || !Array.isArray(results)) {
       return NextResponse.json({ error: 'Invalid results provided' }, { status: 400 });
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
       const fallbackDescription = sequenceDescription || `A custom ${themeName} experience`;
       themeConfig = getCustomThemeConfig(themeName, fallbackDescription);
       rarityScore = calculateCustomRarityScore(results);
-      storyPrompt = generateCustomStoryPrompt(results, themeName, fallbackDescription, rarityScore);
+      storyPrompt = generateCustomStoryPrompt(results, themeName, fallbackDescription, rarityScore, themeSteps);
     } else {
       // Original theme-specific configurations
       themeConfig = getThemeConfig(themeId || 'mystical-academy');
@@ -591,10 +592,21 @@ function generateCustomStoryPrompt(
   results: SequenceResult[], 
   themeName: string, 
   description: string = '', 
-  rarityScore: number
+  rarityScore: number,
+  themeSteps: any[] = []
 ): string {
+  // Create a map of step IDs to step titles
+  const stepIdToTitle: Record<string, string> = {};
+  themeSteps.forEach(step => {
+    if (step.id && step.title) {
+      stepIdToTitle[step.id] = step.title;
+    }
+  });
+  
   const resultsList = results.map((r, index) => {
-    const stepTitle = r.stepId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    // Use the actual step title if available, otherwise fallback to formatted ID
+    const stepTitle = stepIdToTitle[r.stepId] || r.stepId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
     if (r.multiSpinResults && r.multiSpinResults.length > 1) {
       // Multi-spin step: show all results
       const allSpins = r.multiSpinResults.map((spin, spinIndex) => `Spin ${spinIndex + 1}: ${spin.segment.text}`).join(', ');

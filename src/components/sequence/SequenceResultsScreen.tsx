@@ -101,6 +101,9 @@ export const SequenceResultsScreen: React.FC<SequenceResultsScreenProps> = ({
           results,
           themeName: currentTheme.name,
           themeId: currentTheme.id,
+          isCustomSequence: !currentTheme.id || currentTheme.id.startsWith('custom-'),
+          sequenceDescription: currentTheme.description,
+          themeSteps: currentTheme.steps, // Include step titles for custom sequences
         }),
       });
       

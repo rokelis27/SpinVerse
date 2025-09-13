@@ -194,7 +194,7 @@ export const useSequenceStore = create<SequenceStore>()(
             // Advance to next step after a short delay
             setTimeout(() => {
               get().nextStep();
-            }, 100);
+            }, 2500);
             
             return; // Don't continue with normal completion flow
           }
