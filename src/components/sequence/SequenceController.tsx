@@ -21,6 +21,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
   const [lastResult, setLastResult] = useState<SpinResult | null>(null);
   const [showResultPopup, setShowResultPopup] = useState(false);
   const [showMultiSpinResults, setShowMultiSpinResults] = useState(false);
+  const [allowResultsScreen, setAllowResultsScreen] = useState(false); // Delay results screen until popup finishes
   const wheelSettings = useWheelSettings();
 
   const {
@@ -119,8 +120,10 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
       
       if (!willBeComplete) {
         nextStep(); // Only advance if sequence isn't complete
+      } else {
+        // If sequence is complete, allow results screen to show after popup duration
+        setAllowResultsScreen(true);
       }
-      // If sequence is complete, component will re-render to show results screen
     }, popupDuration);
   };
 
@@ -177,7 +180,7 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
     }
   };
 
-  if (isComplete) {
+  if (isComplete && allowResultsScreen) {
     return (
       <SequenceResultsScreen
         onRestart={handleRestart}
@@ -189,13 +192,17 @@ export const SequenceController: React.FC<SequenceControllerProps> = ({ onBackTo
 
   // Handle case where sequence is active but no current step (completed)
   if (!currentStep) {
-    return (
-      <SequenceResultsScreen
-        onRestart={handleRestart}
-        onBackToHome={handleBackToHome}
-        className={className}
-      />
-    );
+    if (allowResultsScreen) {
+      return (
+        <SequenceResultsScreen
+          onRestart={handleRestart}
+          onBackToHome={handleBackToHome}
+          className={className}
+        />
+      );
+    }
+    // If no current step but results screen not allowed yet, show loading or return null
+    return null;
   }
 
   return (
